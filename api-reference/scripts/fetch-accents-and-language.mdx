@@ -4,7 +4,7 @@ api: "GET /fetchAccentsAndLanguageFromBackendServer"
 description: "Get available voice accents and languages for TTS"
 ---
 
-## 🌍 Overview
+##  Overview
 
 Retrieve list of supported voice accents, languages, and voices for text-to-speech configuration.
 
@@ -126,7 +126,7 @@ async function getAvailableVoices() {
   
   const { languages, accents } = response.data.data;
   
-  console.log('\n🌍 Available Languages:');
+  console.log('\n Available Languages:');
   languages.forEach(lang => {
     console.log(`\n${lang.name} (${lang.code})`);
     lang.voices.forEach(voice => {

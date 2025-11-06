@@ -4,7 +4,7 @@ api: "GET /botResTimeAnalytics"
 description: "Analyze AI response times and performance metrics"
 ---
 
-## ⚡ Overview
+##  Overview
 
 Get detailed analytics on AI bot response times, latency breakdown, and performance trends.
 
@@ -167,7 +167,7 @@ async function getBotResponseTimeAnalytics(filters) {
   
   const { overview, latency_breakdown } = response.data.data;
   
-  console.log('\n⚡ Bot Response Time Analytics');
+  console.log('\n Bot Response Time Analytics');
   console.log(`Average: ${overview.average_response_time}s`);
   console.log(`P95: ${overview.p95_response_time}s`);
   console.log(`\n📊 Latency Breakdown:`);

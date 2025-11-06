@@ -4,7 +4,7 @@ api: "GET /pricing/:countryIso"
 description: "Get phone number rental and usage pricing for a country"
 ---
 
-## 💰 Overview
+##  Overview
 
 Retrieve pricing information for phone numbers in a specific country including rental, setup, voice, and SMS rates.
 
@@ -117,7 +117,7 @@ async function getPhonePricing(countryIso) {
   
   const pricing = response.data.data;
   
-  console.log(`\n💰 Pricing for ${pricing.country} (${pricing.country_iso})`);
+  console.log(`\n Pricing for ${pricing.country} (${pricing.country_iso})`);
   console.log(`\n📞 Local Numbers:`);
   console.log(`   Monthly Rental: $${pricing.phone_numbers.local.monthly_rental_rate}`);
   console.log(`   Voice (per minute): $${pricing.phone_numbers.local.voice_rate.outbound}`);
