@@ -1,0 +1,525 @@
+---
+description: Comprehensive guide to all webhook endpoints for Plivo, Twilio, Exotel, Vertage, Teckinfo, Vicidial, and Oridial integrations.
+---
+
+# Webhooks Overview
+
+## What are Webhooks?
+
+Webhooks are HTTP callbacks that VoiceGenie receives from dialer providers (Plivo, Twilio, etc.) for real-time call events. When events occur (call answered, call ended, recording ready, etc.), the dialer sends a POST request to your configured webhook URL.
+
+---
+
+##  Authentication
+
+All webhooks support signature validation for security:
+
+| Provider | Header | Algorithm |
+|----------|--------|-----------|
+| **Plivo** | `X-Plivo-Signature-V2` | HMAC SHA256 |
+| **Twilio** | `X-Twilio-Signature` | HMAC SHA1 |
+| **Exotel** | `X-Exotel-Signature` | HMAC SHA256 |
+
+### Verifying Webhook Signatures
+
+```javascript
+const crypto = require('crypto');
+
+function verifyPlivoSignature(url, params, signature, authToken) {
+  const sortedParams = Object.keys(params)
+    .sort()
+    .map(key => `${key}${params[key]}`)
+    .join('');
+  
+  const data = url + sortedParams;
+  const hash = crypto
+    .createHmac('sha256', authToken)
+    .update(data)
+    .digest('base64');
+  
+  return hash === signature;
+}
+```
+
+---
+
+## 📞 **PLIVO / ORIDIAL WEBHOOKS**
+
+### 1. Incoming Call Handler
+
+**Endpoint:** `POST /oriIncomingCallHandler`
+
+**Purpose:** Handle incoming calls to your purchased phone numbers
+
+**Payload:**
+```json
+{
+  "From": "+919876543210",
+  "To": "+911234567890",
+  "CallUUID": "call-uuid-123",
+  "CallStatus": "ringing",
+  "Direction": "inbound",
+  "ForwardedFrom": null,
+  "CallerName": "John Doe"
+}
+```
+
+**Response (XML):**
+```xml
+<Response>
+  <Speak>Welcome to VoiceGenie. Please hold while we connect you.</Speak>
+  <Dial>
+    <Number>+911234567890</Number>
+  </Dial>
+</Response>
+```
+
+---
+
+### 2. Outbound Call Handler
+
+**Endpoint:** `POST /outboundCallHandler`
+
+**Purpose:** Initiate outbound campaign calls
+
+**Request Payload:**
+```json
+{
+  "campaign_id": "campaign_xyz789",
+  "contact_id": "contact_456",
+  "phone_number": "+919876543210",
+  "script_id": "script_abc123",
+  "custom_fields": {
+    "name": "John Doe",
+    "company": "Acme Corp"
+  }
+}
+```
+
+**Authentication Required:** Yes (API key + rate limit check)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "call_uuid": "call-uuid-123",
+    "status": "initiated",
+    "initiated_at": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+### 3. Call Answered Handler
+
+**Endpoint:** `POST /outboundCallAnswerHandler`
+
+**Purpose:** Triggered when call is answered
+
+**Payload:**
+```json
+{
+  "CallUUID": "call-uuid-123",
+  "CallStatus": "in-progress",
+  "AnswerTime": "2024-01-16T10:30:15Z",
+  "Direction": "outbound",
+  "From": "+911234567890",
+  "To": "+919876543210"
+}
+```
+
+**Response (XML for AI conversation):**
+```xml
+<Response>
+  <Speak>Hi John, this is Alex from Acme Corp.</Speak>
+  <GetInput 
+    action="https://seamless-sandbox-dev-cm.oriserve.com/responseHook"
+    method="POST"
+    inputType="speech"
+    timeout="10"
+    maxSpeechTime="60">
+    <Speak>How are you today?</Speak>
+  </GetInput>
+</Response>
+```
+
+---
+
+### 4. Recording Status Webhook
+
+**Endpoint:** `POST /callRecordingStatus`
+
+**Purpose:** Notification when call recording is ready
+
+**Payload:**
+```json
+{
+  "CallUUID": "call-uuid-123",
+  "RecordingUrl": "https://s3.plivo.com/recordings/recording123.mp3",
+  "RecordingDuration": 345,
+  "RecordingStartTime": "2024-01-16T10:30:15Z",
+  "RecordingEndTime": "2024-01-16T10:36:00Z",
+  "RecordingFormat": "mp3"
+}
+```
+
+**VoiceGenie Action:**
+- Download recording to internal storage
+- Update call record with recording URL
+- Trigger transcription service
+- Send notification via WebSocket
+
+---
+
+### 5. Call Answer Status Hook
+
+**Endpoint:** `POST /callAnswerStatusHook`
+
+**Purpose:** Final call disposition (answered, busy, no-answer, failed)
+
+**Payload:**
+```json
+{
+  "CallUUID": "call-uuid-123",
+  "CallStatus": "completed",
+  "AnswerTime": "2024-01-16T10:30:15Z",
+  "EndTime": "2024-01-16T10:36:00Z",
+  "Duration": 345,
+  "BillDuration": 360,
+  "HangupCause": "NORMAL_CLEARING",
+  "From": "+911234567890",
+  "To": "+919876543210"
+}
+```
+
+**Hangup Causes:**
+- `NORMAL_CLEARING` - Call completed normally
+- `USER_BUSY` - Recipient was busy
+- `NO_ANSWER` - No answer from recipient
+- `CALL_REJECTED` - Call rejected by recipient
+- `INVALID_NUMBER` - Invalid phone number
+
+---
+
+### 6. Call Events Hook
+
+**Endpoint:** `POST /callEventsHook`
+
+**Purpose:** Real-time call events (ringing, answered, recording started, etc.)
+
+**Payload:**
+```json
+{
+  "Event": "recording-started",
+  "CallUUID": "call-uuid-123",
+  "Timestamp": "2024-01-16T10:30:20Z",
+  "EventData": {
+    "recording_id": "recording123"
+  }
+}
+```
+
+**Event Types:**
+- `call-initiated` - Call started
+- `ringing` - Phone is ringing
+- `answered` - Call answered
+- `recording-started` - Recording began
+- `recording-stopped` - Recording ended
+- `transfer-initiated` - Call transfer started
+- `transfer-completed` - Transfer successful
+- `hangup` - Call terminated
+
+---
+
+### 7. Call Hung Up Handler
+
+**Endpoint:** `POST /handleCallHungUp`
+
+**Purpose:** Handle call termination and cleanup
+
+**Payload:**
+```json
+{
+  "CallUUID": "call-uuid-123",
+  "HangupCause": "NORMAL_CLEARING",
+  "Duration": 345,
+  "EndTime": "2024-01-16T10:36:00Z",
+  "Direction": "outbound"
+}
+```
+
+**VoiceGenie Actions:**
+- Update call status in database
+- Trigger post-call analytics
+- Send WebSocket notification
+- Schedule follow-up if needed
+- Update campaign statistics
+
+---
+
+### 8. AI Response Hook
+
+**Endpoint:** `POST /responseHook`
+
+**Purpose:** Receive user speech, send to AI, return response
+
+**Payload:**
+```json
+{
+  "CallUUID": "call-uuid-123",
+  "Speech": "I'm interested in your premium plan",
+  "SpeechConfidence": 0.95,
+  "UnstableSpeech": "I'm interested in your premium plan"
+}
+```
+
+**VoiceGenie Processing:**
+1. Extract user speech from payload
+2. Send to AI (GPT-4) with conversation context
+3. Get AI response
+4. Convert to TTS audio or text
+5. Return XML with next action
+
+**Response (XML):**
+```xml
+<Response>
+  <Speak>That's great! Our premium plan includes...</Speak>
+  <GetInput 
+    action="https://seamless-sandbox-dev-cm.oriserve.com/responseHook"
+    method="POST"
+    inputType="speech">
+    <Speak>Would you like me to schedule a demo?</Speak>
+  </GetInput>
+</Response>
+```
+
+---
+
+### 9. End Ongoing Call Handler
+
+**Endpoint:** `POST /endOngoingCallHandler`
+
+**Purpose:** Force terminate an active call
+
+**Request:**
+```json
+{
+  "call_uuid": "call-uuid-123",
+  "reason": "agent_initiated"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Call terminated successfully"
+}
+```
+
+---
+
+### 10. Manage Agent Status
+
+**Endpoint:** `POST /manageAgentStatus`
+
+**Purpose:** Update agent availability for inbound calls
+
+**Request:**
+```json
+{
+  "agent_id": "agent_123",
+  "status": "available",
+  "max_concurrent_calls": 3
+}
+```
+
+**Status Values:**
+- `available` - Ready for calls
+- `busy` - On active call(s)
+- `away` - Temporarily unavailable
+- `offline` - Logged out
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "agent_id": "agent_123",
+    "status": "available",
+    "current_calls": 0,
+    "updated_at": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+### 11. Get Agent Status
+
+**Endpoint:** `GET /getAgentStatus`
+
+**Query Parameters:**
+- `agent_id` (optional) - Specific agent ID
+- `status` (optional) - Filter by status
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "agents": [
+      {
+        "agent_id": "agent_123",
+        "status": "available",
+        "current_calls": 0,
+        "total_calls_today": 45,
+        "last_call_end": "2024-01-16T10:25:00Z"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 12. Call Transfer Handler
+
+**Endpoint:** `POST /transfer`
+
+**Purpose:** Transfer active call to another number/agent
+
+**Request:**
+```json
+{
+  "call_uuid": "call-uuid-123",
+  "transfer_to": "+911234567890",
+  "transfer_type": "cold",
+  "announcement": "Transferring you to our specialist"
+}
+```
+
+**Transfer Types:**
+- `cold` - Immediate transfer without announcement
+- `warm` - Announce before transfer
+- `attended` - Conference with transfer target first
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "transfer_id": "transfer_456",
+    "status": "initiated",
+    "transfer_leg_uuid": "leg-uuid-789"
+  }
+}
+```
+
+---
+
+## 📱 **TWILIO WEBHOOKS**
+
+Twilio webhooks follow similar patterns but use TwiML (Twilio Markup Language) for responses.
+
+### Key Differences from Plivo:
+- Uses TwiML instead of Plivo XML
+- Different parameter names (`CallSid` vs `CallUUID`)
+- Signature verification uses SHA1 (Plivo uses SHA256)
+- Different status values
+
+### Example TwiML Response:
+```xml
+<Response>
+  <Say voice="alice">Hello from VoiceGenie</Say>
+  <Gather input="speech" action="/responseHook" method="POST">
+    <Say>How can I help you today?</Say>
+  </Gather>
+</Response>
+```
+
+---
+
+## 🔄 **WEBHOOK RETRY LOGIC**
+
+If webhook delivery fails, providers retry with exponential backoff:
+
+| Attempt | Delay | Total Time |
+|---------|-------|------------|
+| 1st | Immediate | 0s |
+| 2nd | 1 minute | 1m |
+| 3rd | 5 minutes | 6m |
+| 4th | 15 minutes | 21m |
+| 5th | 30 minutes | 51m |
+
+**Best Practices:**
+- Respond within 30 seconds
+- Return 200 OK immediately
+- Process heavy tasks asynchronously
+- Implement idempotency
+- Log all webhook requests
+
+---
+
+## 🧪 **TESTING WEBHOOKS**
+
+### Using ngrok for Local Testing:
+```bash
+# Start ngrok tunnel
+ngrok http 8080
+
+# Use ngrok URL in dialer webhook configuration
+https://abc123.ngrok.io/oriIncomingCallHandler
+```
+
+### Webhook Testing Tools:
+- **Postman** - Manual testing
+- **webhook.site** - Inspect webhook payloads
+- **ngrok** - Local development tunneling
+- **RequestBin** - Capture and inspect webhooks
+
+---
+
+## **WEBHOOK MONITORING**
+
+Track webhook health:
+- **Success Rate** - % of successful deliveries
+- **Response Time** - Average response time
+- **Error Rate** - % of failures
+- **Retry Rate** - % requiring retries
+
+**Alerts trigger when:**
+- Success rate < 95%
+- Response time > 5 seconds
+- Error rate > 5%
+- Multiple consecutive failures
+
+---
+
+## 🔒 **SECURITY BEST PRACTICES**
+
+1. **Always verify signatures** - Don't trust payload without verification
+2. **Use HTTPS only** - Never accept webhooks over HTTP
+3. **Implement rate limiting** - Prevent abuse
+4. **Validate payload** - Check all required fields exist
+5. **Use IP whitelisting** - Only accept from known IPs
+6. **Log everything** - Audit trail for troubleshooting
+7. **Implement idempotency** - Handle duplicate webhooks
+8. **Timeout protection** - Don't let slow operations block webhooks
+
+---
+
+## 📚 **RELATED DOCUMENTATION**
+
+- [WebSocket Events](/api-reference/websockets/real-time-events) - Real-time updates
+- [Call Management](/api-reference/call-management/get-call-recordings) - Recording APIs
+- [Campaign Management](/api-reference/campaign/get-campaign-stats) - Campaign stats
+
+---
+
+**Provider-Specific Docs:**
+- [Plivo Webhooks](https://www.plivo.com/docs/voice/concepts/webhooks/)
+- [Twilio Webhooks](https://www.twilio.com/docs/usage/webhooks)
+- [Exotel Webhooks](https://developer.exotel.com/api/)

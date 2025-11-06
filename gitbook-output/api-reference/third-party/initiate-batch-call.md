@@ -1,0 +1,101 @@
+---
+description: Initiate calls to multiple contacts in a single request
+---
+
+# Initiate Batch Call
+
+**Endpoint:** `POST /initiateBatchCall`
+
+## 📞 Overview
+
+Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contacts per request.
+
+---
+
+##  Request Body
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Batch call initiated successfully",
+  "data": {
+    "total_contacts": 2,
+    "calls_initiated": 2,
+    "calls_failed": 0,
+    "batch_id": "batch_xyz789",
+    "calls": [
+      {
+        "call_uuid": "call-uuid-001",
+        "phone_number": "+919876543210",
+        "status": "initiated"
+      },
+      {
+        "call_uuid": "call-uuid-002",
+        "phone_number": "+919876543211",
+        "status": "initiated"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X POST "https://api.voicegenie.com/initiateBatchCall" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "507f1f77bcf86cd799439011",
+    "contacts": [
+      {
+        "phone_number": "+919876543210",
+        "custom_data": {"name": "John Doe"}
+      },
+      {
+        "phone_number": "+919876543211",
+        "custom_data": {"name": "Jane Smith"}
+      }
+    ]
+  }'
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function initiateBatchCall(agentId, contacts) {
+  const response = await axios.post(
+    'https://api.voicegenie.com/initiateBatchCall',
+    {
+      agent_id: agentId,
+      contacts: contacts
+    }
+  );
+  
+  console.log(`✅ ${response.data.data.calls_initiated} calls initiated`);
+  return response.data.data;
+}
+
+// Example
+const contacts = [
+  { phone_number: '+919876543210', custom_data: { name: 'John Doe' } },
+  { phone_number: '+919876543211', custom_data: { name: 'Jane Smith' } }
+];
+
+initiateBatchCall('507f1f77bcf86cd799439011', contacts);
+```
+
+---
+
+## Related Endpoints
+
+- [Initiate Call](/api-reference/third-party/initiate-call) - Single call
+- [Initiate Batch Call Using Sheet](/api-reference/third-party/initiate-batch-call-using-sheet) - File upload

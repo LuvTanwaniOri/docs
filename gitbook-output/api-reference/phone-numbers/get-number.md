@@ -1,0 +1,106 @@
+---
+description: Retrieve detailed information about a specific phone number
+---
+
+# Get Phone Number Details
+
+**Endpoint:** `GET /numbers/:number`
+
+## 📞 Overview
+
+Get complete details for a specific phone number from Plivo, including configuration, pricing, and status.
+
+---
+
+##  Authentication
+
+---
+
+##  Path Parameters
+
+<ParamField path="number" type="string" required>
+  Phone number (E.164 format)
+  ```
+  919876543210
+  ```
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Phone number details retrieved successfully",
+  "data": {
+    "number": "919876543210",
+    "alias": "Sales Team Number",
+    "country_iso": "IN",
+    "region": "Maharashtra",
+    "voice_enabled": true,
+    "sms_enabled": true,
+    "fax_enabled": false,
+    "application": {
+      "app_id": "app_abc123",
+      "app_name": "VoiceGenie Production"
+    },
+    "monthly_rental_rate": "2.50",
+    "setup_rate": "0.00",
+    "voice_rate": "0.0085",
+    "sms_rate": "0.0050",
+    "resource_uri": "/v1/Account/XXXXX/Number/919876543210/",
+    "added_on": "2024-01-10T08:30:00Z",
+    "configured_scripts": [
+      {
+        "_id": "507f1f77bcf86cd799439012",
+        "botName": "Sales Bot"
+      }
+    ],
+    "inbound_call_enabled": true
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/numbers/919876543210" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getPhoneNumberDetails(number) {
+  const response = await axios.get(
+    `https://api.voicegenie.com/numbers/${number}`,
+    {
+      headers: {
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  console.log('Number:', response.data.data.number);
+  console.log('Voice Enabled:', response.data.data.voice_enabled);
+  console.log('Monthly Rate:', response.data.data.monthly_rental_rate);
+  
+  return response.data.data;
+}
+
+// Example
+getPhoneNumberDetails('919876543210');
+```
+
+---
+
+## Related Endpoints
+
+- [List Account Numbers](/api-reference/phone-numbers/list-account-numbers) - All numbers
+- [Update Number](/api-reference/phone-numbers/update-number) - Modify configuration

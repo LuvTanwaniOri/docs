@@ -1,0 +1,126 @@
+---
+description: Retrieve user preferences and application settings
+---
+
+# Get Settings
+
+**Endpoint:** `GET /getSettings`
+
+##  Overview
+
+Fetch current user settings including theme, notifications, and campaign defaults.
+
+---
+
+##  Authentication
+
+---
+
+##  Query Parameters
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Settings retrieved successfully",
+  "data": {
+    "user_id": "507f1f77bcf86cd799439011",
+    "settings": {
+      "theme": "dark",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true,
+        "webhook": true
+      },
+      "campaign_defaults": {
+        "auto_retry": true,
+        "max_retries": 3,
+        "retry_interval": 3600,
+        "working_hours": {
+          "start": "09:00",
+          "end": "18:00"
+        }
+      },
+      "dashboard_layout": {
+        "widgets": ["calls", "analytics", "quota"],
+        "default_date_range": "last_7_days"
+      }
+    },
+    "last_updated": "2024-01-16T12:30:00Z"
+  }
+}
+```
+
+### No Settings Found (200 OK):
+```json
+{
+  "success": true,
+  "message": "No settings found, returning defaults",
+  "data": {
+    "user_id": "507f1f77bcf86cd799439011",
+    "settings": {
+      "theme": "light",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": false,
+        "webhook": false
+      },
+      "campaign_defaults": {
+        "auto_retry": false,
+        "max_retries": 1
+      },
+      "dashboard_layout": {
+        "widgets": ["calls"],
+        "default_date_range": "today"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/getSettings?user_id=507f1f77bcf86cd799439011" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getSettings(userId) {
+  const response = await axios.get(
+    'https://api.voicegenie.com/getSettings',
+    {
+      params: { user_id: userId },
+      headers: {
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  console.log('Theme:', response.data.data.settings.theme);
+  console.log('Email Notifications:', response.data.data.settings.notifications.email);
+  
+  return response.data.data.settings;
+}
+
+// Example
+getSettings('507f1f77bcf86cd799439011');
+```
+
+---
+
+## Related Endpoints
+
+- [Save Settings](/api-reference/settings/save-settings) - Update settings

@@ -1,0 +1,88 @@
+---
+description: Get current usage quota and limits for your account
+---
+
+# Fetch Quota
+
+**Endpoint:** `GET /fetchQuota`
+
+## Overview
+
+Retrieve current account usage quota including calls, minutes, and remaining limits.
+
+---
+
+##  Authentication
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Quota fetched successfully",
+  "data": {
+    "plan": "Pro",
+    "quota": {
+      "calls": {
+        "used": 1234,
+        "limit": 10000,
+        "remaining": 8766,
+        "percentage": 12.34
+      },
+      "minutes": {
+        "used": 5678,
+        "limit": 50000,
+        "remaining": 44322,
+        "percentage": 11.36
+      },
+      "sms": {
+        "used": 456,
+        "limit": 5000,
+        "remaining": 4544,
+        "percentage": 9.12
+      }
+    },
+    "resetDate": "2024-02-01T00:00:00Z",
+    "billingCycle": "monthly"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/fetchQuota" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function fetchQuota() {
+  const response = await axios.get(
+    'https://api.voicegenie.com/fetchQuota',
+    {
+      headers: { 'x-api-key': 'YOUR_API_KEY' }
+    }
+  );
+  
+  const { quota } = response.data.data;
+  console.log(`Calls: ${quota.calls.used}/${quota.calls.limit} (${quota.calls.percentage}%)`);
+  console.log(`Minutes: ${quota.minutes.used}/${quota.minutes.limit}`);
+  
+  return response.data.data;
+}
+```
+
+---
+
+## Related Endpoints
+
+- [Reset Quota](/api-reference/settings/reset-quota) - Reset usage counters

@@ -1,0 +1,215 @@
+---
+description: Get phone number rental and usage pricing for a country
+---
+
+# Get Phone Number Pricing
+
+**Endpoint:** `GET /pricing/:countryIso`
+
+##  Overview
+
+Retrieve pricing information for phone numbers in a specific country including rental, setup, voice, and SMS rates.
+
+---
+
+##  Authentication
+
+---
+
+##  Path Parameters
+
+<ParamField path="countryIso" type="string" required>
+  Country ISO code (2-letter)
+  ```
+  IN | US | GB | AU | CA
+  ```
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Pricing retrieved successfully",
+  "data": {
+    "country": "India",
+    "country_iso": "IN",
+    "currency": "USD",
+    "phone_numbers": {
+      "local": {
+        "available": true,
+        "monthly_rental_rate": "2.50",
+        "setup_rate": "0.00",
+        "voice_rate": {
+          "inbound": "0.0085",
+          "outbound": "0.0085"
+        },
+        "sms_rate": {
+          "inbound": "0.0035",
+          "outbound": "0.0050"
+        }
+      },
+      "toll_free": {
+        "available": true,
+        "monthly_rental_rate": "5.00",
+        "setup_rate": "0.00",
+        "voice_rate": {
+          "inbound": "0.0120",
+          "outbound": "0.0120"
+        },
+        "sms_rate": {
+          "inbound": "N/A",
+          "outbound": "N/A"
+        }
+      },
+      "mobile": {
+        "available": false
+      }
+    },
+    "bulk_discounts": [
+      {
+        "min_numbers": 10,
+        "discount_percentage": 10
+      },
+      {
+        "min_numbers": 50,
+        "discount_percentage": 20
+      }
+    ],
+    "additional_charges": {
+      "recording_storage": "0.005 per minute/month",
+      "transcription": "0.02 per minute",
+      "ai_processing": "included"
+    },
+    "last_updated": "2024-01-10T00:00:00Z"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/pricing/IN" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getPhonePricing(countryIso) {
+  const response = await axios.get(
+    `https://api.voicegenie.com/pricing/${countryIso}`,
+    {
+      headers: {
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  const pricing = response.data.data;
+  
+  console.log(`\n Pricing for ${pricing.country} (${pricing.country_iso})`);
+  console.log(`\n📞 Local Numbers:`);
+  console.log(`   Monthly Rental: $${pricing.phone_numbers.local.monthly_rental_rate}`);
+  console.log(`   Voice (per minute): $${pricing.phone_numbers.local.voice_rate.outbound}`);
+  console.log(`   SMS (per message): $${pricing.phone_numbers.local.sms_rate.outbound}`);
+  
+  if (pricing.bulk_discounts.length > 0) {
+    console.log(`\n🎁 Bulk Discounts Available:`);
+    pricing.bulk_discounts.forEach(discount => {
+      console.log(`   ${discount.min_numbers}+ numbers: ${discount.discount_percentage}% off`);
+    });
+  }
+  
+  return pricing;
+}
+
+// Example: Compare prices
+async function comparePricing(countries) {
+  const pricingData = await Promise.all(
+    countries.map(country => getPhonePricing(country))
+  );
+  
+  const comparison = pricingData.map(p => ({
+    country: p.country,
+    rental: parseFloat(p.phone_numbers.local.monthly_rental_rate),
+    voice_rate: parseFloat(p.phone_numbers.local.voice_rate.outbound)
+  }));
+  
+  // Sort by rental cost
+  comparison.sort((a, b) => a.rental - b.rental);
+  
+  console.log('\n📊 Price Comparison (cheapest first):');
+  comparison.forEach(c => {
+    console.log(`${c.country}: $${c.rental}/month, $${c.voice_rate}/min`);
+  });
+}
+
+// Compare India, US, UK
+comparePricing(['IN', 'US', 'GB']);
+```
+
+---
+
+## Use Cases
+
+### 1. Cost Estimation:
+```javascript
+async function estimateMonthlyCost(countryIso, params) {
+  const pricing = await getPhonePricing(countryIso);
+  
+  const {
+    numbers_count = 1,
+    expected_minutes = 1000,
+    expected_sms = 500
+  } = params;
+  
+  const localPricing = pricing.phone_numbers.local;
+  
+  const costs = {
+    rental: parseFloat(localPricing.monthly_rental_rate) * numbers_count,
+    voice: parseFloat(localPricing.voice_rate.outbound) * expected_minutes,
+    sms: parseFloat(localPricing.sms_rate.outbound) * expected_sms
+  };
+  
+  const subtotal = costs.rental + costs.voice + costs.sms;
+  
+  // Apply bulk discount
+  const discount = pricing.bulk_discounts.find(d => numbers_count >= d.min_numbers);
+  const discountAmount = discount ? (subtotal * discount.discount_percentage / 100) : 0;
+  
+  const total = subtotal - discountAmount;
+  
+  console.log('\n💵 Monthly Cost Estimate:');
+  console.log(`Number Rental: $${costs.rental.toFixed(2)}`);
+  console.log(`Voice Calls: $${costs.voice.toFixed(2)}`);
+  console.log(`SMS: $${costs.sms.toFixed(2)}`);
+  if (discountAmount > 0) {
+    console.log(`Bulk Discount: -$${discountAmount.toFixed(2)} (${discount.discount_percentage}%)`);
+  }
+  console.log(`TOTAL: $${total.toFixed(2)}`);
+  
+  return { costs, total };
+}
+
+// Example
+estimateMonthlyCost('IN', {
+  numbers_count: 10,
+  expected_minutes: 5000,
+  expected_sms: 1000
+});
+```
+
+---
+
+## Related Endpoints
+
+- [Search Numbers](/api-reference/phone-numbers/search-numbers) - Find available numbers
+- [Buy Number](/api-reference/phone-numbers/buy-number) - Purchase number

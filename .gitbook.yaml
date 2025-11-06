@@ -1,0 +1,12 @@
+root: ./
+
+structure:
+  readme: introduction.md
+  summary: SUMMARY.md
+
+redirects: {}
+
+# Optional: Customize your GitBook integration
+integrations:
+  github:
+    enabled: true

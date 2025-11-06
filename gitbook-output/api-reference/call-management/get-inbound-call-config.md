@@ -1,0 +1,211 @@
+---
+description: Retrieve agent configuration for handling inbound calls
+---
+
+# Get Inbound Call Config
+
+**Endpoint:** `POST /getAgentConfigAndUserDetailsForInboundCall`
+
+## 📞 Overview
+
+Get the configured AI script and settings for handling an inbound call to a specific phone number.
+
+---
+
+##  Authentication
+
+---
+
+##  Request Body
+
+### Example Request:
+```json
+{
+  "phone_number": "919876543210",
+  "caller_number": "+919123456789"
+}
+```
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Inbound call configuration retrieved successfully",
+  "data": {
+    "phone_number": "919876543210",
+    "inbound_enabled": true,
+    "agent_config": {
+      "agent_id": "507f1f77bcf86cd799439012",
+      "bot_name": "Customer Support Bot",
+      "voice_config": {
+        "voice_id": "en-IN-Neural2-A",
+        "language": "en-IN",
+        "speaking_rate": 1.0,
+        "pitch": 0
+      },
+      "greeting_message": "Thank you for calling Acme Corp customer support. How can I help you today?",
+      "system_prompt": "You are a helpful customer support assistant...",
+      "knowledge_base": {
+        "enabled": true,
+        "documents_count": 15
+      },
+      "transfer_config": {
+        "enabled": true,
+        "transfer_number": "+911234567890",
+        "keywords": ["speak to human", "transfer", "agent"]
+      }
+    },
+    "user_details": {
+      "user_id": "507f1f77bcf86cd799439011",
+      "company_name": "Acme Corp",
+      "business_hours": {
+        "enabled": true,
+        "timezone": "Asia/Kolkata",
+        "schedule": {
+          "monday": { "start": "09:00", "end": "18:00" },
+          "tuesday": { "start": "09:00", "end": "18:00" },
+          "wednesday": { "start": "09:00", "end": "18:00" },
+          "thursday": { "start": "09:00", "end": "18:00" },
+          "friday": { "start": "09:00", "end": "18:00" },
+          "saturday": { "start": "10:00", "end": "14:00" },
+          "sunday": { "closed": true }
+        },
+        "after_hours_message": "Our office is currently closed. Please leave a message or call back during business hours."
+      }
+    },
+    "webhooks": {
+      "call_started": "https://api.example.com/webhooks/call-started",
+      "call_ended": "https://api.example.com/webhooks/call-ended"
+    }
+  }
+}
+```
+
+### Number Not Configured (404 Not Found):
+```json
+{
+  "success": false,
+  "message": "Phone number not configured for inbound calls",
+  "error": {
+    "code": "NUMBER_NOT_CONFIGURED",
+    "phone_number": "919876543210"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X POST "https://api.voicegenie.com/getAgentConfigAndUserDetailsForInboundCall" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "phone_number": "919876543210",
+    "caller_number": "+919123456789"
+  }'
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getInboundCallConfig(phoneNumber, callerNumber) {
+  try {
+    const response = await axios.post(
+      'https://api.voicegenie.com/getAgentConfigAndUserDetailsForInboundCall',
+      {
+        phone_number: phoneNumber,
+        caller_number: callerNumber
+      },
+      {
+        headers: {
+          'x-api-key': 'YOUR_API_KEY',
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    const config = response.data.data;
+    
+    console.log('✅ Inbound Config Retrieved');
+    console.log(`Bot: ${config.agent_config.bot_name}`);
+    console.log(`Greeting: ${config.agent_config.greeting_message}`);
+    console.log(`Transfer Enabled: ${config.agent_config.transfer_config.enabled}`);
+    
+    return config;
+  } catch (error) {
+    if (error.response?.data?.error?.code === 'NUMBER_NOT_CONFIGURED') {
+      console.error('❌ Number not configured for inbound calls');
+    }
+    throw error;
+  }
+}
+
+// Example
+getInboundCallConfig('919876543210', '+919123456789');
+```
+
+---
+
+## Use Cases
+
+### 1. Call Router Logic:
+```javascript
+async function routeInboundCall(phoneNumber, callerNumber) {
+  const config = await getInboundCallConfig(phoneNumber, callerNumber);
+  
+  if (!config.inbound_enabled) {
+    return { action: 'reject', reason: 'Inbound calls disabled' };
+  }
+  
+  // Check business hours
+  const now = new Date();
+  const isBusinessHours = checkBusinessHours(
+    now,
+    config.user_details.business_hours
+  );
+  
+  if (!isBusinessHours && config.user_details.business_hours.enabled) {
+    return {
+      action: 'play_message',
+      message: config.user_details.business_hours.after_hours_message
+    };
+  }
+  
+  return {
+    action: 'connect_agent',
+    agent_id: config.agent_config.agent_id,
+    greeting: config.agent_config.greeting_message
+  };
+}
+```
+
+### 2. Dynamic Greeting:
+```javascript
+async function generateDynamicGreeting(phoneNumber, callerNumber) {
+  const config = await getInboundCallConfig(phoneNumber, callerNumber);
+  
+  // Check if caller is known customer
+  const customer = await lookupCustomer(callerNumber);
+  
+  if (customer) {
+    return `Hello ${customer.name}, ${config.agent_config.greeting_message}`;
+  }
+  
+  return config.agent_config.greeting_message;
+}
+```
+
+---
+
+## Related Endpoints
+
+- [Update Phone Number](/api-reference/phone-numbers/update-number) - Configure inbound settings
+- [Fetch Script](/api-reference/scripts/fetch-script) - Get full script details

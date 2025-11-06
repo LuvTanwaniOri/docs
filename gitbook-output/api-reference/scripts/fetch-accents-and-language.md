@@ -1,0 +1,188 @@
+---
+description: Get available voice accents and languages for TTS
+---
+
+# Fetch Accents and Languages
+
+**Endpoint:** `GET /fetchAccentsAndLanguageFromBackendServer`
+
+##  Overview
+
+Retrieve list of supported voice accents, languages, and voices for text-to-speech configuration.
+
+---
+
+##  Authentication
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Accents and languages retrieved successfully",
+  "data": {
+    "languages": [
+      {
+        "code": "en-US",
+        "name": "English (US)",
+        "voices": [
+          {
+            "voice_id": "en-US-Neural2-A",
+            "name": "US English Female",
+            "gender": "female",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/en-US-Neural2-A.mp3"
+          },
+          {
+            "voice_id": "en-US-Neural2-D",
+            "name": "US English Male",
+            "gender": "male",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/en-US-Neural2-D.mp3"
+          }
+        ]
+      },
+      {
+        "code": "en-IN",
+        "name": "English (India)",
+        "voices": [
+          {
+            "voice_id": "en-IN-Neural2-A",
+            "name": "Indian English Female",
+            "gender": "female",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/en-IN-Neural2-A.mp3"
+          },
+          {
+            "voice_id": "en-IN-Neural2-B",
+            "name": "Indian English Male",
+            "gender": "male",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/en-IN-Neural2-B.mp3"
+          }
+        ]
+      },
+      {
+        "code": "hi-IN",
+        "name": "Hindi (India)",
+        "voices": [
+          {
+            "voice_id": "hi-IN-Neural2-A",
+            "name": "Hindi Female",
+            "gender": "female",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/hi-IN-Neural2-A.mp3"
+          },
+          {
+            "voice_id": "hi-IN-Neural2-B",
+            "name": "Hindi Male",
+            "gender": "male",
+            "sample_url": "https://voicegenie-samples.s3.amazonaws.com/hi-IN-Neural2-B.mp3"
+          }
+        ]
+      }
+    ],
+    "accents": [
+      {
+        "accent": "american",
+        "supported_languages": ["en-US"]
+      },
+      {
+        "accent": "indian",
+        "supported_languages": ["en-IN", "hi-IN"]
+      },
+      {
+        "accent": "british",
+        "supported_languages": ["en-GB"]
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/fetchAccentsAndLanguageFromBackendServer" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getAvailableVoices() {
+  const response = await axios.get(
+    'https://api.voicegenie.com/fetchAccentsAndLanguageFromBackendServer',
+    {
+      headers: {
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  const { languages, accents } = response.data.data;
+  
+  console.log('\n Available Languages:');
+  languages.forEach(lang => {
+    console.log(`\n${lang.name} (${lang.code})`);
+    lang.voices.forEach(voice => {
+      console.log(`  - ${voice.name} (${voice.gender})`);
+    });
+  });
+  
+  return response.data.data;
+}
+
+// Example: Find Indian English voices
+async function findIndianVoices() {
+  const data = await getAvailableVoices();
+  
+  const indianLang = data.languages.find(l => l.code === 'en-IN');
+  console.log('\n🇮🇳 Indian English Voices:', indianLang.voices);
+}
+
+findIndianVoices();
+```
+
+---
+
+## Use Cases
+
+### 1. Voice Selector UI:
+```javascript
+async function buildVoiceSelector() {
+  const data = await getAvailableVoices();
+  
+  const voiceOptions = data.languages.flatMap(lang =>
+    lang.voices.map(voice => ({
+      value: voice.voice_id,
+      label: `${lang.name} - ${voice.name}`,
+      sample: voice.sample_url
+    }))
+  );
+  
+  return voiceOptions;
+}
+```
+
+### 2. Language-Based Voice Selection:
+```javascript
+async function getVoicesForLanguage(languageCode) {
+  const data = await getAvailableVoices();
+  
+  const language = data.languages.find(l => l.code === languageCode);
+  return language ? language.voices : [];
+}
+
+// Example
+const hindiVoices = await getVoicesForLanguage('hi-IN');
+```
+
+---
+
+## Related Endpoints
+
+- [Create Script](/api-reference/scripts/create-script) - Use voice in script
+- [Update User Script Data](/api-reference/scripts/update-user-specific-script-data) - Change voice

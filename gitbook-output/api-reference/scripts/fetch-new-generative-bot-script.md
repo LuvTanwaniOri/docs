@@ -1,0 +1,147 @@
+---
+description: Fetch user document to retrieve generative bot script configuration
+---
+
+# Fetch New Generative Bot Script
+
+**Endpoint:** `POST /fetchNewGenerativeBotScript`
+
+## Overview
+
+Retrieves the user document for a given `userId`, which contains the user's generative bot script configuration and preferences. This endpoint is used to fetch the latest script settings for a specific user.
+
+---
+
+## Request Body
+
+| Field | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `userId` | string | ✅ Yes | - | MongoDB ObjectId of the user whose script data should be fetched |
+---
+
+## Response (Success - 200)
+
+```json
+{
+  "status": "success",
+  "data": {
+    "_id": "507f1f77bcf86cd799439011",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "generativeBotScript": true,
+    "allowedRoutes": ["/dashboard", "/campaigns", "/analytics"],
+    "editScriptAppData": false,
+    "viewHistoryTranscriptions": false,
+    "viewVoiceComponentConfigs": false,
+    "showQuotaStatusBox": true,
+    "agentLoginDetails": {
+      "lastLogin": "2024-01-16T10:30:00.000Z",
+      "loginCount": 42
+    },
+    "createdAt": "2023-12-01T08:00:00.000Z",
+    "updatedAt": "2024-01-16T14:30:00.000Z"
+  },
+  "message": "Fetched"
+}
+```
+
+---
+
+## Response (Error - 422)
+
+### Missing or Invalid userId
+```json
+{
+  "status": "failed",
+  "data": "something went wrong!",
+  "message": ""
+}
+```
+
+---
+
+## Response (Error - 500)
+
+```json
+{
+  "status": "failed",
+  "data": {},
+  "message": "fetchNewGenerativeBotScript Failed."
+}
+```
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```javascript JavaScript
+const response = await fetch('https://api.voicegenie.ai/fetchNewGenerativeBotScript', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    userId: '507f1f77bcf86cd799439011'
+  })
+});
+
+const data = await response.json();
+console.log(data.data.generativeBotScript);
+console.log(data.data.allowedRoutes);
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.voicegenie.ai/fetchNewGenerativeBotScript',
+    json={'userId': '507f1f77bcf86cd799439011'}
+)
+
+data = response.json()
+print(f"Generative Bot Script Enabled: {data['data']['generativeBotScript']}")
+print(f"Allowed Routes: {data['data']['allowedRoutes']}")
+```
+
+```bash cURL
+curl -X POST https://api.voicegenie.ai/fetchNewGenerativeBotScript \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "507f1f77bcf86cd799439011"}'
+```
+
+</CodeGroup>
+
+---
+
+## Field Descriptions
+
+### Response Data Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `_id` | string | MongoDB ObjectId of the user |
+| `name` | string | User's full name |
+| `email` | string | User's email address |
+| `generativeBotScript` | boolean | Whether generative bot script feature is enabled for this user |
+| `allowedRoutes` | array | List of UI routes the user can access |
+| `editScriptAppData` | boolean | Permission to edit script application data |
+| `viewHistoryTranscriptions` | boolean | Permission to view call history transcriptions |
+| `viewVoiceComponentConfigs` | boolean | Permission to view voice component configurations |
+| `showQuotaStatusBox` | boolean | Whether to show quota status in UI |
+| `agentLoginDetails` | object | (Optional) Login details including last login time and count |
+| `createdAt` | string (ISO 8601) | User creation timestamp |
+| `updatedAt` | string (ISO 8601) | Last update timestamp |
+
+---
+
+## Notes
+
+- **User Lookup:** Retrieves user document by `_id` (MongoDB ObjectId)
+- **Lean Query:** Uses `.lean().exec()` for optimized read-only query
+- **Feature Flags:** The response includes various feature flags that control UI behavior and permissions
+- **Not Script Generation:** Despite the name, this endpoint does NOT generate new scripts; it fetches existing user configuration
+- **Use Case:** Frontend applications use this endpoint to determine which features and routes to show to the logged-in user
+- **Error Handling:** Returns 422 if user not found or userId is invalid
+- **Naming Note:** The endpoint name suggests script generation, but it actually retrieves user settings; consider it as a "fetch user script config" endpoint
