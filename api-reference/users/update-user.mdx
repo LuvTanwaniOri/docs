@@ -1,0 +1,353 @@
+---
+title: "Update User"
+api: "POST /updateUser"
+description: "Update user details including permissions, password, and access settings"
+---
+
+## 🔄 Overview
+
+Modify existing user account details. All fields are optional - only provide the fields you want to update.
+
+---
+
+##  Authentication
+
+<ParamField header="x-api-key" type="string" required>
+  Your API key for authentication
+</ParamField>
+
+---
+
+##  Request Body
+
+<ParamField body="userId" type="string" required>
+  MongoDB ObjectId of the user to update
+  ```
+  507f1f77bcf86cd799439011
+  ```
+</ParamField>
+
+<ParamField body="name" type="string">
+  Updated user name
+  ```
+  John Smith
+  ```
+</ParamField>
+
+<ParamField body="email" type="string">
+  Updated email address
+  ```
+  john.smith@newcompany.com
+  ```
+</ParamField>
+
+<ParamField body="password" type="string">
+  New password (will be encrypted)
+  ```
+  NewSecureP@ss456
+  ```
+</ParamField>
+
+<ParamField body="allowedRoutes" type="array">
+  Updated array of allowed routes
+  ```json
+  ["/campaign", "/contacts", "/analytics", "/settings"]
+  ```
+</ParamField>
+
+<ParamField body="accessLevel" type="string">
+  Updated access level/role
+  ```
+  manager
+  ```
+  
+  **Options:** `admin`, `manager`, `user`
+</ParamField>
+
+<ParamField body="editScriptAppData" type="boolean">
+  Permission to edit script data
+  ```
+  true
+  ```
+</ParamField>
+
+<ParamField body="viewHistoryTranscriptions" type="boolean">
+  Permission to view transcriptions
+  ```
+  true
+  ```
+</ParamField>
+
+<ParamField body="viewVoiceComponentConfigs" type="boolean">
+  Permission to view voice configs
+  ```
+  false
+  ```
+</ParamField>
+
+<ParamField body="showQuotaStatusBox" type="boolean">
+  Show quota status on dashboard
+  ```
+  true
+  ```
+</ParamField>
+
+<ParamField body="active" type="boolean">
+  Account active status (set to `false` to deactivate)
+  ```
+  true
+  ```
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "User updated successfully",
+  "data": {
+    "_id": "507f1f77bcf86cd799439011",
+    "name": "John Smith",
+    "email": "john.smith@newcompany.com",
+    "allowedRoutes": ["/campaign", "/contacts", "/analytics", "/settings"],
+    "accessLevel": "manager",
+    "editScriptAppData": true,
+    "viewHistoryTranscriptions": true,
+    "viewVoiceComponentConfigs": false,
+    "showQuotaStatusBox": true,
+    "active": true,
+    "isDeleted": false,
+    "loginAttempts": 0,
+    "isUserIdBlocked": false,
+    "createdAt": "2024-01-16T10:30:00Z",
+    "updatedAt": "2024-01-16T11:45:00Z"
+  }
+}
+```
+
+### Error Responses:
+
+#### 400 - Missing User ID:
+```json
+{
+  "success": false,
+  "message": "User ID is required"
+}
+```
+
+#### 404 - User Not Found:
+```json
+{
+  "success": false,
+  "message": "User not found"
+}
+```
+
+#### 500 - Server Error:
+```json
+{
+  "success": false,
+  "message": "Error updating user",
+  "data": "Error details here"
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X POST "https://api.voicegenie.com/updateUser" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "userId": "507f1f77bcf86cd799439011",
+    "name": "John Smith",
+    "accessLevel": "manager",
+    "viewHistoryTranscriptions": true
+  }'
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function updateUser(userId, updates) {
+  try {
+    const response = await axios.post(
+      'https://api.voicegenie.com/updateUser',
+      {
+        userId,
+        ...updates
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'YOUR_API_KEY'
+        }
+      }
+    );
+    
+    console.log('User updated:', response.data.data);
+  } catch (error) {
+    console.error('Error:', error.response.data);
+  }
+}
+
+// Example: Promote user to manager
+updateUser('507f1f77bcf86cd799439011', {
+  accessLevel: 'manager',
+  allowedRoutes: ['/campaign', '/contacts', '/analytics', '/settings'],
+  viewHistoryTranscriptions: true
+});
+```
+
+### Python:
+```python
+import requests
+
+def update_user(user_id, **updates):
+    url = "https://api.voicegenie.com/updateUser"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": "YOUR_API_KEY"
+    }
+    
+    payload = {
+        "userId": user_id,
+        **updates
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        print("User updated successfully!")
+        print(response.json()['data'])
+    else:
+        print("Error:", response.json())
+
+# Example: Change password
+update_user(
+    "507f1f77bcf86cd799439011",
+    password="NewSecureP@ss456"
+)
+```
+
+---
+
+## 🔒 Security Notes
+
+### Password Update:
+- New passwords are automatically encrypted using bcryptjs
+- Password is never returned in responses
+- Users are logged out after password change (must re-authenticate)
+
+### Permission Changes:
+- Only admins can update user permissions
+- Changes take effect immediately
+- User session may need refresh to reflect new permissions
+
+---
+
+## Common Use Cases
+
+### 1. Reset User Password:
+```javascript
+async function resetPassword(userId, newPassword) {
+  await axios.post('/updateUser', {
+    userId,
+    password: newPassword
+  });
+  
+  console.log('Password reset. User must login again.');
+}
+```
+
+### 2. Grant Additional Permissions:
+```javascript
+async function grantPermission(userId, newRoute) {
+  const user = await getUser(userId);
+  
+  await axios.post('/updateUser', {
+    userId,
+    allowedRoutes: [...user.allowedRoutes, newRoute]
+  });
+}
+```
+
+### 3. Deactivate User Account:
+```javascript
+async function deactivateUser(userId) {
+  await axios.post('/updateUser', {
+    userId,
+    active: false
+  });
+  
+  console.log('User account deactivated.');
+}
+```
+
+### 4. Bulk Permission Update:
+```javascript
+async function promoteToManager(userId) {
+  await axios.post('/updateUser', {
+    userId,
+    accessLevel: 'manager',
+    allowedRoutes: [
+      '/campaign',
+      '/contacts', 
+      '/analytics',
+      '/settings',
+      '/reports'
+    ],
+    viewHistoryTranscriptions: true,
+    editScriptAppData: true,
+    showQuotaStatusBox: true
+  });
+}
+```
+
+---
+
+## 🚨 Important Notes
+
+<Warning>
+  **Partial Updates:** Only the fields provided in the request body are updated. All other fields remain unchanged.
+</Warning>
+
+<Note>
+  **Password Security:** If updating password, ensure it's transmitted over HTTPS. The API automatically encrypts passwords before storage.
+</Note>
+
+<Note>
+  **Active Status:** Setting `active: false` prevents user login but doesn't delete the account. Use `/deleteUser` for soft deletion.
+</Note>
+
+---
+
+## Rate Limits
+
+| Plan | Requests/min |
+|------|--------------|
+| Free | 60 |
+| Basic | 300 |
+| Pro | 1000 |
+| Enterprise | Unlimited |
+
+---
+
+## Related Endpoints
+
+- [Get All Users](/api-reference/users/get-all-users) - List users
+- [Create User](/api-reference/users/create-user) - Create new user
+- [Delete User](/api-reference/users/delete-user) - Remove user
+- [Login](/api-reference/authentication/login) - User authentication
+
+---
+
+**Tip:** Always update `updatedAt` timestamp is automatically managed by Mongoose. ⏰

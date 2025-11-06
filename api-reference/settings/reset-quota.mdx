@@ -1,0 +1,93 @@
+---
+title: "Reset Quota"
+api: "POST /resetQuota"
+description: "Reset usage quota counters (admin only)"
+---
+
+## 🔄 Overview
+
+Reset quota usage counters to zero. Typically used at billing cycle renewal or for manual resets.
+
+---
+
+##  Authentication
+
+<ParamField header="x-api-key" type="string" required>
+  Your API key for authentication (admin role required)
+</ParamField>
+
+---
+
+##  Request Body
+
+<ParamField body="resetType" type="string">
+  Type of reset to perform
+  ```
+  full
+  ```
+  
+  **Options:**
+  - `full` - Reset all counters
+  - `calls` - Reset only calls counter
+  - `minutes` - Reset only minutes counter
+  - `sms` - Reset only SMS counter
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Quota reset successfully",
+  "data": {
+    "quota": {
+      "calls": { "used": 0, "limit": 10000 },
+      "minutes": { "used": 0, "limit": 50000 },
+      "sms": { "used": 0, "limit": 5000 }
+    },
+    "resetAt": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X POST "https://api.voicegenie.com/resetQuota" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{"resetType": "full"}'
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function resetQuota(resetType = 'full') {
+  const response = await axios.post(
+    'https://api.voicegenie.com/resetQuota',
+    { resetType },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  console.log('Quota reset:', response.data.message);
+  return response.data.data;
+}
+```
+
+---
+
+## Related Endpoints
+
+- [Fetch Quota](/api-reference/settings/fetch-quota) - View current quota

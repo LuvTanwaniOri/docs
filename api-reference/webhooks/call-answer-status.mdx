@@ -1,0 +1,651 @@
+---
+title: "Call Answer Status Hook"
+api: "POST /callAnswerStatusHook"
+description: "Final call disposition with complete call details (answered, busy, no-answer, failed)"
+---
+
+## ☎️ Overview
+
+This is the **final webhook** sent when a call ends. It contains the complete call summary including duration, hangup cause, billing info, and final status. Critical for campaign analytics and billing.
+
+---
+
+##  Authentication
+
+<ParamField header="X-Plivo-Signature-V2" type="string" required>
+  HMAC SHA256 signature for webhook verification
+</ParamField>
+
+---
+
+##  Request Body
+
+<ParamField body="CallUUID" type="string" required>
+  Unique call identifier
+  ```
+  call-uuid-abc123
+  ```
+</ParamField>
+
+<ParamField body="CallStatus" type="string" required>
+  Final call status
+  
+  **Values:**
+  - `completed` - Call answered and completed
+  - `busy` - Recipient was busy
+  - `no-answer` - No answer from recipient
+  - `failed` - Call failed (network/technical issue)
+  - `canceled` - Call canceled before answer
+</ParamField>
+
+<ParamField body="From" type="string" required>
+  Caller's phone number (E.164 format)
+  ```
+  +919876543210
+  ```
+</ParamField>
+
+<ParamField body="To" type="string" required>
+  Called phone number
+  ```
+  +911234567890
+  ```
+</ParamField>
+
+<ParamField body="Direction" type="string" required>
+  Call direction: `inbound` or `outbound`
+</ParamField>
+
+<ParamField body="AnswerTime" type="string">
+  ISO 8601 timestamp when call was answered (null if not answered)
+  ```
+  2024-01-16T10:30:15Z
+  ```
+</ParamField>
+
+<ParamField body="InitiationTime" type="string" required>
+  When call was initiated
+  ```
+  2024-01-16T10:30:00Z
+  ```
+</ParamField>
+
+<ParamField body="EndTime" type="string" required>
+  When call ended
+  ```
+  2024-01-16T10:36:00Z
+  ```
+</ParamField>
+
+<ParamField body="Duration" type="integer">
+  Total call duration in seconds (0 if not answered)
+  ```
+  345
+  ```
+</ParamField>
+
+<ParamField body="BillDuration" type="integer">
+  Billable duration in seconds (rounded up to next 60s increment)
+  ```
+  360
+  ```
+</ParamField>
+
+<ParamField body="HangupCause" type="string" required>
+  Detailed reason for call termination
+  
+  **Common Causes:**
+  - `NORMAL_CLEARING` - Normal call completion
+  - `USER_BUSY` - Called party busy
+  - `NO_ANSWER` - No answer within timeout
+  - `CALL_REJECTED` - Call rejected by recipient
+  - `INVALID_NUMBER` - Invalid phone number
+  - `NETWORK_ERROR` - Network/technical failure
+  - `INSUFFICIENT_FUNDS` - Account balance too low
+  - `UNALLOCATED_NUMBER` - Number doesn't exist
+  - `USER_NOT_REGISTERED` - VoIP user offline
+  - `ORIGINATOR_CANCEL` - Caller hung up before answer
+</ParamField>
+
+<ParamField body="HangupSource" type="string">
+  Who initiated hangup
+  
+  **Values:**
+  - `caller` - Caller hung up
+  - `callee` - Called party hung up
+  - `system` - System terminated (timeout, error)
+  - `api` - Terminated via API call
+</ParamField>
+
+<ParamField body="TotalAmount" type="string">
+  Total cost in USD
+  ```
+  0.0120
+  ```
+</ParamField>
+
+<ParamField body="TotalRate" type="string">
+  Rate per minute in USD
+  ```
+  0.0070
+  ```
+</ParamField>
+
+<ParamField body="ParentCallUUID" type="string">
+  If this is a transferred/conferenced call, original call UUID
+</ParamField>
+
+<ParamField body="ResourceUri" type="string">
+  API URI to fetch full call details
+  ```
+  /v1/Account/MAXXXXXX/Call/call-uuid-abc123/
+  ```
+</ParamField>
+
+---
+
+## VoiceGenie Processing Flow
+
+```
+Call ends → Webhook received → Verify signature
+                                     ↓
+                    1. Update call record in MongoDB
+                    2. Calculate campaign statistics
+                    3. Update contact disposition
+                    4. Trigger post-call workflows
+                    5. Send WebSocket notification
+                    6. Update billing/quota
+                    7. Schedule follow-ups (if needed)
+                                     ↓
+                    Return 200 OK → Processing complete
+```
+
+---
+
+## Response
+
+### Success (200 OK):
+```json
+{
+  "success": true,
+  "message": "Call status updated successfully",
+  "data": {
+    "call_uuid": "call-abc123",
+    "status": "completed",
+    "duration": 345,
+    "outcome": "successful_conversation",
+    "next_action": "follow_up_scheduled"
+  }
+}
+```
+
+---
+
+## Database Update
+
+Update call record with final details:
+
+```javascript
+async function updateCallRecord(callUUID, webhookData) {
+  await CallEvents.findOneAndUpdate(
+    { call_uuid: callUUID },
+    {
+      $set: {
+        status: webhookData.CallStatus,
+        hangup_cause: webhookData.HangupCause,
+        hangup_source: webhookData.HangupSource,
+        duration: webhookData.Duration,
+        bill_duration: webhookData.BillDuration,
+        answer_time: webhookData.AnswerTime,
+        end_time: webhookData.EndTime,
+        total_amount: parseFloat(webhookData.TotalAmount),
+        updated_at: new Date()
+      }
+    },
+    { upsert: true }
+  );
+}
+```
+
+---
+
+## 📈 Campaign Statistics Update
+
+Aggregate stats in real-time:
+
+```javascript
+async function updateCampaignStats(callUUID, status) {
+  const call = await CallEvents.findOne({ call_uuid: callUUID });
+  
+  await Campaigns.findByIdAndUpdate(
+    call.campaign_id,
+    {
+      $inc: {
+        'stats.total_calls': 1,
+        [`stats.${status}_calls`]: 1, // completed, busy, no_answer, failed
+        'stats.total_duration': call.duration || 0,
+        'stats.total_cost': parseFloat(call.total_amount) || 0
+      },
+      $set: {
+        'stats.last_call_at': new Date()
+      }
+    }
+  );
+}
+```
+
+**Campaign Stats Structure:**
+```javascript
+{
+  stats: {
+    total_calls: 1523,
+    completed_calls: 987,
+    busy_calls: 234,
+    no_answer_calls: 189,
+    failed_calls: 113,
+    total_duration: 125340, // seconds
+    avg_duration: 127,
+    total_cost: 156.78,
+    success_rate: 64.8, // %
+    last_call_at: "2024-01-16T10:36:00Z"
+  }
+}
+```
+
+---
+
+## 🏷️ Contact Disposition
+
+Update contact record based on outcome:
+
+```javascript
+async function updateContactDisposition(call) {
+  const dispositionMap = {
+    'completed': 'contacted',
+    'busy': 'callback_scheduled',
+    'no-answer': 'no_answer',
+    'failed': 'unreachable'
+  };
+  
+  await Contacts.findByIdAndUpdate(
+    call.contact_id,
+    {
+      $set: {
+        last_call_status: call.status,
+        last_call_at: call.end_time,
+        disposition: dispositionMap[call.status]
+      },
+      $inc: {
+        call_attempts: 1,
+        [`${call.status}_count`]: 1
+      }
+    }
+  );
+}
+```
+
+---
+
+## 🔄 Post-Call Workflows
+
+Trigger automated actions based on outcome:
+
+```javascript
+async function triggerPostCallWorkflows(call) {
+  const workflows = {
+    
+    // Successful call -> Send thank you email
+    'completed': async () => {
+      if (call.duration > 60) { // More than 1 minute
+        await sendEmail({
+          to: call.contact_email,
+          template: 'post_call_thank_you',
+          data: { call_duration: call.duration }
+        });
+      }
+    },
+    
+    // Busy -> Schedule retry after 2 hours
+    'busy': async () => {
+      await scheduleRetryCall(call.contact_id, {
+        delay: 2 * 60 * 60 * 1000, // 2 hours
+        max_retries: 3
+      });
+    },
+    
+    // No answer -> Try different time slot
+    'no-answer': async () => {
+      const nextTimeSlot = getAlternativeTimeSlot(call.attempted_at);
+      await scheduleRetryCall(call.contact_id, {
+        scheduled_at: nextTimeSlot,
+        max_retries: 2
+      });
+    },
+    
+    // Failed -> Alert support team
+    'failed': async () => {
+      if (call.hangup_cause === 'NETWORK_ERROR') {
+        await alertSupportTeam({
+          message: 'Network error in campaign',
+          call_uuid: call.call_uuid,
+          campaign_id: call.campaign_id
+        });
+      }
+    }
+  };
+  
+  const workflow = workflows[call.status];
+  if (workflow) {
+    await workflow();
+  }
+}
+```
+
+---
+
+## 🔔 WebSocket Notification
+
+Real-time update to connected clients:
+
+```javascript
+function notifyCallCompleted(call) {
+  const wsMessage = {
+    event: 'call.completed',
+    data: {
+      call_uuid: call.call_uuid,
+      campaign_id: call.campaign_id,
+      status: call.status,
+      duration: call.duration,
+      hangup_cause: call.hangup_cause,
+      cost: call.total_amount,
+      outcome: determineOutcome(call),
+      timestamp: new Date().toISOString()
+    }
+  };
+  
+  // Send to dashboard
+  broadcastToSubscribers(call.campaign_id, wsMessage);
+}
+```
+
+---
+
+## 💰 Billing & Quota Update
+
+Update account usage:
+
+```javascript
+async function updateBillingAndQuota(call) {
+  const account = await Accounts.findById(call.account_id);
+  
+  // Deduct from quota
+  await Accounts.findByIdAndUpdate(
+    call.account_id,
+    {
+      $inc: {
+        'quota.calls_used': 1,
+        'quota.minutes_used': Math.ceil(call.duration / 60),
+        'billing.current_month_cost': parseFloat(call.total_amount)
+      }
+    }
+  );
+  
+  // Check if quota exceeded
+  if (account.quota.calls_used >= account.quota.calls_limit) {
+    await pauseCampaignsForAccount(call.account_id);
+    await sendQuotaExceededEmail(account.email);
+  }
+}
+```
+
+---
+
+## Analytics & Insights
+
+Generate insights from call data:
+
+```javascript
+async function generateCallInsights(call) {
+  return {
+    // Call quality score
+    quality_score: calculateQualityScore({
+      duration: call.duration,
+      status: call.status,
+      speech_clarity: call.avg_speech_confidence
+    }),
+    
+    // Best time to call analysis
+    optimal_time: analyzeOptimalCallTime(call.contact_id),
+    
+    // Conversion probability
+    conversion_probability: predictConversion({
+      call_count: call.attempt_number,
+      avg_duration: call.duration,
+      sentiment: call.sentiment
+    }),
+    
+    // Agent performance
+    agent_score: rateAgentPerformance(call.agent_id, call)
+  };
+}
+
+function calculateQualityScore(metrics) {
+  let score = 0;
+  
+  // Duration scoring
+  if (metrics.duration > 180) score += 40; // 3+ mins
+  else if (metrics.duration > 60) score += 25; // 1+ min
+  else score += 10;
+  
+  // Status scoring
+  if (metrics.status === 'completed') score += 30;
+  
+  // Speech clarity
+  if (metrics.speech_clarity > 0.9) score += 30;
+  else if (metrics.speech_clarity > 0.7) score += 20;
+  
+  return Math.min(score, 100);
+}
+```
+
+---
+
+## Smart Retry Logic
+
+Determine if/when to retry based on outcome:
+
+```javascript
+function shouldRetry(call) {
+  const retryConditions = {
+    'busy': {
+      retry: true,
+      delay: 2 * 60 * 60 * 1000, // 2 hours
+      max_attempts: 3
+    },
+    'no-answer': {
+      retry: true,
+      delay: 4 * 60 * 60 * 1000, // 4 hours
+      max_attempts: 2
+    },
+    'failed': {
+      retry: call.hangup_cause !== 'INVALID_NUMBER',
+      delay: 24 * 60 * 60 * 1000, // 24 hours
+      max_attempts: 1
+    },
+    'completed': {
+      retry: false
+    }
+  };
+  
+  const condition = retryConditions[call.status];
+  
+  if (!condition.retry) return null;
+  if (call.attempt_number >= condition.max_attempts) return null;
+  
+  return {
+    schedule_at: new Date(Date.now() + condition.delay),
+    attempt_number: call.attempt_number + 1
+  };
+}
+```
+
+---
+
+## Example Use Cases
+
+### 1. Lead Scoring Update:
+```javascript
+async function updateLeadScore(call) {
+  const scoreChanges = {
+    'completed': {
+      duration_gt_180: +15, // Long conversation = high interest
+      duration_60_180: +10,
+      duration_lt_60: +5
+    },
+    'no-answer': -2,
+    'busy': 0,
+    'failed': -5
+  };
+  
+  let scoreChange = scoreChanges[call.status];
+  
+  if (call.status === 'completed') {
+    if (call.duration > 180) scoreChange = scoreChanges.completed.duration_gt_180;
+    else if (call.duration > 60) scoreChange = scoreChanges.completed.duration_60_180;
+    else scoreChange = scoreChanges.completed.duration_lt_60;
+  }
+  
+  await Contacts.findByIdAndUpdate(
+    call.contact_id,
+    { $inc: { lead_score: scoreChange } }
+  );
+}
+```
+
+### 2. DNC (Do Not Call) List Management:
+```javascript
+async function checkDNCConditions(call) {
+  // Auto-add to DNC if:
+  // - Explicitly requested
+  // - Invalid number
+  // - Multiple failed attempts
+  
+  const dncConditions = [
+    call.hangup_cause === 'CALL_REJECTED' && call.duration === 0,
+    call.hangup_cause === 'INVALID_NUMBER',
+    call.failed_attempts >= 5
+  ];
+  
+  if (dncConditions.some(condition => condition)) {
+    await Contacts.findByIdAndUpdate(
+      call.contact_id,
+      {
+        $set: {
+          dnc_status: true,
+          dnc_reason: call.hangup_cause,
+          dnc_added_at: new Date()
+        }
+      }
+    );
+  }
+}
+```
+
+---
+
+## 🧪 Testing
+
+### cURL Request:
+```bash
+curl -X POST https://your-domain.com/callAnswerStatusHook \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "X-Plivo-Signature-V2: YOUR_SIGNATURE" \
+  -d "CallUUID=test-call-123" \
+  -d "CallStatus=completed" \
+  -d "From=+919876543210" \
+  -d "To=+911234567890" \
+  -d "Direction=outbound" \
+  -d "AnswerTime=2024-01-16T10:30:15Z" \
+  -d "InitiationTime=2024-01-16T10:30:00Z" \
+  -d "EndTime=2024-01-16T10:36:00Z" \
+  -d "Duration=345" \
+  -d "BillDuration=360" \
+  -d "HangupCause=NORMAL_CLEARING" \
+  -d "HangupSource=caller" \
+  -d "TotalAmount=0.0120" \
+  -d "TotalRate=0.0070"
+```
+
+---
+
+## 🚨 Error Handling
+
+### Duplicate Webhook:
+```javascript
+// Use idempotency to prevent double-processing
+const idempotencyKey = `${callUUID}-${webhookData.EndTime}`;
+
+const existing = await cache.get(idempotencyKey);
+if (existing) {
+  return res.status(200).json({ success: true, message: 'Already processed' });
+}
+
+// Process webhook...
+
+await cache.set(idempotencyKey, 'processed', 3600); // 1 hour TTL
+```
+
+### Missing Call Record:
+```javascript
+const call = await CallEvents.findOne({ call_uuid: callUUID });
+
+if (!call) {
+  // Create call record from webhook data
+  await CallEvents.create({
+    call_uuid: callUUID,
+    status: webhookData.CallStatus,
+    // ... other fields
+    created_from_webhook: true
+  });
+}
+```
+
+---
+
+## Status Distribution
+
+Typical campaign status breakdown:
+
+| Status | Percentage | Industry Avg |
+|--------|------------|--------------|
+| **Completed** | 65% | 60-70% |
+| **No Answer** | 15% | 10-20% |
+| **Busy** | 12% | 10-15% |
+| **Failed** | 8% | 5-10% |
+
+---
+
+## Related Endpoints
+
+- [Call Events Hook](/api-reference/webhooks/call-events) - Real-time events during call
+- [Recording Status](/api-reference/webhooks/recording-status) - Recording ready notification
+- [Get Campaign Stats](/api-reference/campaign/get-campaign-stats) - View aggregated stats
+
+---
+
+## 📚 Best Practices
+
+1. **Always validate signatures** - Prevent spoofed webhooks
+2. **Respond immediately** - Return 200 OK within 5s
+3. **Process async** - Don't block webhook response
+4. **Implement idempotency** - Handle duplicate webhooks gracefully
+5. **Log everything** - Keep audit trail for debugging
+6. **Monitor anomalies** - Alert on unusual failure rates
+7. **Update quotas** - Track usage in real-time
+8. **Trigger workflows** - Automate follow-ups based on outcome
+9. **Calculate ROI** - Track cost vs conversions
+10. **Optimize retries** - Smart retry logic based on hangup cause
+
+---
+
+**This webhook is critical for accurate billing and campaign analytics!** 💰📊

@@ -1,0 +1,211 @@
+---
+title: "Get Campaign Data As Per Interval"
+api: "GET /getCampaignDataAsPerInterval"
+description: "Time-series campaign metrics aggregated by hour or day with timezone support"
+---
+
+## Overview
+
+Returns aggregated campaign call records grouped by time interval (hourly or daily) and call status. Supports timezone-aware date filtering and multiple campaign filtering.
+
+---
+
+## Query Parameters
+
+<ParamField query="type" type="string" default="hourly">
+  Aggregation interval type. Valid values: `hourly` or `daywise`
+</ParamField>
+
+<ParamField query="campaignName" type="string">
+  Campaign name(s) to filter. For multiple campaigns, use comma-separated values: `Campaign1,Campaign2`
+</ParamField>
+
+<ParamField query="startDateTime" type="string">
+  Start date/time for filtering (ISO 8601 format). Example: `2024-01-15T00:00:00Z`
+</ParamField>
+
+<ParamField query="endDateTime" type="string">
+  End date/time for filtering (ISO 8601 format). Example: `2024-01-16T23:59:59Z`
+</ParamField>
+
+---
+
+## Headers
+
+<ParamField header="timezone" type="string" default="Asia/Calcutta">
+  User's timezone for date aggregation. Example: `America/New_York`, `Europe/London`
+</ParamField>
+
+---
+
+## Response (Hourly Type)
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "time": {
+        "date": 16,
+        "month": 1,
+        "year": 2024,
+        "hour": 10,
+        "status": "completed"
+      },
+      "count": 45
+    },
+    {
+      "time": {
+        "date": 16,
+        "month": 1,
+        "year": 2024,
+        "hour": 10,
+        "status": "busy"
+      },
+      "count": 12
+    },
+    {
+      "time": {
+        "date": 16,
+        "month": 1,
+        "year": 2024,
+        "hour": 11,
+        "status": "completed"
+      },
+      "count": 52
+    }
+  ],
+  "message": "Data fetched..."
+}
+```
+
+---
+
+## Response (Daywise Type)
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "time": {
+        "date": 15,
+        "month": 1,
+        "year": 2024,
+        "status": "completed"
+      },
+      "count": 234
+    },
+    {
+      "time": {
+        "date": 15,
+        "month": 1,
+        "year": 2024,
+        "status": "busy"
+      },
+      "count": 56
+    },
+    {
+      "time": {
+        "date": 16,
+        "month": 1,
+        "year": 2024,
+        "status": "completed"
+      },
+      "count": 312
+    }
+  ],
+  "message": "Data fetched..."
+}
+```
+
+---
+
+## Error Responses
+
+### Missing Required Parameters (422)
+```json
+{
+  "status": "failed",
+  "data": {},
+  "message": {
+    "message": "Please provide campaign name to get analytics!"
+  }
+}
+```
+
+### Server Error (500)
+```json
+{
+  "status": "failed",
+  "data": {},
+  "message": "Something went wrong!"
+}
+```
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```javascript JavaScript
+// Hourly data for multiple campaigns with timezone
+const response = await fetch(
+  'https://api.voicegenie.ai/getCampaignDataAsPerInterval?' +
+  'type=hourly&' +
+  'campaignName=Campaign1,Campaign2&' +
+  'startDateTime=2024-01-15T00:00:00Z&' +
+  'endDateTime=2024-01-16T23:59:59Z',
+  {
+    headers: {
+      'timezone': 'America/New_York'
+    }
+  }
+);
+
+const data = await response.json();
+console.log(data.data); // Array of time-series records
+```
+
+```python Python
+import requests
+
+# Daily aggregation for single campaign
+response = requests.get(
+    'https://api.voicegenie.ai/getCampaignDataAsPerInterval',
+    params={
+        'type': 'daywise',
+        'campaignName': 'SalesOutreach',
+        'startDateTime': '2024-01-01T00:00:00Z',
+        'endDateTime': '2024-01-31T23:59:59Z'
+    },
+    headers={
+        'timezone': 'Asia/Calcutta'
+    }
+)
+
+data = response.json()
+for record in data['data']:
+    print(f"{record['time']} - {record['count']} calls")
+```
+
+```bash cURL
+curl -X GET "https://api.voicegenie.ai/getCampaignDataAsPerInterval?type=hourly&campaignName=Campaign1&startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z" \
+  -H "timezone: Europe/London"
+```
+
+</CodeGroup>
+
+---
+
+## Notes
+
+- **Timezone Support:** The `timezone` header determines how dates are grouped. If not provided, defaults to `Asia/Calcutta`
+- **Multiple Campaigns:** Use comma-separated campaign names: `Campaign1,Campaign2,Campaign3`
+- **Status Values:** Records are grouped by status (e.g., `completed`, `busy`, `no-answer`, `failed`, `cancelled`)
+- **Queued Records Excluded:** Only records with `status` NOT equal to `queued` are included
+- **Date Boundary:** Dates are adjusted to start/end of day based on the provided timezone
+- **Hourly Aggregation:** Groups by date, month, year, hour, and status
+- **Daily Aggregation:** Groups by date, month, year, and status (no hour field)
+- Use this endpoint to build time-series charts showing call volume and status distribution over time

@@ -1,0 +1,182 @@
+---
+title: "Fetch Script"
+api: "POST /fetchScript"
+description: "Retrieve details of an existing AI conversation script including all configuration, variables, and conversation flow."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="script_id" type="string" required>
+  Unique identifier of the script to fetch
+</ParamField>
+
+<ParamField body="include_history" type="boolean" default="false">
+  Include version history and changes
+</ParamField>
+
+<ParamField body="include_analytics" type="boolean" default="false">
+  Include usage analytics for this script
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Script Details">
+    <ResponseField name="script_id" type="string">
+      Unique identifier
+    </ResponseField>
+    
+    <ResponseField name="script_name" type="string">
+      Script name
+    </ResponseField>
+    
+    <ResponseField name="script_content" type="object">
+      Complete script configuration
+    </ResponseField>
+    
+    <ResponseField name="language" type="string">
+      Script language
+    </ResponseField>
+    
+    <ResponseField name="accent" type="string">
+      Voice accent
+    </ResponseField>
+    
+    <ResponseField name="version" type="string">
+      Current version
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string">
+      Creation timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string">
+      Last update timestamp
+    </ResponseField>
+    
+    <ResponseField name="usage_stats" type="object">
+      <Expandable title="Usage Statistics (if requested)">
+        <ResponseField name="total_calls" type="integer">
+          Total calls using this script
+        </ResponseField>
+        
+        <ResponseField name="success_rate" type="number">
+          Conversion success rate percentage
+        </ResponseField>
+        
+        <ResponseField name="avg_duration" type="integer">
+          Average call duration in seconds
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/fetchScript' \
+  --header 'x-api-key: your-api-key-here' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "script_id": "script_abc123xyz",
+    "include_history": false,
+    "include_analytics": true
+  }'
+```
+
+```javascript JavaScript
+const options = {
+  method: 'POST',
+  headers: {
+    'x-api-key': 'your-api-key-here',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    script_id: 'script_abc123xyz',
+    include_analytics: true
+  })
+};
+
+fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchScript', options)
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+
+```python Python
+import requests
+
+url = "https://seamless-sandbox-dev-cm.oriserve.com/fetchScript"
+
+headers = {
+    "x-api-key": "your-api-key-here",
+    "Content-Type": "application/json"
+}
+
+payload = {
+    "script_id": "script_abc123xyz",
+    "include_analytics": True
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "script_id": "script_abc123xyz",
+    "script_name": "Sales Outreach Script",
+    "script_content": {
+      "initial_prompt": "Hi {name}, this is Alex from {company}.",
+      "system_prompt": "You are a friendly sales representative.",
+      "variables": {
+        "name": "Contact Name",
+        "company": "Company Name"
+      }
+    },
+    "language": "en-US",
+    "accent": "american",
+    "version": "1.2.0",
+    "created_at": "2024-01-16T10:30:00Z",
+    "updated_at": "2024-01-18T14:20:00Z",
+    "usage_stats": {
+      "total_calls": 1250,
+      "success_rate": 34.5,
+      "avg_duration": 185
+    }
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "message": "Script not found",
+  "error": "NOT_FOUND"
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- Scripts are cached for 5 minutes for faster retrieval
+- Analytics data updated every hour
+- Rate Limiting: 100 requests per minute

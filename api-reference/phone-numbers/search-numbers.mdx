@@ -1,0 +1,253 @@
+---
+title: "Search Phone Numbers"
+api: "GET /search"
+description: "Search available phone numbers for purchase from Plivo/Oridial"
+---
+
+## Overview
+
+Search for available phone numbers by country, number type, pattern matching, and other criteria.
+
+---
+
+##  Authentication
+
+<ParamField header="x-api-key" type="string" required>
+  Your API key for authentication
+</ParamField>
+
+---
+
+##  Query Parameters
+
+<ParamField query="country_iso" type="string" required>
+  Two-letter ISO country code
+  ```
+  IN
+  ```
+  
+  **Examples:** `US`, `GB`, `IN`, `AU`, `CA`
+</ParamField>
+
+<ParamField query="type" type="string">
+  Number type
+  ```
+  local
+  ```
+  
+  **Options:**
+  - `local` - Local phone numbers
+  - `tollfree` - Toll-free numbers
+  - `mobile` - Mobile numbers
+</ParamField>
+
+<ParamField query="pattern" type="string">
+  Pattern to match in the phone number
+  ```
+  1234
+  ```
+  
+  Use wildcards: `123*` or `*456`
+</ParamField>
+
+<ParamField query="region" type="string">
+  Specific region/state code
+  ```
+  Maharashtra
+  ```
+</ParamField>
+
+<ParamField query="services" type="string">
+  Comma-separated service capabilities
+  ```
+  voice,sms
+  ```
+  
+  **Options:** `voice`, `sms`, `mms`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Maximum results to return
+  ```
+  20
+  ```
+  
+  **Default:** 20, **Max:** 100
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Phone numbers retrieved successfully",
+  "data": {
+    "api_id": "abc123-def456",
+    "objects": [
+      {
+        "country": "INDIA",
+        "lata": null,
+        "monthly_rental_rate": "0.80000",
+        "number": "919876543210",
+        "type": "local",
+        "prefix": "919876",
+        "setup_rate": "0.00000",
+        "sms_enabled": true,
+        "sms_rate": "0.00350",
+        "voice_enabled": true,
+        "voice_rate": "0.00700",
+        "region": "Maharashtra, IN",
+        "resource_uri": "/v1/Account/MAXXXXXX/PhoneNumber/919876543210/"
+      },
+      {
+        "country": "INDIA",
+        "lata": null,
+        "monthly_rental_rate": "0.80000",
+        "number": "919876543211",
+        "type": "local",
+        "prefix": "919876",
+        "setup_rate": "0.00000",
+        "sms_enabled": true,
+        "sms_rate": "0.00350",
+        "voice_enabled": true,
+        "voice_rate": "0.00700",
+        "region": "Maharashtra, IN",
+        "resource_uri": "/v1/Account/MAXXXXXX/PhoneNumber/919876543211/"
+      }
+    ],
+    "meta": {
+      "limit": 20,
+      "offset": 0,
+      "total_count": 156
+    }
+  }
+}
+```
+
+### Error Response (400):
+```json
+{
+  "success": false,
+  "message": "Search failed",
+  "data": {
+    "error": "Invalid country code"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/search?country_iso=IN&type=local&limit=20" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function searchPhoneNumbers(params) {
+  try {
+    const response = await axios.get(
+      'https://api.voicegenie.com/search',
+      {
+        params: {
+          country_iso: 'IN',
+          type: 'local',
+          pattern: '1234',
+          limit: 20
+        },
+        headers: {
+          'x-api-key': 'YOUR_API_KEY'
+        }
+      }
+    );
+    
+    console.log('Available numbers:', response.data.data.objects);
+  } catch (error) {
+    console.error('Error:', error.response.data);
+  }
+}
+
+searchPhoneNumbers();
+```
+
+### Python:
+```python
+import requests
+
+def search_phone_numbers():
+    url = "https://api.voicegenie.com/search"
+    
+    params = {
+        "country_iso": "IN",
+        "type": "local",
+        "pattern": "1234",
+        "limit": 20
+    }
+    
+    headers = {
+        "x-api-key": "YOUR_API_KEY"
+    }
+    
+    response = requests.get(url, params=params, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()['data']
+        print(f"Found {data['meta']['total_count']} numbers")
+        for num in data['objects']:
+            print(f"- {num['number']} (₹{num['monthly_rental_rate']}/month)")
+    else:
+        print("Error:", response.json())
+
+search_phone_numbers()
+```
+
+---
+
+## 🌍 Supported Countries
+
+| Country | ISO Code | Types Available |
+|---------|----------|-----------------|
+| India | IN | local, mobile |
+| United States | US | local, tollfree |
+| United Kingdom | GB | local, mobile |
+| Canada | CA | local, tollfree |
+| Australia | AU | local, mobile |
+| Germany | DE | local |
+| France | FR | local |
+
+---
+
+## 💰 Pricing Information
+
+Each number in the response includes:
+- `monthly_rental_rate` - Monthly cost (USD)
+- `setup_rate` - One-time setup fee
+- `voice_rate` - Per-minute voice call cost
+- `sms_rate` - Per SMS cost
+
+---
+
+## Related Endpoints
+
+- [Buy Phone Number](/api-reference/phone-numbers/buy-number) - Purchase a number
+- [List Account Numbers](/api-reference/phone-numbers/list-numbers) - View owned numbers
+- [Get Pricing](/api-reference/phone-numbers/get-pricing) - Country pricing
+
+---
+
+## Rate Limits
+
+| Plan | Requests/min |
+|------|--------------|
+| Free | 60 |
+| Basic | 300 |
+| Pro | 1000 |
+| Enterprise | Unlimited |

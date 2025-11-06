@@ -1,0 +1,147 @@
+---
+title: "Get Campaign by ID"
+api: "GET /campaign/:id"
+description: "Retrieves detailed information about a specific campaign by its unique identifier."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the campaign
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Campaign Details">
+    <ResponseField name="id" type="string">
+      Unique identifier for the campaign
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      Name of the campaign
+    </ResponseField>
+    
+    <ResponseField name="campaign_status" type="string">
+      Current status of the campaign
+      
+      **Values:** `completed`, `running`, `paused`, `scheduled`, `draft`
+    </ResponseField>
+    
+    <ResponseField name="script_id" type="string">
+      ID of the script associated with this campaign
+    </ResponseField>
+    
+    <ResponseField name="contact_ids" type="array">
+      Array of contact IDs included in this campaign
+    </ResponseField>
+    
+    <ResponseField name="total_count" type="integer">
+      Total number of contacts
+    </ResponseField>
+    
+    <ResponseField name="completed_count" type="integer">
+      Number of completed calls
+    </ResponseField>
+    
+    <ResponseField name="failed_count" type="integer">
+      Number of failed calls
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of campaign creation
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of last update
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/campaign/550e8400-e29b-41d4-a716-446655440000' \
+  --header 'x-api-key: your-api-key-here'
+```
+
+```javascript JavaScript
+const campaignId = '550e8400-e29b-41d4-a716-446655440000';
+
+const options = {
+  method: 'GET',
+  headers: {
+    'x-api-key': 'your-api-key-here'
+  }
+};
+
+fetch(`https://seamless-sandbox-dev-cm.oriserve.com/campaign/${campaignId}`, options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+
+campaign_id = "550e8400-e29b-41d4-a716-446655440000"
+url = f"https://seamless-sandbox-dev-cm.oriserve.com/campaign/{campaign_id}"
+
+headers = {
+    "x-api-key": "your-api-key-here"
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Q4 Sales Campaign",
+    "campaign_status": "running",
+    "script_id": "660e8400-e29b-41d4-a716-446655440001",
+    "contact_ids": ["c1", "c2", "c3"],
+    "total_count": 150,
+    "completed_count": 45,
+    "failed_count": 5,
+    "created_at": "2024-01-15T14:30:00Z",
+    "updated_at": "2024-01-16T10:15:00Z"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "message": "Campaign not found",
+  "error": "NOT_FOUND"
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "message": "Invalid or missing API key",
+  "error": "UNAUTHORIZED"
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,187 @@
+{
+  "name": "VoiceGenie Dialer API",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#07C983",
+    "dark": "#0D9373",
+    "anchors": {
+      "from": "#0D9373",
+      "to": "#07C983"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@voicegenie.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://dashboard.voicegenie.com"
+  },
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "authentication"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        {
+          "group": "Authentication",
+          "pages": [
+            "api-reference/authentication/login",
+            "api-reference/authentication/verify-login",
+            "api-reference/authentication/logout"
+          ]
+        },
+        {
+          "group": "Campaigns",
+          "pages": [
+            "api-reference/campaign/get-all-campaigns",
+            "api-reference/campaign/get-campaign",
+            "api-reference/campaign/upload-campaign-data",
+            "api-reference/campaigns/upload-campaign-data-and-run",
+            "api-reference/campaign/start-campaign",
+            "api-reference/campaigns/start-campaign-v2",
+            "api-reference/campaign/pause-campaign",
+            "api-reference/campaign/delete-campaign",
+            "api-reference/campaign/get-campaign-stats",
+            "api-reference/campaign/get-campaign-history",
+            "api-reference/campaign/download-campaign-stats",
+            "api-reference/campaigns/redial-campaign-calls",
+            "api-reference/campaigns/get-campaign-statuses",
+            "api-reference/campaigns/delete-history-record",
+            "api-reference/campaigns/handle-campaign-call-cut",
+            "api-reference/campaigns/create-contact-and-campaign"
+          ]
+        },
+        {
+          "group": "Contacts",
+          "pages": [
+            "api-reference/contacts/create-contact",
+            "api-reference/contacts/get-contacts",
+            "api-reference/contacts/get-contact",
+            "api-reference/contacts/delete-contact"
+          ]
+        },
+        {
+          "group": "Scripts",
+          "pages": [
+            "api-reference/scripts/create-script",
+            "api-reference/scripts/fetch-script",
+            "api-reference/scripts/update-user-specific-script-data",
+            "api-reference/scripts/fetch-accents-and-language",
+            "api-reference/scripts/fetch-new-generative-bot-script"
+          ]
+        },
+        {
+          "group": "Analytics",
+          "pages": [
+            "api-reference/analytics/get-day-wise-call-counts",
+            "api-reference/analytics/get-campaign-analytics",
+            "api-reference/analytics/get-campaign-data-as-per-interval",
+            "api-reference/analytics/fetch-campaign-data-only-names",
+            "api-reference/analytics/bot-response-time-analytics",
+            "api-reference/analytics/call-funnel-analytics",
+            "api-reference/analytics/get-bot-res-time-analytics",
+            "api-reference/analytics/audit-call"
+          ]
+        },
+        {
+          "group": "User Management",
+          "pages": [
+            "api-reference/users/create-user",
+            "api-reference/users/get-all-users",
+            "api-reference/users/update-user",
+            "api-reference/users/delete-user"
+          ]
+        },
+        {
+          "group": "Knowledge Base",
+          "pages": [
+            "api-reference/knowledge-base/fetch-knowledge-base",
+            "api-reference/knowledge-base/update-knowledge-base"
+          ]
+        },
+        {
+          "group": "Phone Numbers",
+          "pages": [
+            "api-reference/phone-numbers/search-numbers",
+            "api-reference/phone-numbers/buy-number",
+            "api-reference/phone-numbers/list-account-numbers",
+            "api-reference/phone-numbers/get-number",
+            "api-reference/phone-numbers/update-number",
+            "api-reference/phone-numbers/unrent-number",
+            "api-reference/phone-numbers/get-pricing",
+            "api-reference/phone-numbers/lookup-number",
+            "api-reference/phone-numbers/list-applications",
+            "api-reference/phone-numbers/get-application"
+          ]
+        },
+        {
+          "group": "Call Management",
+          "pages": [
+            "api-reference/call-management/get-call-recordings",
+            "api-reference/call-management/get-conversation-logs",
+            "api-reference/call-management/ai-dialer-callback",
+            "api-reference/call-management/get-inbound-call-config"
+          ]
+        },
+        {
+          "group": "Settings & Quota",
+          "pages": [
+            "api-reference/settings/save-settings",
+            "api-reference/settings/get-settings",
+            "api-reference/settings/get-campaign-table-header-data",
+            "api-reference/settings/fetch-quota",
+            "api-reference/settings/reset-quota"
+          ]
+        },
+        {
+          "group": "Third-Party Integration",
+          "pages": [
+            "api-reference/third-party/initiate-call",
+            "api-reference/third-party/initiate-batch-call",
+            "api-reference/third-party/initiate-batch-call-using-sheet"
+          ]
+        },
+        {
+          "group": "Webhooks",
+          "pages": [
+            "api-reference/webhooks/overview",
+            "api-reference/webhooks/incoming-call",
+            "api-reference/webhooks/ai-response-hook",
+            "api-reference/webhooks/recording-status",
+            "api-reference/webhooks/call-answer-status"
+          ]
+        },
+        {
+          "group": "WebSockets",
+          "pages": [
+            "api-reference/websockets/real-time-events"
+          ]
+        },
+        {
+          "group": "Automation",
+          "pages": [
+            "api-reference/automation/schedule-crons"
+          ]
+        }
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/voicegenie",
+    "github": "https://github.com/voicegenie",
+    "linkedin": "https://www.linkedin.com/company/voicegenie"
+  }
+}

@@ -1,0 +1,202 @@
+---
+title: "Get Campaign Stats"
+api: "GET /getCampaignStats/:campaignId"
+description: "Retrieve detailed statistics and performance metrics for a specific campaign."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="campaignId" type="string" required>
+  The unique identifier of the campaign
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Campaign Statistics">
+    <ResponseField name="campaign_id" type="string">
+      Unique identifier of the campaign
+    </ResponseField>
+    
+    <ResponseField name="campaign_name" type="string">
+      Name of the campaign
+    </ResponseField>
+    
+    <ResponseField name="total_contacts" type="integer">
+      Total number of contacts in the campaign
+    </ResponseField>
+    
+    <ResponseField name="calls_completed" type="integer">
+      Number of successfully completed calls
+    </ResponseField>
+    
+    <ResponseField name="calls_failed" type="integer">
+      Number of failed calls
+    </ResponseField>
+    
+    <ResponseField name="calls_in_progress" type="integer">
+      Number of calls currently in progress
+    </ResponseField>
+    
+    <ResponseField name="calls_pending" type="integer">
+      Number of calls yet to be initiated
+    </ResponseField>
+    
+    <ResponseField name="success_rate" type="number">
+      Percentage of successful calls (0-100)
+    </ResponseField>
+    
+    <ResponseField name="average_call_duration" type="integer">
+      Average call duration in seconds
+    </ResponseField>
+    
+    <ResponseField name="total_call_duration" type="integer">
+      Total duration of all calls in seconds
+    </ResponseField>
+    
+    <ResponseField name="call_status_breakdown" type="object">
+      <Expandable title="Status Breakdown">
+        <ResponseField name="answered" type="integer">
+          Calls answered by recipient
+        </ResponseField>
+        
+        <ResponseField name="busy" type="integer">
+          Recipient was busy
+        </ResponseField>
+        
+        <ResponseField name="no_answer" type="integer">
+          No answer from recipient
+        </ResponseField>
+        
+        <ResponseField name="failed" type="integer">
+          Failed due to technical issues
+        </ResponseField>
+        
+        <ResponseField name="voicemail" type="integer">
+          Reached voicemail
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="started_at" type="string">
+      ISO 8601 timestamp when campaign started
+    </ResponseField>
+    
+    <ResponseField name="completed_at" type="string">
+      ISO 8601 timestamp when campaign completed (null if still running)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/550e8400-e29b-41d4-a716-446655440000' \
+  --header 'x-api-key: your-api-key-here'
+```
+
+```javascript JavaScript
+const campaignId = '550e8400-e29b-41d4-a716-446655440000';
+
+const options = {
+  method: 'GET',
+  headers: {
+    'x-api-key': 'your-api-key-here'
+  }
+};
+
+fetch(`https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/${campaignId}`, options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+
+campaign_id = "550e8400-e29b-41d4-a716-446655440000"
+url = f"https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/{campaign_id}"
+
+headers = {
+    "x-api-key": "your-api-key-here"
+}
+
+response = requests.get(url, headers=headers)
+stats = response.json()
+print(f"Success Rate: {stats['data']['success_rate']}%")
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "campaign_id": "550e8400-e29b-41d4-a716-446655440000",
+    "campaign_name": "Q4 Sales Campaign",
+    "total_contacts": 1000,
+    "calls_completed": 750,
+    "calls_failed": 150,
+    "calls_in_progress": 50,
+    "calls_pending": 50,
+    "success_rate": 83.33,
+    "average_call_duration": 245,
+    "total_call_duration": 183750,
+    "call_status_breakdown": {
+      "answered": 750,
+      "busy": 80,
+      "no_answer": 50,
+      "failed": 20,
+      "voicemail": 100
+    },
+    "started_at": "2024-01-16T09:00:00Z",
+    "completed_at": null
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "message": "Campaign not found",
+  "error": "NOT_FOUND"
+}
+```
+
+```json 500 Internal Server Error
+{
+  "success": false,
+  "message": "Failed to retrieve campaign statistics",
+  "error": "INTERNAL_SERVER_ERROR"
+}
+```
+
+</ResponseExample>
+
+## Performance Notes
+
+- **Response Time**: Typically < 500ms for campaigns with < 10,000 contacts
+- **Heavy Load**: Campaigns with 50,000+ contacts may take 2-3 seconds
+- **Real-time Data**: Statistics are updated in real-time as calls complete
+- **Caching**: Stats are cached for 30 seconds to improve performance
+- **Rate Limiting**: 200 requests per minute per campaign
+
+## Use Cases
+
+- **Dashboard Display**: Show real-time campaign performance
+- **Monitoring**: Track campaign progress programmatically
+- **Reporting**: Generate custom reports and analytics
+- **Alerting**: Set up alerts based on success rates or completion status

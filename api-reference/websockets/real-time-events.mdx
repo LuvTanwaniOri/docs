@@ -1,0 +1,484 @@
+---
+title: "WebSocket Connection"
+api: "WS /"
+description: "Real-time WebSocket connection for live updates on call status, campaign progress, and agent events."
+---
+
+## Connection
+
+<ParamField path="url" type="string" required>
+  WebSocket URL: `wss://your-domain.com/`
+</ParamField>
+
+<ParamField path="event" type="string" required>
+  Connection event: `connection:dialer`
+</ParamField>
+
+## Authentication
+
+WebSocket connections require initial authentication:
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key (passed during connection)
+</ParamField>
+
+## Server → Client Events
+
+### call.initiated
+Emitted when a new call is initiated
+
+```json
+{
+  "event": "call.initiated",
+  "data": {
+    "callId": "call_abc123",
+    "campaignId": "campaign_xyz789",
+    "contactId": "contact_456",
+    "phoneNumber": "+919876543210",
+    "timestamp": "2024-01-16T10:30:00Z",
+    "dialerProvider": "plivo"
+  }
+}
+```
+
+### call.answered
+Emitted when call is answered by recipient
+
+```json
+{
+  "event": "call.answered",
+  "data": {
+    "callId": "call_abc123",
+    "answeredAt": "2024-01-16T10:30:15Z",
+    "duration": 0,
+    "status": "in-progress"
+  }
+}
+```
+
+### call.ended
+Emitted when call terminates
+
+```json
+{
+  "event": "call.ended",
+  "data": {
+    "callId": "call_abc123",
+    "endedAt": "2024-01-16T10:35:45Z",
+    "duration": 345,
+    "reason": "completed",
+    "disposition": "answered",
+    "recordingUrl": "https://recordings.example.com/call_abc123.mp3"
+  }
+}
+```
+
+**Disposition Values:**
+- `answered` - Call answered and completed
+- `busy` - Recipient was busy
+- `no_answer` - No answer from recipient
+- `failed` - Technical failure
+- `cancelled` - Call cancelled by agent
+
+### campaign.progress
+Real-time campaign progress updates
+
+```json
+{
+  "event": "campaign.progress",
+  "data": {
+    "campaignId": "campaign_xyz789",
+    "stats": {
+      "total": 1000,
+      "completed": 450,
+      "pending": 500,
+      "failed": 50,
+      "successRate": 75.5
+    },
+    "timestamp": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+### agent.status
+Agent availability status changes
+
+```json
+{
+  "event": "agent.status",
+  "data": {
+    "agentId": "agent_123",
+    "status": "available",
+    "currentCall": null,
+    "lastUpdated": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+**Status Values:**
+- `available` - Agent is ready for calls
+- `busy` - Agent on active call
+- `away` - Agent temporarily unavailable
+- `offline` - Agent logged out
+
+### ai.response
+AI generated response during call
+
+```json
+{
+  "event": "ai.response",
+  "data": {
+    "callId": "call_abc123",
+    "response": "I understand you're interested in our premium plan. Let me schedule a demo for you.",
+    "confidence": 0.92,
+    "responseTime": 450,
+    "timestamp": "2024-01-16T10:30:20Z"
+  }
+}
+```
+
+### recording.ready
+Call recording processed and available
+
+```json
+{
+  "event": "recording.ready",
+  "data": {
+    "callId": "call_abc123",
+    "recordingUrl": "https://recordings.example.com/call_abc123.mp3",
+    "duration": 345,
+    "fileSize": 2456789,
+    "format": "mp3",
+    "processedAt": "2024-01-16T10:40:00Z"
+  }
+}
+```
+
+### error
+Error occurred in WebSocket communication
+
+```json
+{
+  "event": "error",
+  "data": {
+    "code": "AUTH_FAILED",
+    "message": "Invalid API key",
+    "timestamp": "2024-01-16T10:30:00Z"
+  }
+}
+```
+
+## Client → Server Events
+
+### subscribe.campaign
+Subscribe to campaign updates
+
+```json
+{
+  "event": "subscribe.campaign",
+  "data": {
+    "campaignId": "campaign_xyz789"
+  }
+}
+```
+
+### unsubscribe.campaign
+Unsubscribe from campaign updates
+
+```json
+{
+  "event": "unsubscribe.campaign",
+  "data": {
+    "campaignId": "campaign_xyz789"
+  }
+}
+```
+
+### agent.update
+Update agent status
+
+```json
+{
+  "event": "agent.update",
+  "data": {
+    "agentId": "agent_123",
+    "status": "available"
+  }
+}
+```
+
+### ping
+Heartbeat to keep connection alive
+
+```json
+{
+  "event": "ping",
+  "timestamp": "2024-01-16T10:30:00Z"
+}
+```
+
+Server responds with:
+```json
+{
+  "event": "pong",
+  "timestamp": "2024-01-16T10:30:00Z"
+}
+```
+
+## Connection Examples
+
+<RequestExample>
+
+```javascript JavaScript
+const WebSocket = require('ws');
+
+const apiKey = 'your-api-key-here';
+const ws = new WebSocket('wss://your-domain.com/', {
+  headers: {
+    'x-api-key': apiKey
+  }
+});
+
+ws.on('open', function open() {
+  console.log('Connected to VoiceGenie WebSocket');
+  
+  // Subscribe to campaign updates
+  ws.send(JSON.stringify({
+    event: 'subscribe.campaign',
+    data: { campaignId: 'campaign_xyz789' }
+  }));
+});
+
+ws.on('message', function message(data) {
+  const event = JSON.parse(data);
+  console.log('Received:', event);
+  
+  switch(event.event) {
+    case 'call.initiated':
+      console.log('New call:', event.data.callId);
+      break;
+    case 'call.answered':
+      console.log('Call answered:', event.data.callId);
+      break;
+    case 'call.ended':
+      console.log('Call ended:', event.data.callId, event.data.disposition);
+      break;
+    case 'campaign.progress':
+      console.log('Campaign progress:', event.data.stats);
+      break;
+  }
+});
+
+ws.on('error', function error(err) {
+  console.error('WebSocket error:', err);
+});
+
+ws.on('close', function close() {
+  console.log('Disconnected from WebSocket');
+});
+
+// Send heartbeat every 30 seconds
+setInterval(() => {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ event: 'ping', timestamp: new Date().toISOString() }));
+  }
+}, 30000);
+```
+
+```python Python
+import websocket
+import json
+import time
+import threading
+
+API_KEY = 'your-api-key-here'
+WS_URL = 'wss://your-domain.com/'
+
+def on_message(ws, message):
+    event = json.loads(message)
+    print(f"Received: {event['event']}")
+    
+    if event['event'] == 'call.initiated':
+        print(f"New call: {event['data']['callId']}")
+    elif event['event'] == 'call.ended':
+        print(f"Call ended: {event['data']['callId']}")
+    elif event['event'] == 'campaign.progress':
+        print(f"Progress: {event['data']['stats']}")
+
+def on_error(ws, error):
+    print(f"Error: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    print("Connection closed")
+
+def on_open(ws):
+    print("Connected to WebSocket")
+    
+    # Subscribe to campaign
+    ws.send(json.dumps({
+        'event': 'subscribe.campaign',
+        'data': {'campaignId': 'campaign_xyz789'}
+    }))
+    
+    # Start heartbeat
+    def heartbeat():
+        while True:
+            time.sleep(30)
+            try:
+                ws.send(json.dumps({'event': 'ping'}))
+            except:
+                break
+    
+    threading.Thread(target=heartbeat, daemon=True).start()
+
+# Create WebSocket connection
+ws = websocket.WebSocketApp(
+    WS_URL,
+    header={'x-api-key': API_KEY},
+    on_open=on_open,
+    on_message=on_message,
+    on_error=on_error,
+    on_close=on_close
+)
+
+# Run forever
+ws.run_forever()
+```
+
+```php PHP
+<?php
+use Ratchet\Client\WebSocket;
+use Ratchet\Client\Connector;
+
+$apiKey = 'your-api-key-here';
+$url = 'wss://your-domain.com/';
+
+$connector = new Connector();
+
+$connector($url, [], ['x-api-key' => $apiKey])
+    ->then(function(WebSocket $conn) {
+        echo "Connected\n";
+        
+        // Subscribe to campaign
+        $conn->send(json_encode([
+            'event' => 'subscribe.campaign',
+            'data' => ['campaignId' => 'campaign_xyz789']
+        ]));
+        
+        $conn->on('message', function($msg) use ($conn) {
+            $event = json_decode($msg);
+            echo "Received: {$event->event}\n";
+            
+            if ($event->event === 'call.initiated') {
+                echo "New call: {$event->data->callId}\n";
+            }
+        });
+        
+        $conn->on('close', function($code = null, $reason = null) {
+            echo "Connection closed ({$code} - {$reason})\n";
+        });
+        
+    }, function($e) {
+        echo "Could not connect: {$e->getMessage()}\n";
+    });
+?>
+```
+
+</RequestExample>
+
+## Connection Management
+
+### Auto-Reconnection
+
+Implement exponential backoff for reconnection:
+
+```javascript
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 10;
+const baseDelay = 1000; // 1 second
+
+function connect() {
+  const ws = new WebSocket(WS_URL);
+  
+  ws.on('close', () => {
+    if (reconnectAttempts < maxReconnectAttempts) {
+      const delay = baseDelay * Math.pow(2, reconnectAttempts);
+      console.log(`Reconnecting in ${delay}ms...`);
+      
+      setTimeout(() => {
+        reconnectAttempts++;
+        connect();
+      }, delay);
+    }
+  });
+  
+  ws.on('open', () => {
+    reconnectAttempts = 0; // Reset on successful connection
+  });
+}
+```
+
+### Heartbeat/Ping-Pong
+
+Send ping every 30 seconds to keep connection alive:
+
+```javascript
+setInterval(() => {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ event: 'ping' }));
+  }
+}, 30000);
+```
+
+## Performance & Limits
+
+- **Max Connections:** 1000 concurrent connections per account
+- **Message Rate:** 100 messages/second per connection
+- **Heartbeat:** Ping every 30 seconds (connection closed after 60s silence)
+- **Message Size:** Max 1MB per message
+- **Reconnection:** Auto-retry with exponential backoff
+- **Idle Timeout:** 10 minutes of inactivity
+
+## Use Cases
+
+1. **Real-time Dashboards** - Display live campaign progress
+2. **Agent Monitoring** - Track agent availability and call status
+3. **Call Center Displays** - Show active calls and queues
+4. **Alerting Systems** - Trigger alerts on specific events
+5. **Analytics Streaming** - Stream call data for real-time analysis
+6. **Campaign Automation** - Auto-adjust campaigns based on performance
+
+## Security
+
+- All connections must use WSS (secure WebSocket)
+- API key authentication required
+- Connections limited by IP and account
+- Rate limiting applies per connection
+- Automatic disconnection on suspicious activity
+
+## Troubleshooting
+
+### Connection Refused
+- Verify API key is valid
+- Check firewall/network settings
+- Ensure using WSS (not WS)
+
+### Frequent Disconnections
+- Implement heartbeat mechanism
+- Check network stability
+- Verify rate limits not exceeded
+
+### Missing Events
+- Confirm subscription to correct campaigns
+- Check event filters
+- Verify WebSocket message queue not full
+
+---
+
+**Best Practices:**
+- Always implement reconnection logic
+- Send heartbeat/ping regularly
+- Handle all event types gracefully
+- Implement error handling
+- Log connection state changes
+- Monitor connection health

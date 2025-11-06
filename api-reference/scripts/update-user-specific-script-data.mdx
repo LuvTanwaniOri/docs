@@ -1,0 +1,193 @@
+---
+title: "Update User Script Data"
+api: "POST /updateUserSpecificScriptData"
+description: "Update user-specific customizations for a script"
+---
+
+## ✏️ Overview
+
+Modify user-specific script configurations without affecting the base script template.
+
+---
+
+##  Authentication
+
+<ParamField header="x-api-key" type="string" required>
+  Your API key for authentication
+</ParamField>
+
+---
+
+##  Request Body
+
+<ParamField body="script_id" type="string" required>
+  Script ID (MongoDB ObjectId)
+  ```
+  507f1f77bcf86cd799439012
+  ```
+</ParamField>
+
+<ParamField body="user_id" type="string" required>
+  User ID making the changes
+  ```
+  507f1f77bcf86cd799439011
+  ```
+</ParamField>
+
+<ParamField body="user_specific_data" type="object" required>
+  Custom script data for this user
+</ParamField>
+
+### User Specific Data Fields:
+
+<ParamField body="user_specific_data.custom_prompts" type="array">
+  Custom conversation prompts
+  ```json
+  [
+    {
+      "trigger": "greeting",
+      "text": "Hello from {company_name}"
+    }
+  ]
+  ```
+</ParamField>
+
+<ParamField body="user_specific_data.variables" type="object">
+  Dynamic variables
+  ```json
+  {
+    "company_name": "Acme Corp",
+    "support_email": "support@acme.com"
+  }
+  ```
+</ParamField>
+
+<ParamField body="user_specific_data.custom_actions" type="array">
+  Custom actions/webhooks
+  ```json
+  [
+    {
+      "event": "call_ended",
+      "webhook_url": "https://api.example.com/call-ended"
+    }
+  ]
+  ```
+</ParamField>
+
+### Example Request:
+```json
+{
+  "script_id": "507f1f77bcf86cd799439012",
+  "user_id": "507f1f77bcf86cd799439011",
+  "user_specific_data": {
+    "custom_prompts": [
+      {
+        "trigger": "greeting",
+        "text": "Hello from Acme Corp, how can I assist you?"
+      },
+      {
+        "trigger": "goodbye",
+        "text": "Thank you for calling Acme Corp. Have a great day!"
+      }
+    ],
+    "variables": {
+      "company_name": "Acme Corp",
+      "support_email": "support@acme.com",
+      "business_hours": "9 AM to 6 PM IST"
+    },
+    "custom_actions": [
+      {
+        "event": "call_ended",
+        "webhook_url": "https://api.example.com/call-ended",
+        "method": "POST"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "User-specific script data updated successfully",
+  "data": {
+    "script_id": "507f1f77bcf86cd799439012",
+    "user_id": "507f1f77bcf86cd799439011",
+    "user_specific_data": {
+      "custom_prompts": [
+        {
+          "trigger": "greeting",
+          "text": "Hello from Acme Corp, how can I assist you?"
+        }
+      ],
+      "variables": {
+        "company_name": "Acme Corp",
+        "support_email": "support@acme.com"
+      },
+      "custom_actions": [
+        {
+          "event": "call_ended",
+          "webhook_url": "https://api.example.com/call-ended"
+        }
+      ]
+    },
+    "updated_at": "2024-01-16T13:00:00Z"
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function updateUserScriptData(scriptId, userId, customData) {
+  const response = await axios.post(
+    'https://api.voicegenie.com/updateUserSpecificScriptData',
+    {
+      script_id: scriptId,
+      user_id: userId,
+      user_specific_data: customData
+    },
+    {
+      headers: {
+        'x-api-key': 'YOUR_API_KEY',
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  
+  console.log('✅ User script data updated');
+  return response.data.data;
+}
+
+// Example: Customize greetings
+updateUserScriptData(
+  '507f1f77bcf86cd799439012',
+  '507f1f77bcf86cd799439011',
+  {
+    custom_prompts: [{
+      trigger: 'greeting',
+      text: 'Hello from Acme Corp!'
+    }],
+    variables: {
+      company_name: 'Acme Corp'
+    }
+  }
+);
+```
+
+---
+
+## Related Endpoints
+
+- [Fetch Script](/api-reference/scripts/fetch-script) - Get base script
+- [Create Script](/api-reference/scripts/create-script) - New script

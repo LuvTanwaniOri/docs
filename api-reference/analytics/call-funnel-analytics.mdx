@@ -1,0 +1,314 @@
+---
+title: "Call Funnel Analytics"
+api: "GET /callFunnelAnalytics"
+description: "Analyze call conversion funnel and drop-off points"
+---
+
+## Overview
+
+Get detailed funnel analytics showing how calls progress through stages and where prospects drop off.
+
+---
+
+##  Authentication
+
+<ParamField header="x-api-key" type="string" required>
+  Your API key for authentication
+</ParamField>
+
+---
+
+##  Query Parameters
+
+<ParamField query="campaign_id" type="string">
+  Filter by campaign ID (optional)
+  ```
+  507f1f77bcf86cd799439013
+  ```
+</ParamField>
+
+<ParamField query="script_id" type="string">
+  Filter by script ID (optional)
+  ```
+  507f1f77bcf86cd799439012
+  ```
+</ParamField>
+
+<ParamField query="start_date" type="string">
+  Start date (ISO 8601)
+  ```
+  2024-01-01T00:00:00Z
+  ```
+</ParamField>
+
+<ParamField query="end_date" type="string">
+  End date (ISO 8601)
+  ```
+  2024-01-31T23:59:59Z
+  ```
+</ParamField>
+
+---
+
+## Response
+
+### Success Response (200 OK):
+```json
+{
+  "success": true,
+  "message": "Call funnel analytics retrieved successfully",
+  "data": {
+    "funnel_overview": {
+      "total_calls_initiated": 1000,
+      "overall_conversion_rate": 32.5,
+      "total_conversions": 325
+    },
+    "funnel_stages": [
+      {
+        "stage": "call_initiated",
+        "stage_name": "Call Dialed",
+        "count": 1000,
+        "percentage": 100.0,
+        "drop_off": 0,
+        "drop_off_rate": 0.0
+      },
+      {
+        "stage": "call_ringing",
+        "stage_name": "Phone Ringing",
+        "count": 920,
+        "percentage": 92.0,
+        "drop_off": 80,
+        "drop_off_rate": 8.0,
+        "drop_off_reasons": {
+          "number_unreachable": 45,
+          "invalid_number": 35
+        }
+      },
+      {
+        "stage": "call_answered",
+        "stage_name": "Call Answered",
+        "count": 750,
+        "percentage": 75.0,
+        "drop_off": 170,
+        "drop_off_rate": 18.5,
+        "drop_off_reasons": {
+          "no_answer": 120,
+          "busy": 30,
+          "voicemail": 20
+        }
+      },
+      {
+        "stage": "engagement",
+        "stage_name": "Engaged in Conversation",
+        "count": 620,
+        "percentage": 62.0,
+        "drop_off": 130,
+        "drop_off_rate": 17.3,
+        "drop_off_reasons": {
+          "hung_up_early": 85,
+          "wrong_person": 45
+        },
+        "average_duration": 45
+      },
+      {
+        "stage": "interest_shown",
+        "stage_name": "Interest Shown",
+        "count": 480,
+        "percentage": 48.0,
+        "drop_off": 140,
+        "drop_off_rate": 22.6,
+        "average_duration": 125
+      },
+      {
+        "stage": "conversion",
+        "stage_name": "Converted",
+        "count": 325,
+        "percentage": 32.5,
+        "drop_off": 155,
+        "drop_off_rate": 32.3,
+        "drop_off_reasons": {
+          "needs_time_to_think": 80,
+          "price_objection": 45,
+          "not_interested": 30
+        },
+        "average_duration": 245
+      }
+    ],
+    "conversion_paths": [
+      {
+        "path": "call_answered -> engagement -> interest_shown -> conversion",
+        "count": 285,
+        "conversion_rate": 87.7,
+        "average_duration": 265
+      },
+      {
+        "path": "call_answered -> engagement -> conversion",
+        "count": 40,
+        "conversion_rate": 12.3,
+        "average_duration": 180,
+        "notes": "Quick decision makers"
+      }
+    ],
+    "drop_off_analysis": {
+      "highest_drop_off_stage": "interest_shown",
+      "highest_drop_off_rate": 32.3,
+      "recommendations": [
+        "Improve objection handling at interest stage",
+        "Reduce call-to-conversion time",
+        "Follow up on 'needs time to think' prospects"
+      ]
+    },
+    "time_analysis": {
+      "average_time_to_conversion": 245,
+      "fastest_conversion": 120,
+      "slowest_conversion": 480,
+      "optimal_call_duration": "180-280 seconds"
+    }
+  }
+}
+```
+
+---
+
+## Code Examples
+
+### cURL:
+```bash
+curl -X GET "https://api.voicegenie.com/callFunnelAnalytics?campaign_id=507f1f77bcf86cd799439013&start_date=2024-01-01T00:00:00Z" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### JavaScript:
+```javascript
+const axios = require('axios');
+
+async function getCallFunnelAnalytics(filters) {
+  const response = await axios.get(
+    'https://api.voicegenie.com/callFunnelAnalytics',
+    {
+      params: filters,
+      headers: {
+        'x-api-key': 'YOUR_API_KEY'
+      }
+    }
+  );
+  
+  const { funnel_stages, funnel_overview, drop_off_analysis } = response.data.data;
+  
+  console.log('\n📊 Call Funnel Analysis');
+  console.log(`Overall Conversion Rate: ${funnel_overview.overall_conversion_rate}%`);
+  console.log(`Total Conversions: ${funnel_overview.total_conversions}\n`);
+  
+  console.log('Funnel Stages:');
+  funnel_stages.forEach(stage => {
+    console.log(`\n${stage.stage_name}:`);
+    console.log(`   Count: ${stage.count} (${stage.percentage}%)`);
+    if (stage.drop_off > 0) {
+      console.log(`   Drop-off: ${stage.drop_off} (${stage.drop_off_rate}%)`);
+    }
+  });
+  
+  console.log(`\n⚠️ Highest Drop-off: ${drop_off_analysis.highest_drop_off_stage} (${drop_off_analysis.highest_drop_off_rate}%)`);
+  console.log('\n💡 Recommendations:');
+  drop_off_analysis.recommendations.forEach(rec => {
+    console.log(`   - ${rec}`);
+  });
+  
+  return response.data.data;
+}
+
+// Example
+getCallFunnelAnalytics({
+  campaign_id: '507f1f77bcf86cd799439013',
+  start_date: '2024-01-01T00:00:00Z',
+  end_date: '2024-01-31T23:59:59Z'
+});
+```
+
+### Python:
+```python
+import requests
+import matplotlib.pyplot as plt
+
+def visualize_funnel(campaign_id):
+    url = "https://api.voicegenie.com/callFunnelAnalytics"
+    
+    params = {"campaign_id": campaign_id}
+    headers = {"x-api-key": "YOUR_API_KEY"}
+    
+    response = requests.get(url, params=params, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()['data']
+        stages = data['funnel_stages']
+        
+        # Extract data for visualization
+        stage_names = [s['stage_name'] for s in stages]
+        counts = [s['count'] for s in stages]
+        
+        # Create funnel chart
+        plt.figure(figsize=(10, 6))
+        plt.barh(stage_names, counts, color='skyblue')
+        plt.xlabel('Number of Calls')
+        plt.title(f'Call Funnel Analysis - {data["funnel_overview"]["overall_conversion_rate"]}% Conversion')
+        plt.gca().invert_yaxis()
+        
+        # Add percentage labels
+        for i, (name, count) in enumerate(zip(stage_names, counts)):
+            percentage = stages[i]['percentage']
+            plt.text(count, i, f' {count} ({percentage}%)', 
+                    va='center', fontsize=10)
+        
+        plt.tight_layout()
+        plt.savefig('funnel_analysis.png')
+        print("📊 Funnel chart saved to funnel_analysis.png")
+        
+        return data
+
+# Example
+visualize_funnel("507f1f77bcf86cd799439013")
+```
+
+---
+
+## Use Cases
+
+### 1. Identify Bottlenecks:
+```javascript
+async function identifyBottlenecks(campaignId) {
+  const data = await getCallFunnelAnalytics({ campaign_id: campaignId });
+  
+  const bottleneck = data.funnel_stages
+    .filter(s => s.drop_off_rate > 20)
+    .sort((a, b) => b.drop_off_rate - a.drop_off_rate)[0];
+  
+  if (bottleneck) {
+    console.log(`🎯 Major Bottleneck: ${bottleneck.stage_name}`);
+    console.log(`Drop-off Rate: ${bottleneck.drop_off_rate}%`);
+    console.log('Reasons:', bottleneck.drop_off_reasons);
+  }
+}
+```
+
+### 2. Calculate ROI by Stage:
+```javascript
+async function calculateStageROI(campaignId, costPerCall) {
+  const data = await getCallFunnelAnalytics({ campaign_id: campaignId });
+  
+  const totalCost = data.funnel_overview.total_calls_initiated * costPerCall;
+  const conversions = data.funnel_overview.total_conversions;
+  const costPerConversion = totalCost / conversions;
+  
+  console.log(`\n💰 ROI Analysis:`);
+  console.log(`Total Cost: $${totalCost.toFixed(2)}`);
+  console.log(`Conversions: ${conversions}`);
+  console.log(`Cost per Conversion: $${costPerConversion.toFixed(2)}`);
+}
+```
+
+---
+
+## Related Endpoints
+
+- [Get Campaign Analytics](/api-reference/analytics/get-campaign-analytics) - Overall metrics
+- [Bot Response Time Analytics](/api-reference/analytics/bot-response-time-analytics) - Performance metrics

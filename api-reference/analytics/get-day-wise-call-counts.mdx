@@ -1,0 +1,61 @@
+---
+title: "Get Day-wise Call Counts"
+api: "GET /getDayWiseCallCounts"
+description: "Retrieve aggregated call statistics grouped by day for analytics and reporting."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="start_date" type="string" required>
+  Start date for analytics (ISO 8601 format)
+</ParamField>
+
+<ParamField query="end_date" type="string" required>
+  End date for analytics (ISO 8601 format)
+</ParamField>
+
+<ParamField query="campaign_id" type="string">
+  Optional: Filter by specific campaign
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getDayWiseCallCounts?start_date=2024-01-01&end_date=2024-01-31' \
+  --header 'x-api-key: your-api-key-here'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": [
+    {
+      "date": "2024-01-16",
+      "total_calls": 1250,
+      "answered": 1000,
+      "busy": 150,
+      "no_answer": 100
+    },
+    {
+      "date": "2024-01-17",
+      "total_calls": 1500,
+      "answered": 1200,
+      "busy": 180,
+      "no_answer": 120
+    }
+  ]
+}
+```
+
+</ResponseExample>

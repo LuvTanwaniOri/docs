@@ -1,0 +1,121 @@
+---
+title: "Verify Login"
+api: "POST /auth/verifyLogin"
+description: "Verify if the current authentication token is valid and retrieve user information."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key/token
+</ParamField>
+
+<ParamField header="Content-Type" type="string" default="application/json">
+  Must be `application/json`
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the token is valid
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="properties">
+    <ResponseField name="valid" type="boolean">
+      Whether the token is currently valid
+    </ResponseField>
+    
+    <ResponseField name="user" type="object">
+      <Expandable title="User Object">
+        <ResponseField name="id" type="string">
+          Unique user identifier
+        </ResponseField>
+        
+        <ResponseField name="email" type="string">
+          User's email address
+        </ResponseField>
+        
+        <ResponseField name="name" type="string">
+          User's full name
+        </ResponseField>
+        
+        <ResponseField name="role" type="string">
+          User's role in the system
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="expires_at" type="string">
+      ISO 8601 timestamp when the token expires
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin' \
+  --header 'x-api-key: your-api-key-here' \
+  --header 'Content-Type: application/json'
+```
+
+```javascript JavaScript
+const options = {
+  method: 'POST',
+  headers: {
+    'x-api-key': 'your-api-key-here',
+    'Content-Type': 'application/json'
+  }
+};
+
+fetch('https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin', options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+
+url = "https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin"
+
+headers = {
+    "x-api-key": "your-api-key-here",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, headers=headers)
+print(response.json())
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "valid": true,
+    "user": {
+      "id": "user_123456",
+      "email": "user@example.com",
+      "name": "John Doe",
+      "role": "manager"
+    },
+    "expires_at": "2024-12-31T23:59:59Z"
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "message": "Invalid or expired token",
+  "error": "UNAUTHORIZED"
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,22 @@
+{
+  "name": "voicegenie-api-documentation",
+  "version": "1.0.0",
+  "description": "Professional API Documentation for VoiceGenie Dialer Service",
+  "scripts": {
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "install-mintlify": "npm install -g mintlify",
+    "preview": "mintlify dev",
+    "validate": "mintlify validate",
+    "check-links": "mintlify broken-links"
+  },
+  "keywords": [
+    "api",
+    "documentation",
+    "voicegenie",
+    "dialer",
+    "voice-ai"
+  ],
+  "author": "VoiceGenie Team",
+  "license": "ISC"
+}

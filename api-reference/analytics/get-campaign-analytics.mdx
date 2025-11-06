@@ -1,0 +1,53 @@
+---
+title: "Get Campaign Analytics"
+api: "GET /getCampaignAnalyticsNumber"
+description: "Retrieve comprehensive analytics and performance metrics across all campaigns."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="date_range" type="string" default="last_30_days">
+  Predefined date range: `today`, `yesterday`, `last_7_days`, `last_30_days`, `custom`
+</ParamField>
+
+<ParamField query="start_date" type="string">
+  Required if date_range is `custom`
+</ParamField>
+
+<ParamField query="end_date" type="string">
+  Required if date_range is `custom`
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignAnalyticsNumber?date_range=last_30_days' \
+  --header 'x-api-key: your-api-key-here'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "total_campaigns": 45,
+    "active_campaigns": 12,
+    "total_calls": 125000,
+    "success_rate": 78.5,
+    "average_call_duration": 234,
+    "top_performing_campaigns": []
+  }
+}
+```
+
+</ResponseExample>

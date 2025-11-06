@@ -1,0 +1,47 @@
+---
+title: "Get Contact"
+api: "GET /fetchContact"
+description: "Retrieve detailed information about a specific contact."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="contact_id" type="string" required>
+  The unique identifier of the contact
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/fetchContact?contact_id=contact_123' \
+  --header 'x-api-key: your-api-key-here'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "id": "contact_123",
+    "name": "John Doe",
+    "phone_number": "+919876543210",
+    "email": "john@example.com",
+    "custom_fields": {
+      "company": "Acme Corp"
+    },
+    "created_at": "2024-01-15T10:00:00Z"
+  }
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,100 @@
+---
+title: "Get Campaign History"
+api: "POST /getHistory"
+description: "Retrieve call history and detailed logs for a specific campaign with pagination and filtering options."
+---
+
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your VoiceGenie API key for authentication
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="campaign_id" type="string" required>
+  The unique identifier of the campaign
+</ParamField>
+
+<ParamField body="limit" type="integer" default="50">
+  Maximum number of records to return
+</ParamField>
+
+<ParamField body="offset" type="integer" default="0">
+  Number of records to skip for pagination
+</ParamField>
+
+<ParamField body="status_filter" type="string">
+  Filter by call status: `answered`, `busy`, `no_answer`, `failed`
+</ParamField>
+
+<ParamField body="date_from" type="string">
+  Start date for filtering (ISO 8601 format)
+</ParamField>
+
+<ParamField body="date_to" type="string">
+  End date for filtering (ISO 8601 format)
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="properties">
+    <ResponseField name="history" type="array">
+      Array of call history objects
+    </ResponseField>
+    
+    <ResponseField name="pagination" type="object">
+      Pagination information
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getHistory' \
+  --header 'x-api-key: your-api-key-here' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "campaign_id": "550e8400-e29b-41d4-a716-446655440000",
+    "limit": 50,
+    "offset": 0,
+    "status_filter": "answered"
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "success": true,
+  "data": {
+    "history": [
+      {
+        "call_id": "call_123",
+        "contact_name": "John Doe",
+        "phone_number": "+919876543210",
+        "status": "answered",
+        "duration": 245,
+        "call_time": "2024-01-16T10:30:00Z",
+        "recording_url": "https://..."
+      }
+    ],
+    "pagination": {
+      "total": 750,
+      "limit": 50,
+      "offset": 0
+    }
+  }
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,533 @@
+---
+title: "AI Response Hook"
+api: "POST /responseHook"
+description: "Process user speech input, send to AI model, and return conversational response"
+---
+
+## 🤖 Overview
+
+This is the **core webhook** for AI-powered voice conversations. When a user speaks, Plivo sends the transcribed text here. VoiceGenie processes it through GPT-4, maintains conversation context, and returns the AI's response as XML.
+
+---
+
+##  Authentication
+
+<ParamField header="X-Plivo-Signature-V2" type="string" required>
+  HMAC SHA256 signature for webhook verification
+</ParamField>
+
+<ParamField header="x-api-key" type="string">
+  Optional API key for internal rate limiting
+</ParamField>
+
+---
+
+##  Request Body
+
+<ParamField body="CallUUID" type="string" required>
+  Unique call identifier
+  ```
+  call-uuid-abc123
+  ```
+</ParamField>
+
+<ParamField body="Speech" type="string" required>
+  Transcribed user speech
+  ```
+  I'm interested in your premium plan
+  ```
+</ParamField>
+
+<ParamField body="SpeechConfidence" type="number">
+  Confidence score (0.0 - 1.0)
+  ```
+  0.95
+  ```
+</ParamField>
+
+<ParamField body="UnstableSpeech" type="string">
+  Partial/interim transcription
+  ```
+  I'm interested...
+  ```
+</ParamField>
+
+<ParamField body="From" type="string">
+  Caller's phone number
+</ParamField>
+
+<ParamField body="To" type="string">
+  Called number
+</ParamField>
+
+<ParamField body="CallStatus" type="string">
+  Current call status: `in-progress`
+</ParamField>
+
+<ParamField body="Duration" type="integer">
+  Call duration so far (seconds)
+</ParamField>
+
+---
+
+## 🧠 AI Processing Flow
+
+```
+User speaks → Plivo transcribes → POST /responseHook
+                                           ↓
+                              1. Fetch conversation history from Redis
+                              2. Build context with script + history
+                              3. Send to OpenAI GPT-4
+                              4. Parse AI response
+                              5. Check end-call conditions
+                              6. Save to conversation log
+                              7. Generate XML response
+                                           ↓
+                              Return XML → Plivo speaks response → User hears
+```
+
+---
+
+## Response (XML)
+
+### Continue Conversation:
+```xml
+<Response>
+  <Speak voice="WOMAN" language="en-US">
+    That's great! Our premium plan includes unlimited calls, 
+    AI analytics, and priority support. It costs $99 per month. 
+    Would you like to know more about the features?
+  </Speak>
+  <GetInput 
+    action="https://your-domain.com/responseHook"
+    method="POST"
+    inputType="speech"
+    timeout="10"
+    maxSpeechTime="60"
+    speechTimeout="5"
+    interimSpeechResultsCallback="https://your-domain.com/interim-results"
+    interimSpeechResultsCallbackMethod="POST">
+    <Speak>I'm listening...</Speak>
+  </GetInput>
+</Response>
+```
+
+### End Call (Goal Achieved):
+```xml
+<Response>
+  <Speak>Perfect! I've sent the details to your email. 
+  Our team will contact you within 24 hours. Have a great day!</Speak>
+  <Hangup reason="call_completed" />
+</Response>
+```
+
+### Transfer to Human Agent:
+```xml
+<Response>
+  <Speak>I understand you'd like to speak with a specialist. 
+  Let me transfer you now.</Speak>
+  <Dial action="/call-transfer-complete" timeout="30">
+    <Number>+919876543210</Number>
+  </Dial>
+</Response>
+```
+
+---
+
+## AI Model Configuration
+
+VoiceGenie uses these AI models based on complexity:
+
+| Model | Use Case | Response Time | Cost |
+|-------|----------|---------------|------|
+| **GPT-3.5-turbo** | Simple queries | 0.5-1s | Low |
+| **GPT-4** | Complex reasoning | 2-4s | Medium |
+| **GPT-4-turbo** | Long context | 1-2s | High |
+
+---
+
+## 💾 Conversation Context
+
+Each call maintains context in Redis:
+
+```javascript
+{
+  call_uuid: "call-abc123",
+  script_id: "script-xyz",
+  conversation_history: [
+    {
+      role: "system",
+      content: "You are Alex, a sales assistant for VoiceGenie..."
+    },
+    {
+      role: "assistant",
+      content: "Hi, I'm Alex from VoiceGenie. How can I help you?"
+    },
+    {
+      role: "user",
+      content: "I'm interested in your premium plan"
+    },
+    {
+      role: "assistant",
+      content: "That's great! Our premium plan includes..."
+    }
+  ],
+  custom_data: {
+    customer_name: "John Doe",
+    lead_source: "website",
+    interest_level: "high"
+  },
+  turn_count: 3,
+  sentiment: "positive"
+}
+```
+
+**Context Window:** Up to 16,000 tokens (GPT-4-turbo)
+
+---
+
+## 🎭 Script Structure
+
+AI follows a predefined script with dynamic responses:
+
+```javascript
+{
+  script_id: "sales-script-v2",
+  initial_prompt: "Hi, I'm Alex from VoiceGenie. How can I help you today?",
+  
+  system_prompt: `You are a professional sales assistant for VoiceGenie, 
+  an AI-powered dialer service. Your goal is to:
+  - Understand customer needs
+  - Explain product features
+  - Handle objections
+  - Schedule demos
+  - Close deals
+  
+  Be conversational, friendly, and helpful. Keep responses under 50 words.`,
+  
+  conversation_flow: [
+    {
+      stage: "greeting",
+      objective: "Introduce yourself and ask how you can help",
+      success_criteria: "User states their interest"
+    },
+    {
+      stage: "needs_assessment",
+      objective: "Understand customer requirements",
+      questions: [
+        "What's your current calling setup?",
+        "How many calls do you make per day?",
+        "What challenges are you facing?"
+      ]
+    },
+    {
+      stage: "product_presentation",
+      objective: "Explain relevant features",
+      key_points: [
+        "AI-powered dialing",
+        "Real-time analytics",
+        "Multi-channel integration"
+      ]
+    },
+    {
+      stage: "objection_handling",
+      common_objections: {
+        "too_expensive": "Our ROI calculator shows...",
+        "not_interested": "May I ask what you're using currently?",
+        "need_time": "I understand. Can I send you some info?"
+      }
+    },
+    {
+      stage: "closing",
+      objective: "Schedule demo or close deal",
+      success_criteria: "Demo scheduled OR deal closed"
+    }
+  ],
+  
+  end_call_conditions: [
+    "User explicitly says goodbye",
+    "Demo scheduled successfully",
+    "User requests human agent",
+    "User is unresponsive (3 prompts)",
+    "Call duration exceeds 10 minutes"
+  ],
+  
+  variables: {
+    customer_name: "",
+    company_name: "",
+    phone_number: "",
+    email: "",
+    demo_date: "",
+    interest_level: ""
+  }
+}
+```
+
+---
+
+## 🎤 Speech Recognition Settings
+
+### Optimal Configuration:
+```xml
+<GetInput 
+  inputType="speech"
+  timeout="10"           <!-- Wait 10s for user to start speaking -->
+  maxSpeechTime="60"     <!-- Max 60s per response -->
+  speechTimeout="5"      <!-- 5s silence ends speech -->
+  profanityFilter="false" <!-- Don't censor words -->
+  interimSpeechResultsCallback="https://your-domain.com/interim-results">
+```
+
+### Supported Languages:
+- `en-US` - English (US)
+- `en-GB` - English (UK)
+- `en-IN` - English (India)
+- `hi-IN` - Hindi
+- `es-ES` - Spanish
+- `fr-FR` - French
+- `de-DE` - German
+
+---
+
+## Sentiment Analysis
+
+VoiceGenie analyzes sentiment in real-time:
+
+```javascript
+{
+  sentiment: "positive",      // positive | neutral | negative
+  confidence: 0.87,
+  emotions: ["interested", "curious"],
+  keywords: ["premium plan", "features", "pricing"],
+  intent: "purchase_inquiry"
+}
+```
+
+**Actions Based on Sentiment:**
+- **Negative** → Offer to transfer to manager
+- **Neutral** → Ask clarifying questions
+- **Positive** → Push towards demo/purchase
+
+---
+
+## Advanced Features
+
+### 1. Dynamic Variable Extraction
+
+AI automatically captures information:
+
+```javascript
+// User says: "My name is John Doe and my email is john@example.com"
+
+// AI extracts:
+{
+  variables: {
+    customer_name: "John Doe",
+    email: "john@example.com"
+  }
+}
+```
+
+### 2. Intelligent Call Routing
+
+```javascript
+// User says: "I want to cancel my subscription"
+
+// AI detects churn risk and transfers:
+return `
+  <Response>
+    <Speak>I understand this is important. Let me connect you with 
+    our retention specialist who can help.</Speak>
+    <Dial><Number>+919876543210</Number></Dial>
+  </Response>
+`;
+```
+
+### 3. Multi-Language Support
+
+```javascript
+// User speaks in Hindi
+Speech: "मुझे आपकी प्रीमियम योजना के बारे में जानना है"
+
+// AI responds in Hindi:
+<Speak language="hi-IN">
+  बहुत बढ़िया! हमारी प्रीमियम योजना में...
+</Speak>
+```
+
+---
+
+## ⚡ Performance Optimization
+
+### Caching Strategy:
+```javascript
+// Cache AI responses for common queries
+const cache = {
+  "what is voicegenie": "VoiceGenie is an AI-powered...",
+  "how much does it cost": "Our pricing starts at...",
+  "can i get a demo": "Absolutely! I can schedule..."
+};
+
+// Check cache first (< 50ms), then hit AI (1-3s)
+```
+
+### Parallel Processing:
+```javascript
+// Run sentiment analysis and AI response in parallel
+const [aiResponse, sentiment] = await Promise.all([
+  getAIResponse(conversationHistory),
+  analyzeSentiment(userSpeech)
+]);
+```
+
+---
+
+## 🧪 Testing
+
+### cURL Request:
+```bash
+curl -X POST https://your-domain.com/responseHook \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "X-Plivo-Signature-V2: YOUR_SIGNATURE" \
+  -d "CallUUID=test-call-123" \
+  -d "Speech=I'm interested in your premium plan" \
+  -d "SpeechConfidence=0.95" \
+  -d "From=+919876543210" \
+  -d "To=+911234567890"
+```
+
+### Python Test Script:
+```python
+import requests
+
+response = requests.post(
+    'https://your-domain.com/responseHook',
+    headers={
+        'X-Plivo-Signature-V2': 'YOUR_SIGNATURE',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data={
+        'CallUUID': 'test-call-123',
+        'Speech': "I'm interested in your premium plan",
+        'SpeechConfidence': 0.95,
+        'From': '+919876543210',
+        'To': '+911234567890'
+    }
+)
+
+print(response.text)  # Should be XML
+```
+
+---
+
+## 🚨 Error Handling
+
+### Low Confidence Speech:
+```javascript
+if (speechConfidence < 0.7) {
+  return `
+    <Response>
+      <Speak>I didn't catch that. Could you please repeat?</Speak>
+      <GetInput action="/responseHook" inputType="speech">
+        <Speak>I'm listening...</Speak>
+      </GetInput>
+    </Response>
+  `;
+}
+```
+
+### AI API Failure:
+```javascript
+try {
+  aiResponse = await openai.chat.completions.create(...);
+} catch (error) {
+  return `
+    <Response>
+      <Speak>I apologize, I'm having technical difficulties. 
+      Let me transfer you to a live agent.</Speak>
+      <Dial><Number>+919876543210</Number></Dial>
+    </Response>
+  `;
+}
+```
+
+### Timeout / No Speech:
+```xml
+<Response>
+  <Speak>Are you still there?</Speak>
+  <GetInput action="/responseHook" inputType="speech" timeout="10">
+    <Speak>Please say something if you can hear me.</Speak>
+  </GetInput>
+</Response>
+```
+
+---
+
+## Analytics Captured
+
+Every interaction logs:
+
+```javascript
+{
+  call_uuid: "call-abc123",
+  timestamp: "2024-01-16T10:30:45Z",
+  user_input: "I'm interested in your premium plan",
+  ai_response: "That's great! Our premium plan includes...",
+  speech_confidence: 0.95,
+  response_time_ms: 1250,
+  ai_model: "gpt-4",
+  tokens_used: 180,
+  sentiment: "positive",
+  intent: "purchase_inquiry",
+  variables_captured: ["interest_level"],
+  next_action: "continue_conversation"
+}
+```
+
+---
+
+## 📈 Performance Metrics
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Response Time | < 2s | 1.5s |
+| Speech Recognition Accuracy | > 90% | 93% |
+| AI Response Relevance | > 85% | 89% |
+| Conversation Completion Rate | > 70% | 75% |
+| User Satisfaction | > 4.0/5 | 4.2/5 |
+
+---
+
+## Related Endpoints
+
+- [Create AI Script](/api-reference/scripts/create-script) - Define conversation logic
+- [Get Conversation Logs](/api-reference/call-management/get-conversation-logs) - View full transcript
+- [WebSocket Events](/api-reference/websockets/real-time-events) - Real-time AI responses
+
+---
+
+## 💰 Rate Limits & Pricing
+
+| Plan | Requests/min | AI Tokens/month | Cost per 1K tokens |
+|------|--------------|-----------------|---------------------|
+| Free | 10 | 100K | $0.002 (GPT-3.5) |
+| Basic | 60 | 1M | $0.002 |
+| Pro | 300 | 10M | $0.03 (GPT-4) |
+| Enterprise | Unlimited | Unlimited | Custom |
+
+---
+
+## 📚 Best Practices
+
+1. **Keep responses concise** - Under 50 words for natural flow
+2. **Use context effectively** - Reference previous messages
+3. **Handle silence gracefully** - Max 3 prompts before ending
+4. **Detect intent early** - Route to right destination quickly
+5. **Capture variables** - Extract email, name, preferences
+6. **Monitor sentiment** - Adjust tone based on user mood
+7. **Test edge cases** - Profanity, multi-language, background noise
+8. **Optimize prompts** - Shorter prompts = faster responses
+
+---
+
+**This is the most critical webhook for AI voice agents!** 🚀

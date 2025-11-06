@@ -1,0 +1,174 @@
+---
+title: "Get Bot Response Time Analytics"
+api: "GET /botResTimeAnalytics"
+description: "Returns detailed bot response time analytics from voice session data with pagination"
+---
+
+## Overview
+
+Fetches bot response time analytics stored in `CustomerSpecificData.botResTimeAnalytics` field of voice sessions. Supports date filtering and pagination.
+
+---
+
+## Query Parameters
+
+<ParamField query="startDateTime" type="string">
+  Start date/time for filtering (ISO 8601 format). Example: `2024-01-15T00:00:00Z`
+</ParamField>
+
+<ParamField query="endDateTime" type="string">
+  End date/time for filtering (ISO 8601 format). Example: `2024-01-16T23:59:59Z`
+</ParamField>
+
+<ParamField query="skip" type="number" default="0">
+  Number of records to skip for pagination
+</ParamField>
+
+<ParamField query="limit" type="number" default="1000">
+  Maximum number of records to return
+</ParamField>
+
+---
+
+## Response
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "_id": "voice_session_id_1",
+      "updatedAt": "2024-01-16T10:25:30.000Z",
+      "botResTimeAnalytics": {
+        "totalResponseTime": 2.45,
+        "avgResponseTime": 1.22,
+        "maxResponseTime": 3.8,
+        "minResponseTime": 0.6,
+        "responseCount": 12,
+        "details": [
+          {
+            "turn": 1,
+            "userInput": "Hello",
+            "botResponse": "Hi! How can I help you?",
+            "responseTimeMs": 850
+          },
+          {
+            "turn": 2,
+            "userInput": "I need help with my account",
+            "botResponse": "Sure, let me pull up your account details.",
+            "responseTimeMs": 1200
+          }
+        ]
+      }
+    },
+    {
+      "_id": "voice_session_id_2",
+      "updatedAt": "2024-01-16T11:15:45.000Z",
+      "botResTimeAnalytics": {
+        "totalResponseTime": 3.2,
+        "avgResponseTime": 1.6,
+        "maxResponseTime": 2.5,
+        "minResponseTime": 0.8,
+        "responseCount": 8
+      }
+    }
+  ],
+  "message": "Data fetched."
+}
+```
+
+---
+
+## Error Response (500)
+
+```json
+{
+  "status": "failed",
+  "data": {},
+  "message": "Something went wrong!"
+}
+```
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```javascript JavaScript
+// Fetch bot response time analytics with date range
+const response = await fetch(
+  'https://api.voicegenie.ai/botResTimeAnalytics?' +
+  'startDateTime=2024-01-15T00:00:00Z&' +
+  'endDateTime=2024-01-16T23:59:59Z&' +
+  'skip=0&' +
+  'limit=100'
+);
+
+const data = await response.json();
+data.data.forEach(session => {
+  console.log(`Session ${session._id}:`);
+  console.log(`  Avg Response Time: ${session.botResTimeAnalytics.avgResponseTime}s`);
+  console.log(`  Max Response Time: ${session.botResTimeAnalytics.maxResponseTime}s`);
+});
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.voicegenie.ai/botResTimeAnalytics',
+    params={
+        'startDateTime': '2024-01-01T00:00:00Z',
+        'endDateTime': '2024-01-31T23:59:59Z',
+        'skip': 0,
+        'limit': 500
+    }
+)
+
+data = response.json()
+for session in data['data']:
+    analytics = session['botResTimeAnalytics']
+    print(f"Session: {session['_id']}")
+    print(f"  Avg: {analytics.get('avgResponseTime', 'N/A')}s")
+    print(f"  Max: {analytics.get('maxResponseTime', 'N/A')}s")
+```
+
+```bash cURL
+curl -X GET "https://api.voicegenie.ai/botResTimeAnalytics?startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z&skip=0&limit=100"
+```
+
+</CodeGroup>
+
+---
+
+## Field Descriptions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `_id` | string | Voice session MongoDB ObjectId |
+| `updatedAt` | string (ISO 8601) | Last update timestamp of the voice session |
+| `botResTimeAnalytics` | object | Bot response time analytics data (structure varies by implementation) |
+
+### Typical `botResTimeAnalytics` Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `totalResponseTime` | number | Total response time across all bot turns (seconds) |
+| `avgResponseTime` | number | Average response time per bot turn (seconds) |
+| `maxResponseTime` | number | Maximum response time observed (seconds) |
+| `minResponseTime` | number | Minimum response time observed (seconds) |
+| `responseCount` | number | Total number of bot responses in the session |
+| `details` | array | (Optional) Turn-by-turn breakdown with user input, bot response, and response time |
+
+---
+
+## Notes
+
+- **Date Filtering:** Dates are adjusted to start/end of day in `Asia/Kolkata` timezone
+- **Only Sessions with Analytics:** Returns only voice sessions that have `CustomerSpecificData.botResTimeAnalytics` field present
+- **Pagination:** Use `skip` and `limit` for paginating large result sets
+- **Default Limit:** 1000 records (can be adjusted via query param)
+- **Sorted:** Results are sorted by `updatedAt` in descending order (most recent first)
+- **Use Case:** Monitor bot performance, identify slow responses, optimize AI model latency
+- The structure of `botResTimeAnalytics` may vary based on implementation; inspect actual responses for exact schema
