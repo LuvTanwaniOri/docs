@@ -77,7 +77,7 @@ Retrieves the user document for a given `userId`, which contains the user's gene
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://api.voicegenie.ai/fetchNewGenerativeBotScript', {
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//fetchNewGenerativeBotScript', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ console.log(data.data.allowedRoutes);
 import requests
 
 response = requests.post(
-    'https://api.voicegenie.ai/fetchNewGenerativeBotScript',
+    'https://seamless-sandbox-dev-cm.oriserve.com//fetchNewGenerativeBotScript',
     json={'userId': '507f1f77bcf86cd799439011'}
 )
 
@@ -106,7 +106,7 @@ print(f"Allowed Routes: {data['data']['allowedRoutes']}")
 ```
 
 ```bash cURL
-curl -X POST https://api.voicegenie.ai/fetchNewGenerativeBotScript \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com//fetchNewGenerativeBotScript \
   -H "Content-Type: application/json" \
   -d '{"userId": "507f1f77bcf86cd799439011"}'
 ```

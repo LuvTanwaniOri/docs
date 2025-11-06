@@ -56,7 +56,7 @@ This endpoint is called when a call is hung up or cut unexpectedly. It:
 
 ```javascript JavaScript
 // Called by dialer webhook on call hangup
-const response = await fetch('https://api.voicegenie.ai/handleCampaignCallCut', {
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//handleCampaignCallCut', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -78,7 +78,7 @@ console.log(data.message);
 import requests
 
 response = requests.post(
-    'https://api.voicegenie.ai/handleCampaignCallCut',
+    'https://seamless-sandbox-dev-cm.oriserve.com//handleCampaignCallCut',
     json={
         'callId': 'call-uuid-abc123',
         'callDuration': 125,
@@ -93,7 +93,7 @@ print(data['message'])
 ```
 
 ```bash cURL
-curl -X POST https://api.voicegenie.ai/handleCampaignCallCut \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com//handleCampaignCallCut \
   -H "Content-Type: application/json" \
   -d '{
     "callId": "call-uuid-abc123",

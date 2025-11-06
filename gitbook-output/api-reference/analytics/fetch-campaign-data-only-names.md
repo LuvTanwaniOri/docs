@@ -70,7 +70,7 @@ Only returns campaigns where:
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://api.voicegenie.ai/fetchCampaignDataOnlyNamesAndAll');
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll');
 
 const data = await response.json();
 console.log(data.data); // Array of campaigns
@@ -84,7 +84,7 @@ data.data.forEach(campaign => {
 ```python Python
 import requests
 
-response = requests.get('https://api.voicegenie.ai/fetchCampaignDataOnlyNamesAndAll')
+response = requests.get('https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll')
 data = response.json()
 
 for campaign in data['data']:
@@ -92,7 +92,7 @@ for campaign in data['data']:
 ```
 
 ```bash cURL
-curl -X GET https://api.voicegenie.ai/fetchCampaignDataOnlyNamesAndAll
+curl -X GET https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll
 ```
 
 </CodeGroup>

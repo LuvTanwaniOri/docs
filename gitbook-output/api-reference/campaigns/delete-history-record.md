@@ -62,7 +62,7 @@ Soft-deletes a voice session by setting its `isDeleted` flag to `true`. The reco
 
 ```javascript JavaScript
 const callId = 'call-uuid-abc123';
-const response = await fetch(`https://api.voicegenie.ai/deleteHistoryRecord/${callId}`, {
+const response = await fetch(`https://seamless-sandbox-dev-cm.oriserve.com//deleteHistoryRecord/${callId}`, {
   method: 'DELETE'
 });
 
@@ -74,14 +74,14 @@ console.log(data.message); // "Deleted"
 import requests
 
 call_id = 'call-uuid-abc123'
-response = requests.delete(f'https://api.voicegenie.ai/deleteHistoryRecord/{call_id}')
+response = requests.delete(f'https://seamless-sandbox-dev-cm.oriserve.com//deleteHistoryRecord/{call_id}')
 
 data = response.json()
 print(data['message'])
 ```
 
 ```bash cURL
-curl -X DELETE https://api.voicegenie.ai/deleteHistoryRecord/call-uuid-abc123
+curl -X DELETE https://seamless-sandbox-dev-cm.oriserve.com//deleteHistoryRecord/call-uuid-abc123
 ```
 
 </CodeGroup>

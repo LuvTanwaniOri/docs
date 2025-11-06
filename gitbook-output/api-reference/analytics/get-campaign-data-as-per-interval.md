@@ -143,7 +143,7 @@ Returns aggregated campaign call records grouped by time interval (hourly or dai
 ```javascript JavaScript
 // Hourly data for multiple campaigns with timezone
 const response = await fetch(
-  'https://api.voicegenie.ai/getCampaignDataAsPerInterval?' +
+  'https://seamless-sandbox-dev-cm.oriserve.com//getCampaignDataAsPerInterval?' +
   'type=hourly&' +
   'campaignName=Campaign1,Campaign2&' +
   'startDateTime=2024-01-15T00:00:00Z&' +
@@ -164,7 +164,7 @@ import requests
 
 # Daily aggregation for single campaign
 response = requests.get(
-    'https://api.voicegenie.ai/getCampaignDataAsPerInterval',
+    'https://seamless-sandbox-dev-cm.oriserve.com//getCampaignDataAsPerInterval',
     params={
         'type': 'daywise',
         'campaignName': 'SalesOutreach',
@@ -182,7 +182,7 @@ for record in data['data']:
 ```
 
 ```bash cURL
-curl -X GET "https://api.voicegenie.ai/getCampaignDataAsPerInterval?type=hourly&campaignName=Campaign1&startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com//getCampaignDataAsPerInterval?type=hourly&campaignName=Campaign1&startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z" \
   -H "timezone: Europe/London"
 ```
 

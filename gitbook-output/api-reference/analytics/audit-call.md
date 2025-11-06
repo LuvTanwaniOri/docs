@@ -66,7 +66,7 @@ Allows quality assurance teams to audit a call by adding audit satisfaction rati
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://api.voicegenie.ai/auditCall', {
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//auditCall', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ console.log(data.data.voiceSession.auditDetails);
 import requests
 
 response = requests.post(
-    'https://api.voicegenie.ai/auditCall',
+    'https://seamless-sandbox-dev-cm.oriserve.com//auditCall',
     json={
         'callId': 'call-uuid-abc123',
         'auditSatisfaction': 'unsatisfied',
@@ -101,7 +101,7 @@ print(data['data']['voiceSession']['auditDetails'])
 ```
 
 ```bash cURL
-curl -X POST https://api.voicegenie.ai/auditCall \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com//auditCall \
   -H "Content-Type: application/json" \
   -d '{
     "callId": "call-uuid-abc123",

@@ -76,7 +76,7 @@ Both operations use the provided `userData` as the contact/campaign data.
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://api.voicegenie.ai/createContactAndCampaign', {
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//createContactAndCampaign', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -108,7 +108,7 @@ console.log(data.message);
 import requests
 
 response = requests.post(
-    'https://api.voicegenie.ai/createContactAndCampaign',
+    'https://seamless-sandbox-dev-cm.oriserve.com//createContactAndCampaign',
     json={
         'identifierName': 'support_followup_002',
         'userData': [
@@ -131,7 +131,7 @@ print(data['message'])
 ```
 
 ```bash cURL
-curl -X POST https://api.voicegenie.ai/createContactAndCampaign \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com//createContactAndCampaign \
   -H "Content-Type: application/json" \
   -d '{
     "identifierName": "onboarding_campaign_003",

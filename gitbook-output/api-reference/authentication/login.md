@@ -119,7 +119,7 @@ Authenticates a user by validating their credentials and Google reCAPTCHA token.
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://api.voicegenie.ai/auth/login', {
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//auth/login', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -141,7 +141,7 @@ console.log(data.data.name); // User's name
 import requests
 
 response = requests.post(
-    'https://api.voicegenie.ai/auth/login',
+    'https://seamless-sandbox-dev-cm.oriserve.com//auth/login',
     json={
         'email': 'user@example.com',
         'password': 'securePassword123',
@@ -155,7 +155,7 @@ print(data['data']['name'])
 ```
 
 ```bash cURL
-curl -X POST https://api.voicegenie.ai/auth/login \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com//auth/login \
   -H "Content-Type: application/json" \
   -c cookies.txt \
   -d '{

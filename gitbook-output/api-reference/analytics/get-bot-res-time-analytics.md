@@ -90,7 +90,7 @@ Fetches bot response time analytics stored in `CustomerSpecificData.botResTimeAn
 ```javascript JavaScript
 // Fetch bot response time analytics with date range
 const response = await fetch(
-  'https://api.voicegenie.ai/botResTimeAnalytics?' +
+  'https://seamless-sandbox-dev-cm.oriserve.com//botResTimeAnalytics?' +
   'startDateTime=2024-01-15T00:00:00Z&' +
   'endDateTime=2024-01-16T23:59:59Z&' +
   'skip=0&' +
@@ -109,7 +109,7 @@ data.data.forEach(session => {
 import requests
 
 response = requests.get(
-    'https://api.voicegenie.ai/botResTimeAnalytics',
+    'https://seamless-sandbox-dev-cm.oriserve.com//botResTimeAnalytics',
     params={
         'startDateTime': '2024-01-01T00:00:00Z',
         'endDateTime': '2024-01-31T23:59:59Z',
@@ -127,7 +127,7 @@ for session in data['data']:
 ```
 
 ```bash cURL
-curl -X GET "https://api.voicegenie.ai/botResTimeAnalytics?startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z&skip=0&limit=100"
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com//botResTimeAnalytics?startDateTime=2024-01-15T00:00:00Z&endDateTime=2024-01-16T23:59:59Z&skip=0&limit=100"
 ```
 
 </CodeGroup>
