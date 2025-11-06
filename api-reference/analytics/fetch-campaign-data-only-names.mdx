@@ -14,9 +14,75 @@ Only returns campaigns where:
 
 ---
 
-## Response
+## Headers
 
-```json
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  `application/json, text/plain, */*`
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., `https://seamless-sandbox-dev-cmdash.oriserve.com`)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
+## Response Fields
+
+<ResponseField name="status" type="string">
+  Status of the request (`success` or `failed`)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Response message
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of campaign objects
+  
+  <Expandable title="Campaign Object">
+    <ResponseField name="_id" type="string">
+      MongoDB ObjectId of the campaign document
+    </ResponseField>
+    
+    <ResponseField name="campaignName" type="string">
+      Human-readable campaign name
+    </ResponseField>
+    
+    <ResponseField name="campaignId" type="string">
+      Unique campaign identifier (business ID)
+    </ResponseField>
+    
+    <ResponseField name="status" type="string">
+      Current campaign status
+      
+      **Values:** `running`, `paused`, `completed`, `stopped`, `scheduled`, `draft`
+    </ResponseField>
+    
+    <ResponseField name="createdAt" type="string">
+      Campaign creation timestamp (ISO 8601)
+    </ResponseField>
+    
+    <ResponseField name="updatedAt" type="string">
+      Last update timestamp (ISO 8601)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Response Examples
+
+<ResponseExample>
+
+```json Success (200)
 {
   "status": "success",
   "data": [
@@ -35,31 +101,21 @@ Only returns campaigns where:
       "status": "completed",
       "createdAt": "2024-01-12T09:15:00.000Z",
       "updatedAt": "2024-01-15T18:45:00.000Z"
-    },
-    {
-      "_id": "507f1f77bcf86cd799439015",
-      "campaignName": "Customer Feedback Survey",
-      "campaignId": "CAMP-2024-003",
-      "status": "paused",
-      "createdAt": "2024-01-14T11:00:00.000Z",
-      "updatedAt": "2024-01-14T16:30:00.000Z"
     }
   ],
   "message": "Data loaded..."
 }
 ```
 
----
-
-## Error Response (500)
-
-```json
+```json Error (500)
 {
   "status": "failed",
   "data": {},
   "message": "Failed"
 }
 ```
+
+</ResponseExample>
 
 ---
 
@@ -68,7 +124,14 @@ Only returns campaigns where:
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll');
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll', {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json, text/plain, */*',
+    'Origin': 'https://seamless-sandbox-dev-cmdash.oriserve.com'
+  },
+  credentials: 'include' // Important: includes cookies
+});
 
 const data = await response.json();
 console.log(data.data); // Array of campaigns
@@ -82,15 +145,25 @@ data.data.forEach(campaign => {
 ```python Python
 import requests
 
-response = requests.get('https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll')
-data = response.json()
+response = requests.get(
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll',
+    headers={
+        'Accept': 'application/json, text/plain, */*',
+        'Origin': 'https://seamless-sandbox-dev-cmdash.oriserve.com'
+    }
+)
 
+data = response.json()
 for campaign in data['data']:
     print(f"{campaign['campaignName']} - {campaign['campaignId']} [{campaign['status']}]")
 ```
 
 ```bash cURL
-curl -X GET https://seamless-sandbox-dev-cm.oriserve.com//fetchCampaignDataOnlyNamesAndAll
+curl 'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Origin: https://seamless-sandbox-dev-cmdash.oriserve.com' \
+  -H 'Cookie: token=your_auth_token_here' \
+  --compressed
 ```
 
 </CodeGroup>

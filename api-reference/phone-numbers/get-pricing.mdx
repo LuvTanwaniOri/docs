@@ -12,8 +12,20 @@ Retrieve pricing information for phone numbers in a specific country including r
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -97,7 +109,7 @@ Retrieve pricing information for phone numbers in a specific country including r
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/pricing/IN" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/pricing/IN" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -107,7 +119,7 @@ const axios = require('axios');
 
 async function getPhonePricing(countryIso) {
   const response = await axios.get(
-    `https://api.voicegenie.com/pricing/${countryIso}`,
+    `https://seamless-sandbox-dev-cm.oriserve.com/pricing/${countryIso}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'
@@ -118,7 +130,7 @@ async function getPhonePricing(countryIso) {
   const pricing = response.data.data;
   
   console.log(`\n Pricing for ${pricing.country} (${pricing.country_iso})`);
-  console.log(`\n📞 Local Numbers:`);
+  console.log(`\nLocal Numbers:`);
   console.log(`   Monthly Rental: $${pricing.phone_numbers.local.monthly_rental_rate}`);
   console.log(`   Voice (per minute): $${pricing.phone_numbers.local.voice_rate.outbound}`);
   console.log(`   SMS (per message): $${pricing.phone_numbers.local.sms_rate.outbound}`);

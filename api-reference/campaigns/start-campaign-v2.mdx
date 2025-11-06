@@ -10,10 +10,24 @@ Start a campaign immediately with v2 endpoint that supports advanced features li
 
 ---
 
-##  Authentication
+## Headers
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -73,45 +87,61 @@ Start a campaign immediately with v2 endpoint that supports advanced features li
 
 ---
 
-## Code Examples
+<RequestExample>
 
-### cURL:
-```bash
-curl -X GET "https://api.voicegenie.com/startCampaignv2/507f1f77bcf86cd799439013" \
-  -H "x-api-key: YOUR_API_KEY"
+```bash cURL
+curl --request GET \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/{campaignId}' \
+  --header 'Accept: application/json' \
+  --cookie 'token=your_auth_token'
 ```
 
-### JavaScript:
-```javascript
-const axios = require('axios');
+```javascript JavaScript
+const campaignId = '507f1f77bcf86cd799439013';
 
-async function startCampaignV2(campaignId) {
-  try {
-    const response = await axios.get(
-      `https://api.voicegenie.com/startCampaignv2/${campaignId}`,
-      {
-        headers: {
-          'x-api-key': 'YOUR_API_KEY'
-        }
-      }
-    );
-    
+const options = {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json'
+  },
+  credentials: 'include'
+};
+
+fetch(`https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/${campaignId}`, options)
+  .then(response => response.json())
+  .then(data => {
     console.log('✅ Campaign started');
-    console.log('Total contacts:', response.data.data.total_contacts);
-    console.log('Estimated completion:', response.data.data.estimated_completion);
-    
-    return response.data.data;
-  } catch (error) {
-    if (error.response?.data?.error?.code === 'CAMPAIGN_ALREADY_RUNNING') {
-      console.log('⚠️ Campaign already running');
-    }
-    throw error;
-  }
+    console.log('Total contacts:', data.data.total_contacts);
+    console.log('Estimated completion:', data.data.estimated_completion);
+  })
+  .catch(error => console.error('Error:', error));
+```
+
+```python Python
+import requests
+
+campaign_id = "507f1f77bcf86cd799439013"
+url = f"https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/{campaign_id}"
+
+headers = {
+    "Accept": "application/json"
 }
 
-// Example
-startCampaignV2('507f1f77bcf86cd799439013');
+cookies = {
+    "token": "your_auth_token"
+}
+
+response = requests.get(url, headers=headers, cookies=cookies)
+data = response.json()
+
+if response.status_code == 200:
+    print("✅ Campaign started")
+    print(f"Total contacts: {data['data']['total_contacts']}")
+else:
+    print(f"Error: {data.get('message')}")
 ```
+
+</RequestExample>
 
 ---
 

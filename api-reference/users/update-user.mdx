@@ -4,7 +4,7 @@ api: "POST /updateUser"
 description: "Update user details including permissions, password, and access settings"
 ---
 
-## 🔄 Overview
+##  Overview
 
 Modify existing user account details. All fields are optional - only provide the fields you want to update.
 
@@ -12,8 +12,24 @@ Modify existing user account details. All fields are optional - only provide the
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -161,7 +177,7 @@ Modify existing user account details. All fields are optional - only provide the
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/updateUser" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/updateUser" \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -179,7 +195,7 @@ const axios = require('axios');
 async function updateUser(userId, updates) {
   try {
     const response = await axios.post(
-      'https://api.voicegenie.com/updateUser',
+      'https://seamless-sandbox-dev-cm.oriserve.com/updateUser',
       {
         userId,
         ...updates
@@ -211,7 +227,7 @@ updateUser('507f1f77bcf86cd799439011', {
 import requests
 
 def update_user(user_id, **updates):
-    url = "https://api.voicegenie.com/updateUser"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/updateUser"
     
     headers = {
         "Content-Type": "application/json",
@@ -314,7 +330,7 @@ async function promoteToManager(userId) {
 
 ---
 
-## 🚨 Important Notes
+##  Important Notes
 
 <Warning>
   **Partial Updates:** Only the fields provided in the request body are updated. All other fields remain unchanged.

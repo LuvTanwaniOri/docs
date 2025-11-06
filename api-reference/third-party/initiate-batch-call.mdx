@@ -4,13 +4,49 @@ api: "POST /initiateBatchCall"
 description: "Initiate calls to multiple contacts in a single request"
 ---
 
-## 📞 Overview
+## Overview
 
 Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contacts per request.
 
 ---
 
-##  Request Body
+## Headers
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+  
+  **Options:**
+  - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
+  - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
+</ParamField>
+
+<ParamField header="Cookie" type="string">
+  Alternative authentication via cookie: `token=<JWT_TOKEN>`
+  
+  Use this if not using Authorization header
+</ParamField>
+
+<ParamField header="Origin" type="string" required>
+  Origin of the request (must be whitelisted)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
+##  Authentication
+
+<Note>
+  **Static Batch Token** (recommended for integrations): Never expires, ideal for automated systems. Contact support to obtain your static token.
+</Note>
+
+---
 
 <ParamField body="agent_id" type="string" required>
   Script/Agent ID to use for all calls
@@ -84,7 +120,7 @@ Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contact
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/initiateBatchCall" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall" \
   -H "Content-Type: application/json" \
   -d '{
     "agent_id": "507f1f77bcf86cd799439011",
@@ -107,7 +143,7 @@ const axios = require('axios');
 
 async function initiateBatchCall(agentId, contacts) {
   const response = await axios.post(
-    'https://api.voicegenie.com/initiateBatchCall',
+    'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall',
     {
       agent_id: agentId,
       contacts: contacts

@@ -12,8 +12,20 @@ Get the complete conversation transcript including AI responses, user speech, ti
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -98,7 +110,7 @@ Get the complete conversation transcript including AI responses, user speech, ti
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/getConversationLogs/call-uuid-abc123" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/call-uuid-abc123" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -108,7 +120,7 @@ const axios = require('axios');
 
 async function getConversationLogs(callId) {
   const response = await axios.get(
-    `https://api.voicegenie.com/getConversationLogs/${callId}`,
+    `https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/${callId}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'
@@ -118,11 +130,11 @@ async function getConversationLogs(callId) {
   
   const { conversation, sentiment_analysis } = response.data.data;
   
-  console.log(`\n📞 Call: ${callId}`);
+  console.log(`\nCall: ${callId}`);
   console.log(`Sentiment: ${sentiment_analysis.overall_sentiment}\n`);
   
   conversation.forEach(msg => {
-    const speaker = msg.role === 'user' ? '👤 User' : '🤖 AI';
+    const speaker = msg.role === 'user' ? ' User' : '🤖 AI';
     console.log(`${speaker}: ${msg.content}`);
   });
   
@@ -138,7 +150,7 @@ getConversationLogs('call-uuid-abc123');
 import requests
 
 def get_conversation_logs(call_id):
-    url = f"https://api.voicegenie.com/getConversationLogs/{call_id}"
+    url = f"https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/{call_id}"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"
@@ -149,11 +161,11 @@ def get_conversation_logs(call_id):
     if response.status_code == 200:
         data = response.json()['data']
         
-        print(f"\n📞 Call: {call_id}")
+        print(f"\nCall: {call_id}")
         print(f"Sentiment: {data['sentiment_analysis']['overall_sentiment']}\n")
         
         for msg in data['conversation']:
-            speaker = "👤 User" if msg['role'] == 'user' else "🤖 AI"
+            speaker = " User" if msg['role'] == 'user' else "🤖 AI"
             print(f"{speaker}: {msg['content']}")
         
         return data

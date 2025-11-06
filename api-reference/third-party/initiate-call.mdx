@@ -4,16 +4,51 @@ api: "POST /initiateCall"
 description: "Initiate a single outbound call via third-party webhook"
 ---
 
-## 📞 Overview
+## Overview
 
 Trigger an outbound AI call to a single contact. This endpoint is designed for third-party integrations and webhooks.
+
+---
+
+## Headers
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+  
+  **Options:**
+  - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
+  - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
+</ParamField>
+
+<ParamField header="Cookie" type="string">
+  Alternative authentication via cookie: `token=<JWT_TOKEN>`
+  
+  Use this if not using Authorization header
+</ParamField>
+
+<ParamField header="Origin" type="string" required>
+  Origin of the request (must be whitelisted)
+  
+  Example: `https://seamless-sandbox-dev-cmdash.oriserve.com`
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
 
 ---
 
 ##  Authentication
 
 <Note>
-  This endpoint uses **webhook-based authentication** or **API key**. Check with your integration setup.
+  This endpoint supports **two authentication methods**:
+  
+  1. **Static Batch Token** (Recommended for integrations): Never expires, contact support to obtain
+  2. **Regular JWT Token**: Obtained from login endpoint, expires after 24 hours
 </Note>
 
 ---
@@ -86,7 +121,7 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/initiateCall" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall" \
   -H "Content-Type: application/json" \
   -d '{
     "phone_number": "+919876543210",
@@ -104,7 +139,7 @@ const axios = require('axios');
 async function initiateCall(phoneNumber, agentId, customData = {}) {
   try {
     const response = await axios.post(
-      'https://api.voicegenie.com/initiateCall',
+      'https://seamless-sandbox-dev-cm.oriserve.com/initiateCall',
       {
         phone_number: phoneNumber,
         agent_id: agentId,
@@ -136,7 +171,7 @@ initiateCall('+919876543210', '507f1f77bcf86cd799439011', {
 import requests
 
 def initiate_call(phone_number, agent_id, custom_data=None):
-    url = "https://api.voicegenie.com/initiateCall"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall"
     
     payload = {
         "phone_number": phone_number,

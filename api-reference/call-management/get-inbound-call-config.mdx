@@ -4,7 +4,7 @@ api: "POST /getAgentConfigAndUserDetailsForInboundCall"
 description: "Retrieve agent configuration for handling inbound calls"
 ---
 
-## 📞 Overview
+## Overview
 
 Get the configured AI script and settings for handling an inbound call to a specific phone number.
 
@@ -12,8 +12,24 @@ Get the configured AI script and settings for handling an inbound call to a spec
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -119,7 +135,7 @@ Get the configured AI script and settings for handling an inbound call to a spec
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/getAgentConfigAndUserDetailsForInboundCall" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/getAgentConfigAndUserDetailsForInboundCall" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -135,7 +151,7 @@ const axios = require('axios');
 async function getInboundCallConfig(phoneNumber, callerNumber) {
   try {
     const response = await axios.post(
-      'https://api.voicegenie.com/getAgentConfigAndUserDetailsForInboundCall',
+      'https://seamless-sandbox-dev-cm.oriserve.com/getAgentConfigAndUserDetailsForInboundCall',
       {
         phone_number: phoneNumber,
         caller_number: callerNumber

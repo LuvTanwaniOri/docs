@@ -6,8 +6,22 @@ description: "Invalidate the current authentication token and end the user sessi
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your VoiceGenie API key/token to invalidate
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ## Response
@@ -24,16 +38,13 @@ description: "Invalidate the current authentication token and end the user sessi
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/logout' \
-  --header 'x-api-key: your-api-key-here'
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/logout'
 ```
 
 ```javascript JavaScript
 const options = {
   method: 'GET',
-  headers: {
-    'x-api-key': 'your-api-key-here'
-  }
+  credentials: 'include'
 };
 
 fetch('https://seamless-sandbox-dev-cm.oriserve.com/logout', options)
@@ -51,11 +62,7 @@ import requests
 
 url = "https://seamless-sandbox-dev-cm.oriserve.com/logout"
 
-headers = {
-    "x-api-key": "your-api-key-here"
-}
-
-response = requests.get(url, headers=headers)
+response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())
 ```
 

@@ -12,8 +12,20 @@ Get detailed funnel analytics showing how calls progress through stages and wher
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -174,7 +186,7 @@ Get detailed funnel analytics showing how calls progress through stages and wher
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/callFunnelAnalytics?campaign_id=507f1f77bcf86cd799439013&start_date=2024-01-01T00:00:00Z" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/callFunnelAnalytics?campaign_id=507f1f77bcf86cd799439013&start_date=2024-01-01T00:00:00Z" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -184,7 +196,7 @@ const axios = require('axios');
 
 async function getCallFunnelAnalytics(filters) {
   const response = await axios.get(
-    'https://api.voicegenie.com/callFunnelAnalytics',
+    'https://seamless-sandbox-dev-cm.oriserve.com/callFunnelAnalytics',
     {
       params: filters,
       headers: {
@@ -231,7 +243,7 @@ import requests
 import matplotlib.pyplot as plt
 
 def visualize_funnel(campaign_id):
-    url = "https://api.voicegenie.com/callFunnelAnalytics"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/callFunnelAnalytics"
     
     params = {"campaign_id": campaign_id}
     headers = {"x-api-key": "YOUR_API_KEY"}

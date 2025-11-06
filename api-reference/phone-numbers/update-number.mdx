@@ -4,7 +4,7 @@ api: "POST /numbers/:number/update"
 description: "Update phone number configuration and settings"
 ---
 
-## ⚙️ Overview
+##  Overview
 
 Modify phone number settings including alias, application assignment, and script configuration.
 
@@ -12,8 +12,24 @@ Modify phone number settings including alias, application assignment, and script
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -105,7 +121,7 @@ Modify phone number settings including alias, application assignment, and script
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/numbers/919876543210/update" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/numbers/919876543210/update" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -122,7 +138,7 @@ const axios = require('axios');
 
 async function updatePhoneNumber(number, config) {
   const response = await axios.post(
-    `https://api.voicegenie.com/numbers/${number}/update`,
+    `https://seamless-sandbox-dev-cm.oriserve.com/numbers/${number}/update`,
     config,
     {
       headers: {

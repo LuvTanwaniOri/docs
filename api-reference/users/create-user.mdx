@@ -4,7 +4,7 @@ api: "POST /createUser"
 description: "Create a new user account with role-based access control (RBAC)"
 ---
 
-## 👤 Overview
+##  Overview
 
 Create new users for your organization with specific roles and permissions. Supports hierarchical access control for teams, managers, and agents.
 
@@ -12,8 +12,24 @@ Create new users for your organization with specific roles and permissions. Supp
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 <Warning>
@@ -243,7 +259,7 @@ Create new users for your organization with specific roles and permissions. Supp
 
 ---
 
-## 🎭 Role-Based Permissions
+##  Role-Based Permissions
 
 ### Default Permissions by Role:
 
@@ -276,7 +292,7 @@ Create new users for your organization with specific roles and permissions. Supp
 
 ### cURL:
 ```bash
-curl -X POST https://api.voicegenie.com/createUser \
+curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/createUser \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -298,7 +314,7 @@ const axios = require('axios');
 async function createUser(userData) {
   try {
     const response = await axios.post(
-      'https://api.voicegenie.com/createUser',
+      'https://seamless-sandbox-dev-cm.oriserve.com/createUser',
       {
         email: 'john.doe@company.com',
         password: 'SecureP@ss123',
@@ -332,7 +348,7 @@ createUser();
 import requests
 
 def create_user():
-    url = "https://api.voicegenie.com/createUser"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/createUser"
     
     headers = {
         "Content-Type": "application/json",
@@ -398,7 +414,7 @@ function validatePassword(password) {
 
 ---
 
-## 🚨 Common Errors
+##  Common Errors
 
 ### Email Already Exists:
 ```json
@@ -466,4 +482,4 @@ function validatePassword(password) {
 
 ---
 
-**Important:** The generated API key is displayed only once! Make sure to save it securely. 🔑
+**Important:** The generated API key is displayed only once! Make sure to save it securely. 

@@ -4,7 +4,7 @@ api: "POST /resetQuota"
 description: "Reset usage quota counters (admin only)"
 ---
 
-## 🔄 Overview
+##  Overview
 
 Reset quota usage counters to zero. Typically used at billing cycle renewal or for manual resets.
 
@@ -12,8 +12,24 @@ Reset quota usage counters to zero. Typically used at billing cycle renewal or f
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication (admin role required)
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -59,7 +75,7 @@ Reset quota usage counters to zero. Typically used at billing cycle renewal or f
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/resetQuota" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/resetQuota" \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{"resetType": "full"}'
@@ -71,7 +87,7 @@ const axios = require('axios');
 
 async function resetQuota(resetType = 'full') {
   const response = await axios.post(
-    'https://api.voicegenie.com/resetQuota',
+    'https://seamless-sandbox-dev-cm.oriserve.com/resetQuota',
     { resetType },
     {
       headers: {

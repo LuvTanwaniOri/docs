@@ -6,8 +6,26 @@ description: "Retrieve call history and detailed logs for a specific campaign wi
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
-  Your VoiceGenie API key for authentication
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required default="application/json">
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ## Body Parameters
@@ -59,7 +77,6 @@ description: "Retrieve call history and detailed logs for a specific campaign wi
 ```bash cURL
 curl --request POST \
   --url 'https://seamless-sandbox-dev-cm.oriserve.com/getHistory' \
-  --header 'x-api-key: your-api-key-here' \
   --header 'Content-Type: application/json' \
   --data '{
     "campaign_id": "550e8400-e29b-41d4-a716-446655440000",

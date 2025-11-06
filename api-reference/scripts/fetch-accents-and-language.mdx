@@ -12,8 +12,20 @@ Retrieve list of supported voice accents, languages, and voices for text-to-spee
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -106,7 +118,7 @@ Retrieve list of supported voice accents, languages, and voices for text-to-spee
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/fetchAccentsAndLanguageFromBackendServer" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/fetchAccentsAndLanguageFromBackendServer" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -116,7 +128,7 @@ const axios = require('axios');
 
 async function getAvailableVoices() {
   const response = await axios.get(
-    'https://api.voicegenie.com/fetchAccentsAndLanguageFromBackendServer',
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchAccentsAndLanguageFromBackendServer',
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'

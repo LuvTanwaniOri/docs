@@ -6,8 +6,22 @@ description: "Retrieve comprehensive analytics and performance metrics across al
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
-  Your VoiceGenie API key for authentication
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ## Query Parameters
@@ -28,8 +42,7 @@ description: "Retrieve comprehensive analytics and performance metrics across al
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignAnalyticsNumber?date_range=last_30_days' \
-  --header 'x-api-key: your-api-key-here'
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignAnalyticsNumber?date_range=last_30_days'
 ```
 
 </RequestExample>

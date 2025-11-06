@@ -4,7 +4,7 @@ api: "GET /fetchKnowledgeBase"
 description: "Retrieve knowledge base documents for AI context"
 ---
 
-## 📚 Overview
+## Overview
 
 Get the knowledge base content that AI uses for context during conversations.
 
@@ -12,8 +12,20 @@ Get the knowledge base content that AI uses for context during conversations.
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -57,7 +69,7 @@ Get the knowledge base content that AI uses for context during conversations.
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/fetchKnowledgeBase" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/fetchKnowledgeBase" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -67,7 +79,7 @@ const axios = require('axios');
 
 async function fetchKnowledgeBase() {
   const response = await axios.get(
-    'https://api.voicegenie.com/fetchKnowledgeBase',
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchKnowledgeBase',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }

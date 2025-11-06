@@ -1,41 +1,79 @@
 # Authentication
 
-All API requests to VoiceGenie require authentication using an API key.
+All API requests to VoiceGenie require authentication. This guide covers the authentication methods used across the platform.
 
-## API Key Authentication
+## Authentication Methods
 
-Include your API key in the request headers:
+### API Key Authentication
 
+For third-party integrations and server-to-server communication, use API key authentication.
+
+**Header:**
 ```bash
 x-api-key: your-api-key-here
 ```
 
-## How to Get Your API Key
+**Example:**
+```bash
+curl --request GET \
+  --url https://seamless-sandbox-dev-cm.oriserve.com/api/endpoint \
+  --header 'x-api-key: your-api-key-here' \
+  --header 'Content-Type: application/json'
+```
 
-1. Log in to your VoiceGenie dashboard
-2. Navigate to Settings > API Keys
+### Session-Based Authentication
+
+For dashboard and web application access, use session-based authentication with JWT tokens stored in httpOnly cookies.
+
+**Flow:**
+1. [Login](/api-reference/authentication/login) - Authenticate and receive session cookie
+2. [Verify Login](/api-reference/authentication/verify-login) - Check session validity
+3. [Logout](/api-reference/authentication/logout) - End session
+
+**Cookie Header:**
+```bash
+Cookie: token=your_jwt_token_here
+```
+
+## Common Headers
+
+### Required Headers
+
+| Header | Value | Description |
+|--------|-------|-------------|
+| `x-api-key` | Your API key | Required for API key authentication |
+| `Cookie` | `token=jwt_token` | Required for session authentication |
+| `Content-Type` | `application/json` | Required for requests with body |
+
+### Optional Headers
+
+| Header | Example | Description |
+|--------|---------|-------------|
+| `Origin` | `https://dashboard.voicegenie.com` | Request origin (CORS) |
+| `User-Agent` | Browser/client identifier | Client information |
+| `Accept` | `application/json` | Expected response format |
+
+## Getting Your API Key
+
+1. Log in to your [VoiceGenie Dashboard](https://dashboard.voicegenie.com)
+2. Navigate to **Settings** → **API Keys**
 3. Generate a new API key or copy your existing key
+4. Store securely in environment variables
 
 ## Security Best Practices
 
-- **Never share your API key** in public repositories or client-side code
-- **Rotate your keys regularly** for enhanced security
-- **Use environment variables** to store your API keys
-- **Implement IP whitelisting** when possible
-
-## Example Request
-
-```bash
-curl --request GET \
-  --url https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData \
-  --header 'x-api-key: your-api-key-here'
-```
+- Store API keys in environment variables, never in code
+- Use HTTPS for all API requests
+- Rotate API keys regularly (recommended: every 90 days)
+- Use different keys for development, staging, and production environments
+- Implement IP whitelisting when possible
+- Monitor API usage for suspicious activity
 
 ## Error Responses
 
-If authentication fails, you'll receive one of the following errors:
-
 ### 401 Unauthorized
+Invalid or missing authentication credentials.
+
 ```json
 {
   "success": false,
@@ -44,6 +82,8 @@ If authentication fails, you'll receive one of the following errors:
 ```
 
 ### 403 Forbidden
+Valid credentials but insufficient permissions.
+
 ```json
 {
   "success": false,
@@ -52,9 +92,232 @@ If authentication fails, you'll receive one of the following errors:
 ```
 
 ### 429 Too Many Requests
+Rate limit exceeded.
+
 ```json
 {
   "success": false,
   "message": "Rate limit exceeded. Please try again later."
 }
 ```
+
+## Rate Limits
+
+API requests are rate-limited per authentication key:
+
+| Plan | Requests/Minute | Requests/Hour |
+|------|-----------------|---------------|
+| Free | 60 | 1,000 |
+| Basic | 300 | 10,000 |
+| Pro | 1,000 | 50,000 |
+| Enterprise | Custom | Custom |
+
+Rate limit information is included in response headers:
+```bash
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1699276800
+```
+
+## Support
+
+For authentication issues or questions:
+- Email: support@voicegenie.com
+- Documentation: [Authentication Endpoints](/api-reference/authentication/login)
+
+## Common Request Headers
+
+### Required Headers
+| Header | Description | Example |
+|--------|-------------|---------|
+| `x-api-key` | Your API key for authentication | `your-api-key-here` |
+| `Content-Type` | Request payload format | `application/json` |
+
+### Optional Headers
+| Header | Description | Example |
+|--------|-------------|---------|
+| `Authorization` | Bearer token (if applicable) | `Bearer token123` |
+| `X-User-ID` | User identifier for tracking | `user123` |
+| `X-Request-ID` | Unique request identifier | `req-uuid-123` |
+
+## How to Get Your API Key
+
+### Step-by-Step Guide
+
+1. **Log in** to your VoiceGenie dashboard at [https://dashboard.voicegenie.com](https://dashboard.voicegenie.com)
+2. Navigate to **Settings** → **API Keys**
+3. Click **Generate New Key** or copy your existing key
+4. Store the key securely in your environment variables
+
+### Key Management
+- Each key is unique to your account
+- Multiple keys can be generated for different environments
+- Keys can be revoked or regenerated at any time
+
+## Authentication Endpoints
+
+VoiceGenie provides dedicated endpoints for authentication management:
+
+- **[Login](/api-reference/authentication/login)** - Authenticate user and create session
+- **[Verify Login](/api-reference/authentication/verify-login)** - Verify current session status
+- **[Logout](/api-reference/authentication/logout)** - End current session
+
+## Security Best Practices
+
+### API Key Security
+-  **Never share your API key** in public repositories or client-side code
+-  **Use environment variables** to store API keys
+-  **Rotate keys regularly** (recommended: every 90 days)
+-  **Use different keys** for development, staging, and production
+-  **Implement IP whitelisting** when possible
+-  **Monitor API key usage** for suspicious activity
+
+### Request Security
+-  **Always use HTTPS** for API requests
+-  **Validate webhook signatures** for incoming webhooks
+-  **Implement request rate limiting** on your end
+-  **Log authentication failures** for security monitoring
+-  **Set short session timeouts** for web applications
+
+### Password Security (for Session Auth)
+-  Use strong, unique passwords
+-  Enable two-factor authentication when available
+-  Don't store passwords in plain text
+-  Implement password rotation policies
+
+## Error Responses
+
+### 401 Unauthorized
+Missing or invalid API key.
+
+```json
+{
+  "success": false,
+  "message": "Invalid or missing API key"
+}
+```
+
+**Solutions:**
+- Verify your API key is correct
+- Check that the `x-api-key` header is included
+- Ensure your key hasn't been revoked
+
+### 403 Forbidden
+Valid API key but insufficient permissions.
+
+```json
+{
+  "success": false,
+  "message": "API key does not have permission to access this resource"
+}
+```
+
+**Solutions:**
+- Check your account permissions
+- Verify the endpoint requires your access level
+- Contact support to upgrade permissions
+
+### 429 Too Many Requests
+Rate limit exceeded.
+
+```json
+{
+  "success": false,
+  "message": "Rate limit exceeded. Please try again later."
+}
+```
+
+**Solutions:**
+- Implement exponential backoff
+- Reduce request frequency
+- Contact support for higher rate limits
+
+### 500 Internal Server Error
+Server-side authentication error.
+
+```json
+{
+  "success": false,
+  "message": "Authentication service temporarily unavailable"
+}
+```
+
+**Solutions:**
+- Retry the request after a delay
+- Check service status page
+- Contact support if issue persists
+
+## Rate Limiting
+
+VoiceGenie implements rate limiting to ensure service stability:
+
+| Tier | Requests per Minute | Requests per Hour |
+|------|---------------------|-------------------|
+| Free | 60 | 1,000 |
+| Basic | 300 | 10,000 |
+| Pro | 1,000 | 50,000 |
+| Enterprise | Custom | Custom |
+
+### Rate Limit Headers
+Response headers include rate limit information:
+
+```bash
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1699276800
+```
+
+## Testing Authentication
+
+### Quick Test with cURL
+```bash
+curl --request GET \
+  --url https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData \
+  --header 'x-api-key: your-api-key-here' \
+  --verbose
+```
+
+### Test with Postman
+1. Create a new request
+2. Add header: `x-api-key` with your key
+3. Send to any endpoint
+4. Check for 200 OK response
+
+### Test with JavaScript
+```javascript
+const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData', {
+  method: 'GET',
+  headers: {
+    'x-api-key': process.env.VOICEGENIE_API_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+### Test with Python
+```python
+import requests
+import os
+
+headers = {
+    'x-api-key': os.environ.get('VOICEGENIE_API_KEY'),
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData',
+    headers=headers
+)
+
+print(response.json())
+```
+
+## Support
+
+Having authentication issues? Contact us:
+- **Email**: support@voicegenie.com
+- **Documentation**: [API Reference](/api-reference/authentication/login)
+- **Status Page**: Check service status for outages

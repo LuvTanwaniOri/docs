@@ -12,8 +12,20 @@ Get real-time status information for all campaigns including call counts, succes
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -112,7 +124,7 @@ Get real-time status information for all campaigns including call counts, succes
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/getCampaignStatuses" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -122,7 +134,7 @@ const axios = require('axios');
 
 async function getCampaignStatuses(filters = {}) {
   const response = await axios.get(
-    'https://api.voicegenie.com/getCampaignStatuses',
+    'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses',
     {
       params: filters,
       headers: {
@@ -139,7 +151,7 @@ async function getCampaignStatuses(filters = {}) {
   console.log(`Overall Success Rate: ${summary.success_rate_overall}%\n`);
   
   campaigns.forEach(campaign => {
-    console.log(`📞 ${campaign.campaign_name}`);
+    console.log(`${campaign.campaign_name}`);
     console.log(`   Status: ${campaign.status}`);
     console.log(`   Progress: ${campaign.progress?.percentage}%`);
     console.log(`   Completed: ${campaign.call_statistics.completed}/${campaign.total_contacts}`);
@@ -158,7 +170,7 @@ getCampaignStatuses({ status: 'in_progress' });
 import requests
 
 def get_campaign_statuses(status=None):
-    url = "https://api.voicegenie.com/getCampaignStatuses"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses"
     
     params = {}
     if status:
@@ -176,7 +188,7 @@ def get_campaign_statuses(status=None):
         print(f"Active: {data['summary']['active_campaigns']}")
         
         for campaign in data['campaigns']:
-            print(f"\n📞 {campaign['campaign_name']}")
+            print(f"\n{campaign['campaign_name']}")
             print(f"   Status: {campaign['status']}")
             print(f"   Completed: {campaign['call_statistics']['completed']}/{campaign['total_contacts']}")
         

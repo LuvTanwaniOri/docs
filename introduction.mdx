@@ -24,12 +24,94 @@ All API requests require authentication using an API key in the request headers:
 x-api-key: your-api-key-here
 ```
 
-## Quick Links
+## API Features
 
-- [Authentication](/api-reference/authentication/login)
-- [Campaigns](/api-reference/campaign/get-all-campaigns)
-- [Contacts](/api-reference/contacts/create-contact)
-- [Analytics](/api-reference/analytics/get-day-wise-call-counts)
+VoiceGenie provides a comprehensive suite of APIs to manage your voice campaigns:
+
+### **Authentication**
+Secure login, logout, and verification endpoints to manage user sessions.
+- [Login](/api-reference/authentication/login)
+- [Verify Login](/api-reference/authentication/verify-login)
+- [Logout](/api-reference/authentication/logout)
+
+### **Campaign Management**
+Create, manage, and monitor your voice campaigns with full lifecycle control.
+- [Get All Campaigns](/api-reference/campaign/get-all-campaigns)
+- [Start Campaign](/api-reference/campaign/start-campaign)
+- [Upload Campaign Data](/api-reference/campaign/upload-campaign-data)
+- [Pause & Delete Campaigns](/api-reference/campaign/pause-campaign)
+- [Campaign Statistics & History](/api-reference/campaign/get-campaign-stats)
+
+### **Contact Management**
+Manage your contact database for targeted campaigns.
+- [Create Contact](/api-reference/contacts/create-contact)
+- [Get Contacts](/api-reference/contacts/get-contacts)
+- [Update & Delete Contacts](/api-reference/contacts/delete-contact)
+
+### **Scripts & AI Configuration**
+Configure AI bot scripts with custom accents, languages, and generative responses.
+- [Create Script](/api-reference/scripts/create-script)
+- [Fetch Accents & Languages](/api-reference/scripts/fetch-accents-and-language)
+- [Generative Bot Scripts](/api-reference/scripts/fetch-new-generative-bot-script)
+
+### **Analytics & Reporting**
+Comprehensive analytics to track campaign performance and call metrics.
+- [Day-wise Call Counts](/api-reference/analytics/get-day-wise-call-counts)
+- [Campaign Analytics](/api-reference/analytics/get-campaign-analytics)
+- [Bot Response Time Analytics](/api-reference/analytics/bot-response-time-analytics)
+- [Call Funnel Analytics](/api-reference/analytics/call-funnel-analytics)
+- [Audit Calls](/api-reference/analytics/audit-call)
+
+### **User Management**
+Manage team members and user permissions.
+- [Create User](/api-reference/users/create-user)
+- [Get All Users](/api-reference/users/get-all-users)
+- [Update & Delete Users](/api-reference/users/update-user)
+
+### **Knowledge Base**
+Build and manage your AI bot's knowledge base for intelligent responses.
+- [Fetch Knowledge Base](/api-reference/knowledge-base/fetch-knowledge-base)
+- [Update Knowledge Base](/api-reference/knowledge-base/update-knowledge-base)
+
+### **Phone Numbers**
+Search, purchase, and manage phone numbers for your campaigns.
+- [Search Numbers](/api-reference/phone-numbers/search-numbers)
+- [Buy Number](/api-reference/phone-numbers/buy-number)
+- [List Account Numbers](/api-reference/phone-numbers/list-account-numbers)
+- [Number Pricing & Lookup](/api-reference/phone-numbers/get-pricing)
+
+### **Call Management**
+Access call recordings, conversation logs, and manage inbound/outbound calls.
+- [Get Call Recordings](/api-reference/call-management/get-call-recordings)
+- [Conversation Logs](/api-reference/call-management/get-conversation-logs)
+- [AI Dialer Callbacks](/api-reference/call-management/ai-dialer-callback)
+
+### **Settings & Quota**
+Configure system settings and manage API quotas.
+- [Save Settings](/api-reference/settings/save-settings)
+- [Fetch Quota](/api-reference/settings/fetch-quota)
+- [Reset Quota](/api-reference/settings/reset-quota)
+
+### **Third-Party Integration**
+Integrate VoiceGenie with your existing systems.
+- [Initiate Single Call](/api-reference/third-party/initiate-call)
+- [Initiate Batch Calls](/api-reference/third-party/initiate-batch-call)
+- [Batch Call via Sheet](/api-reference/third-party/initiate-batch-call-using-sheet)
+
+### **Webhooks**
+Real-time notifications for call events and AI responses.
+- [Webhook Overview](/api-reference/webhooks/overview)
+- [Incoming Call Webhook](/api-reference/webhooks/incoming-call)
+- [AI Response Hook](/api-reference/webhooks/ai-response-hook)
+- [Recording Status](/api-reference/webhooks/recording-status)
+
+### **WebSockets**
+Real-time event streaming for live campaign monitoring.
+- [Real-Time Events](/api-reference/websockets/real-time-events)
+
+### **Automation**
+Schedule and automate recurring tasks.
+- [Schedule Crons](/api-reference/automation/schedule-crons)
 
 ## Rate Limiting
 

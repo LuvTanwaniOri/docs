@@ -6,8 +6,20 @@ description: "Retrieves detailed information about a specific campaign by its un
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
-  Your VoiceGenie API key for authentication
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ## Path Parameters
@@ -72,8 +84,7 @@ description: "Retrieves detailed information about a specific campaign by its un
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/campaign/550e8400-e29b-41d4-a716-446655440000' \
-  --header 'x-api-key: your-api-key-here'
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/campaign/{id}'
 ```
 
 ```javascript JavaScript
@@ -81,9 +92,7 @@ const campaignId = '550e8400-e29b-41d4-a716-446655440000';
 
 const options = {
   method: 'GET',
-  headers: {
-    'x-api-key': 'your-api-key-here'
-  }
+  credentials: 'include'
 };
 
 fetch(`https://seamless-sandbox-dev-cm.oriserve.com/campaign/${campaignId}`, options)
@@ -98,11 +107,7 @@ import requests
 campaign_id = "550e8400-e29b-41d4-a716-446655440000"
 url = f"https://seamless-sandbox-dev-cm.oriserve.com/campaign/{campaign_id}"
 
-headers = {
-    "x-api-key": "your-api-key-here"
-}
-
-response = requests.get(url, headers=headers)
+response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())
 ```
 

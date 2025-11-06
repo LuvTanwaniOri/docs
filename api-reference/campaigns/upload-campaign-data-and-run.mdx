@@ -12,8 +12,24 @@ Upload contact list and campaign configuration, then immediately start the campa
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -198,7 +214,7 @@ Upload contact list and campaign configuration, then immediately start the campa
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/uploadCampaignDataAndRun" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignDataAndRun" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -227,7 +243,7 @@ const axios = require('axios');
 
 async function uploadAndRunCampaign(campaignData) {
   const response = await axios.post(
-    'https://api.voicegenie.com/uploadCampaignDataAndRun',
+    'https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignDataAndRun',
     campaignData,
     {
       headers: {

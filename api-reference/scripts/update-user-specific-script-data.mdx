@@ -12,8 +12,24 @@ Modify user-specific script configurations without affecting the base script tem
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -151,7 +167,7 @@ const axios = require('axios');
 
 async function updateUserScriptData(scriptId, userId, customData) {
   const response = await axios.post(
-    'https://api.voicegenie.com/updateUserSpecificScriptData',
+    'https://seamless-sandbox-dev-cm.oriserve.com/updateUserSpecificScriptData',
     {
       script_id: scriptId,
       user_id: userId,

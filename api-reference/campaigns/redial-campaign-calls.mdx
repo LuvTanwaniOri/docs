@@ -4,7 +4,7 @@ api: "POST /redialCampaignCalls"
 description: "Retry failed or unanswered calls from a campaign"
 ---
 
-## 🔄 Overview
+##  Overview
 
 Manually trigger redial for specific calls or all failed/unanswered calls in a campaign.
 
@@ -12,8 +12,24 @@ Manually trigger redial for specific calls or all failed/unanswered calls in a c
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -118,7 +134,7 @@ Manually trigger redial for specific calls or all failed/unanswered calls in a c
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/redialCampaignCalls" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -136,7 +152,7 @@ const axios = require('axios');
 
 async function redialCampaignCalls(campaignId, criteria) {
   const response = await axios.post(
-    'https://api.voicegenie.com/redialCampaignCalls',
+    'https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls',
     {
       campaign_id: campaignId,
       redial_criteria: criteria
@@ -190,7 +206,7 @@ async function retryFailedCalls(campaignId) {
 ```javascript
 async function retrySpecificNumbers(campaignId, callUuids) {
   const response = await axios.post(
-    'https://api.voicegenie.com/redialCampaignCalls',
+    'https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls',
     {
       campaign_id: campaignId,
       call_uuids: callUuids

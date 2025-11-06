@@ -12,8 +12,20 @@ Search for available phone numbers by country, number type, pattern matching, an
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -144,7 +156,7 @@ Search for available phone numbers by country, number type, pattern matching, an
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/search?country_iso=IN&type=local&limit=20" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/search?country_iso=IN&type=local&limit=20" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -155,7 +167,7 @@ const axios = require('axios');
 async function searchPhoneNumbers(params) {
   try {
     const response = await axios.get(
-      'https://api.voicegenie.com/search',
+      'https://seamless-sandbox-dev-cm.oriserve.com/search',
       {
         params: {
           country_iso: 'IN',
@@ -183,7 +195,7 @@ searchPhoneNumbers();
 import requests
 
 def search_phone_numbers():
-    url = "https://api.voicegenie.com/search"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/search"
     
     params = {
         "country_iso": "IN",

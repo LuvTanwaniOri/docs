@@ -12,8 +12,20 @@ Get detailed analytics on AI bot response times, latency breakdown, and performa
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -141,7 +153,7 @@ Get detailed analytics on AI bot response times, latency breakdown, and performa
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/botResTimeAnalytics?interval=day&start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/botResTimeAnalytics?interval=day&start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -151,7 +163,7 @@ const axios = require('axios');
 
 async function getBotResponseTimeAnalytics(filters) {
   const response = await axios.get(
-    'https://api.voicegenie.com/botResTimeAnalytics',
+    'https://seamless-sandbox-dev-cm.oriserve.com/botResTimeAnalytics',
     {
       params: {
         start_date: filters.start_date,

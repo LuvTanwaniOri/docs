@@ -6,8 +6,22 @@ description: "Upload contact data for a new or existing campaign. Supports bulk 
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
-  Your VoiceGenie API key for authentication
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 <ParamField header="Content-Type" type="string" default="application/json">
@@ -89,7 +103,6 @@ description: "Upload contact data for a new or existing campaign. Supports bulk 
 ```bash cURL
 curl --request POST \
   --url 'https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignData' \
-  --header 'x-api-key: your-api-key-here' \
   --header 'Content-Type: application/json' \
   --data '{
     "campaign_name": "Summer Sale Campaign",

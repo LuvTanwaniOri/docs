@@ -12,8 +12,20 @@ Get the column configuration for campaign data tables including custom fields an
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -171,7 +183,7 @@ Get the column configuration for campaign data tables including custom fields an
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/getCampaignTableHeaderData" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -182,7 +194,7 @@ const axios = require('axios');
 async function buildCampaignTable() {
   // Get table configuration
   const configResponse = await axios.get(
-    'https://api.voicegenie.com/getCampaignTableHeaderData',
+    'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }
@@ -192,7 +204,7 @@ async function buildCampaignTable() {
   
   // Get campaign data
   const dataResponse = await axios.get(
-    'https://api.voicegenie.com/fetchCampaignData',
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }
@@ -243,14 +255,14 @@ function CampaignTable() {
     async function loadData() {
       // Get table config
       const configRes = await axios.get(
-        'https://api.voicegenie.com/getCampaignTableHeaderData',
+        'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData',
         { headers: { 'x-api-key': 'YOUR_API_KEY' } }
       );
       setTableConfig(configRes.data.data);
       
       // Get campaigns
       const dataRes = await axios.get(
-        'https://api.voicegenie.com/fetchCampaignData',
+        'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData',
         { headers: { 'x-api-key': 'YOUR_API_KEY' } }
       );
       setCampaigns(dataRes.data.data.campaigns);

@@ -4,7 +4,7 @@ api: "POST /oriIncomingCallHandler"
 description: "Handles incoming calls to purchased phone numbers and routes them using IVR logic"
 ---
 
-## 📞 Overview
+## Overview
 
 This webhook is triggered by Plivo/Oridial when someone calls your VoiceGenie phone number. It generates an XML response that controls call flow (IVR menu, routing to agents, voicemail, etc.).
 
@@ -339,7 +339,7 @@ async function handleIncomingCall(from) {
 
 ---
 
-## 🔄 Webhook Flow Diagram
+##  Webhook Flow Diagram
 
 ```
 Caller dials number → Plivo receives call → POST to /oriIncomingCallHandler
@@ -381,7 +381,7 @@ curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/oriIncomingCallHandler
 
 ---
 
-## 🚨 Error Handling
+##  Error Handling
 
 ### Invalid XML Response:
 If you return malformed XML, Plivo plays default error message.
@@ -415,7 +415,7 @@ Plivo retries 3 times with exponential backoff, then gives up.
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Plivo XML Reference](https://www.plivo.com/docs/voice/xml/)
 - [WebSocket Events](/api-reference/websockets/real-time-events)

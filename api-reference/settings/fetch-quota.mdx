@@ -12,8 +12,20 @@ Retrieve current account usage quota including calls, minutes, and remaining lim
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -59,7 +71,7 @@ Retrieve current account usage quota including calls, minutes, and remaining lim
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/fetchQuota" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/fetchQuota" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -69,7 +81,7 @@ const axios = require('axios');
 
 async function fetchQuota() {
   const response = await axios.get(
-    'https://api.voicegenie.com/fetchQuota',
+    'https://seamless-sandbox-dev-cm.oriserve.com/fetchQuota',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }

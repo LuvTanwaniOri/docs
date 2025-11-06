@@ -4,7 +4,7 @@ api: "GET /getAllUsers"
 description: "Fetch list of all users with their details (excluding passwords)"
 ---
 
-## 👥 Overview
+##  Overview
 
 Retrieve all users in the system. Passwords are automatically excluded from the response for security.
 
@@ -12,8 +12,20 @@ Retrieve all users in the system. Passwords are automatically excluded from the 
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -156,7 +168,7 @@ Retrieve all users in the system. Passwords are automatically excluded from the 
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/getAllUsers" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -167,7 +179,7 @@ const axios = require('axios');
 async function getAllUsers() {
   try {
     const response = await axios.get(
-      'https://api.voicegenie.com/getAllUsers',
+      'https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers',
       {
         headers: {
           'x-api-key': 'YOUR_API_KEY'
@@ -190,7 +202,7 @@ getAllUsers();
 import requests
 
 def get_all_users():
-    url = "https://api.voicegenie.com/getAllUsers"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"

@@ -4,7 +4,7 @@ api: "GET /numbers/:number"
 description: "Retrieve detailed information about a specific phone number"
 ---
 
-## 📞 Overview
+## Overview
 
 Get complete details for a specific phone number from Plivo, including configuration, pricing, and status.
 
@@ -12,8 +12,20 @@ Get complete details for a specific phone number from Plivo, including configura
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -71,7 +83,7 @@ Get complete details for a specific phone number from Plivo, including configura
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/numbers/919876543210" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/numbers/919876543210" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -81,7 +93,7 @@ const axios = require('axios');
 
 async function getPhoneNumberDetails(number) {
   const response = await axios.get(
-    `https://api.voicegenie.com/numbers/${number}`,
+    `https://seamless-sandbox-dev-cm.oriserve.com/numbers/${number}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'

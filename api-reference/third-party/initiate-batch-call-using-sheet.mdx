@@ -10,11 +10,41 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 
 ---
 
+## Headers
+
+<ParamField header="Content-Type" type="string" required>
+  multipart/form-data
+</ParamField>
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token for authentication
+  
+  **Options:**
+  - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
+  - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
+</ParamField>
+
+<ParamField header="Cookie" type="string">
+  Alternative authentication via cookie: `token=<JWT_TOKEN>`
+  
+  Use this if not using Authorization header
+</ParamField>
+
+<ParamField header="Origin" type="string" required>
+  Origin of the request (must be whitelisted)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
 ##  Authentication
 
-<ParamField header="x-api-key" type="string">
-  Optional API key for authentication
-</ParamField>
+<Note>
+  **Static Batch Token** (recommended for integrations): Never expires, ideal for automated file uploads. Contact support to obtain your static token.
+</Note>
 
 ---
 
@@ -93,7 +123,7 @@ phone_number,name,email,company,product_interest
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/initiateBatchCallUsingSheet" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet" \
   -F "batchFile=@/path/to/contacts.csv" \
   -F "agent_id=507f1f77bcf86cd799439011" \
   -F "campaign_id=campaign_abc123"
@@ -112,7 +142,7 @@ async function initiateBatchCallUsingSheet(filePath, agentId, campaignId) {
   if (campaignId) form.append('campaign_id', campaignId);
   
   const response = await axios.post(
-    'https://api.voicegenie.com/initiateBatchCallUsingSheet',
+    'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet',
     form,
     {
       headers: form.getHeaders()
@@ -138,7 +168,7 @@ initiateBatchCallUsingSheet(
 import requests
 
 def initiate_batch_call_using_sheet(file_path, agent_id, campaign_id=None):
-    url = "https://api.voicegenie.com/initiateBatchCallUsingSheet"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet"
     
     files = {
         "batchFile": open(file_path, "rb")
@@ -173,7 +203,7 @@ initiate_batch_call_using_sheet(
 
 ---
 
-## 🔧 Multer Configuration
+##  Multer Configuration
 
 ```javascript
 const multer = require('multer');

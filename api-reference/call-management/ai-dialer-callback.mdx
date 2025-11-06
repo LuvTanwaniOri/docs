@@ -4,7 +4,7 @@ api: "POST /aiDialerCallbackWithData"
 description: "Handle AI dialer webhook callbacks with call data"
 ---
 
-## 🔄 Overview
+##  Overview
 
 Webhook endpoint for receiving call status updates and events from AI dialer system. Used internally by VoiceGenie infrastructure.
 
@@ -169,7 +169,7 @@ app.post('/webhook/ai-dialer-callback', express.json(), async (req, res) => {
   
   const { call_uuid, event, call_data } = req.body;
   
-  console.log(`📞 Call Event: ${event} for ${call_uuid}`);
+  console.log(`Call Event: ${event} for ${call_uuid}`);
   
   // Process based on event type
   switch (event) {

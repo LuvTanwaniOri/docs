@@ -12,8 +12,20 @@ Fetch call recordings with S3 URLs, duration, and metadata. Supports filtering a
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -96,7 +108,7 @@ Fetch call recordings with S3 URLs, duration, and metadata. Supports filtering a
 
 ### cURL:
 ```bash
-curl -X GET "https://api.voicegenie.com/callRecordings?campaign_id=campaign_xyz789&page=1&limit=20" \
+curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/callRecordings?campaign_id=campaign_xyz789&page=1&limit=20" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -106,7 +118,7 @@ const axios = require('axios');
 
 async function getCallRecordings(filters = {}) {
   const response = await axios.get(
-    'https://api.voicegenie.com/callRecordings',
+    'https://seamless-sandbox-dev-cm.oriserve.com/callRecordings',
     {
       params: {
         campaign_id: filters.campaign_id,

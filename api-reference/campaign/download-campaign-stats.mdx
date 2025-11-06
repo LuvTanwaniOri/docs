@@ -6,8 +6,22 @@ description: "Download a comprehensive Excel/CSV report of campaign statistics a
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
-  Your VoiceGenie API key for authentication
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ## Query Parameters
@@ -34,8 +48,7 @@ The endpoint returns a downloadable file (Excel or CSV) containing:
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/downloadCampaignStats?campaign_id=550e8400-e29b-41d4-a716-446655440000&format=xlsx' \
-  --header 'x-api-key: your-api-key-here' \
+  --url 'https://seamless-sandbox-dev-cm.oriserve.com/downloadCampaignStats?campaign_id={campaign_id}&format=xlsx' \
   --output campaign_report.xlsx
 ```
 
@@ -44,9 +57,7 @@ const campaignId = '550e8400-e29b-41d4-a716-446655440000';
 const format = 'xlsx';
 
 fetch(`https://seamless-sandbox-dev-cm.oriserve.com/downloadCampaignStats?campaign_id=${campaignId}&format=${format}`, {
-  headers: {
-    'x-api-key': 'your-api-key-here'
-  }
+  credentials: 'include'
 })
 .then(response => response.blob())
 .then(blob => {

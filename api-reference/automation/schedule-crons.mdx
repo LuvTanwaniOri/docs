@@ -12,8 +12,24 @@ Schedule automated recurring tasks like report generation, data cleanup, or camp
 
 ##  Authentication
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="Cookie" type="string" required>
   Your API key for authentication
+</ParamField>
+
+<ParamField header="Accept" type="string">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
 </ParamField>
 
 ---
@@ -123,7 +139,7 @@ Schedule automated recurring tasks like report generation, data cleanup, or camp
 
 ### cURL:
 ```bash
-curl -X POST "https://api.voicegenie.com/scheduleCrons" \
+curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/scheduleCrons" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -142,7 +158,7 @@ const axios = require('axios');
 
 async function scheduleCronJob(config) {
   const response = await axios.post(
-    'https://api.voicegenie.com/scheduleCrons',
+    'https://seamless-sandbox-dev-cm.oriserve.com/scheduleCrons',
     config,
     {
       headers: {
@@ -195,7 +211,7 @@ scheduleCronJob({
 import requests
 
 def schedule_cron_job(queue_name, action_name, cron_expression, timezone="Asia/Calcutta"):
-    url = "https://api.voicegenie.com/scheduleCrons"
+    url = "https://seamless-sandbox-dev-cm.oriserve.com/scheduleCrons"
     
     payload = {
         "queueName": queue_name,
