@@ -22,33 +22,17 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
 
 ---
 
-## Authentication
-
-<Note>
-  **Recommended:** Use a **Static Batch Token** for integrations - it never
-  expires! Contact support to get yours.
-</Note>
-
----
-
 ## Headers
 
 <ParamField header="Content-Type" type="string" default="application/json">
   Set to application/json for JSON requests
 </ParamField>
 
-<ParamField header="Authorization" type="string">
-  Bearer token for authentication (optional)
-  
-  **Options:**
-  - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
-  - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
-</ParamField>
 
 <ParamField header="Origin" type="string">
   Origin of the request (must be whitelisted)
   
-  Example: `https://vb-seamless-dev-backend.oriserve.com/`
+  Example: `vb-seamless-dev-backend.oriserve.com/`
 </ParamField>
 
 ---
@@ -57,10 +41,14 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
 
 <ParamField body="campaignId" type="string" required>
   Campaign ID that links all calls to a specific campaign
+  
+  Example: `b885b212-d3bb-482f-a29d-508d2a8929ac`
 </ParamField>
 
 <ParamField body="notificationWebhookUrl" type="string">
   Webhook URL for batch processing updates (optional)
+  
+  Example: `https://your-webhook.com/batch-updates`
 </ParamField>
 
 <ParamField

@@ -2,7 +2,6 @@
 title: "Initiate Call"
 api: "POST /initiateCall"
 description: "Initiate a single outbound call via third-party webhook"
-auth: "bearer"
 ---
 
 ## Overview
@@ -17,37 +16,13 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
   application/json
 </ParamField>
 
-<ParamField header="Authorization" type="string" required>
-  Bearer token for authentication
-  
-  **Options:**
-  - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
-  - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
-</ParamField>
-
-<ParamField header="Cookie" type="string">
-  Alternative authentication via cookie: `token=<JWT_TOKEN>`
-  
-  Use this if not using Authorization header
-</ParamField>
 
 <ParamField header="Origin" type="string">
   Origin of the request (must be whitelisted)
   
-  Example: `https://vb-seamless-dev-backend.oriserve.com/`
+  Example: `vb-seamless-dev-backend.oriserve.com/`
 </ParamField>
 
-
----
-
-##  Authentication
-
-<Note>
-  This endpoint supports **two authentication methods**:
-  
-  1. **Static Batch Token** (Recommended for integrations): Never expires, contact support to obtain
-  2. **Regular JWT Token**: Obtained from login endpoint, expires after 24 hours
-</Note>
 
 ---
 
@@ -55,16 +30,14 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 <ParamField body="campaignId" type="string" required>
   Campaign ID to associate call with
-  ```
-  b885b212-d3bb-482f-a29d-508d2a8929ac
-  ```
+  
+  Example: `b885b212-d3bb-482f-a29d-508d2a8929ac`
 </ParamField>
 
 <ParamField body="notificationWebhookUrl" type="string">
   Optional webhook URL for call status notifications
-  ```
-  https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata
-  ```
+  
+  Example: `https://your-webhook-url.com/callback`
 </ParamField>
 
 <ParamField body="userName" type="string" required>
@@ -76,9 +49,12 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 <ParamField body="userPhoneNumber" type="string" required>
   Recipient phone number (without + prefix)
-  ```
-  919625147093
-  ```
+  
+  Examples:
+  - India: `919625147093`
+  - USA: `14155551234`
+  - UK: `447700123456`
+  - UAE: `971501234567`
 </ParamField>
 
 <ParamField body="metaData" type="object" required>
