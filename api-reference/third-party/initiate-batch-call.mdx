@@ -156,6 +156,53 @@ Each user in the `users` array should have:
 }
 ```
 
+<RequestExample>
+```json
+{
+  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+  "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
+  "users": [
+    {
+      "userName": "Rajesh Kumar",
+      "userPhoneNumber": "919876543210",
+      "metaData": {
+        "customer_id": "CUST_12345",
+        "account_number": "ACC789123456",
+        "due_amount": "25000",
+        "due_date": "2025-12-15",
+        "loan_type": "Personal Loan",
+        "company_name": "HDFC Bank",
+        "branch_code": "HDFC001",
+        "payment_reminder": "true",
+        "language_preference": "Hindi",
+        "last_payment_date": "2025-10-15",
+        "overdue_days": "24",
+        "contact_attempt": "3"
+      }
+    },
+    {
+      "userName": "John Smith",
+      "userPhoneNumber": "14155551234",
+      "metaData": {
+        "customer_id": "CUST_67890",
+        "account_number": "ACC456789123",
+        "due_amount": "15000",
+        "due_date": "2025-11-28",
+        "loan_type": "Auto Loan",
+        "company_name": "Chase Bank",
+        "branch_code": "CHASE_NYC",
+        "payment_reminder": "false",
+        "language_preference": "English",
+        "last_payment_date": "2025-09-28",
+        "overdue_days": "15",
+        "contact_attempt": "2"
+      }
+    }
+  ]
+}
+```
+</RequestExample>
+
 ---
 
 ## Response
@@ -349,7 +396,10 @@ curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall" \
           "company_name": "Chase Bank",
           "branch_code": "CHASE_NYC",
           "payment_reminder": "false",
-          "language_preference": "English"
+          "language_preference": "English",
+          "last_payment_date": "2025-09-28",
+          "overdue_days": "15",
+          "contact_attempt": "2"
         }
       }
     ]
