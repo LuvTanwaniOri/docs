@@ -17,7 +17,7 @@ description: "Retrieves a paginated list of campaigns for the current user with 
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -122,7 +122,7 @@ description: "Retrieves a paginated list of campaigns for the current user with 
 curl --request GET \
   --url 'https://vb-seamless-dev-backend.oriserve.com/fetchCampaignData?limit={limit}&offset={offset}&call_count={call_count}' \
   --header 'Accept: application/json' \
-  --header 'Origin: https://seamless-sandbox-dev-cmdash.oriserve.com' \
+  --header 'Origin: https://vb-seamless-dev-backend.oriserve.com/' \
   --cookie 'token=your_auth_token'
 ```
 
@@ -135,7 +135,7 @@ const options = {
   method: 'GET',
   headers: {
     'Accept': 'application/json',
-    'Origin': 'https://seamless-sandbox-dev-cmdash.oriserve.com'
+    'Origin': 'https://vb-seamless-dev-backend.oriserve.com/'
   },
   credentials: 'include'
 };
@@ -153,7 +153,7 @@ url = "https://vb-seamless-dev-backend.oriserve.com/fetchCampaignData"
 
 headers = {
     "Accept": "application/json",
-    "Origin": "https://seamless-sandbox-dev-cmdash.oriserve.com"
+    "Origin": "https://vb-seamless-dev-backend.oriserve.com/"
 }
 
 params = {
@@ -181,7 +181,7 @@ curl_setopt_array($curl, [
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_HTTPHEADER => [
     "Accept: application/json",
-    "Origin: https://seamless-sandbox-dev-cmdash.oriserve.com",
+    "Origin: https://vb-seamless-dev-backend.oriserve.com/",
     "Cookie: token=your_auth_token"
   ],
 ]);

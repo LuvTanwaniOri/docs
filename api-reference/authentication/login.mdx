@@ -22,7 +22,7 @@ Authenticates a user by validating their credentials and Google reCAPTCHA token.
 <ParamField header="Origin" type="string" required>
   Origin of the request (must be whitelisted in CORS configuration)
   
-  Example: `https://seamless-sandbox-dev-cmdash.oriserve.com`
+  Example: `https://vb-seamless-dev-backend.oriserve.com/`
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -206,7 +206,7 @@ Authenticates a user by validating their credentials and Google reCAPTCHA token.
 curl --request POST \
   --url https://vb-seamless-dev-backend.oriserve.com/auth/login \
   --header 'Content-Type: application/json' \
-  --header 'Origin: https://seamless-sandbox-dev-cmdash.oriserve.com' \
+  --header 'Origin: https://vb-seamless-dev-backend.oriserve.com/' \
   --data '{
   "email": "user@example.com",
   "password": "securePassword123",
@@ -219,7 +219,7 @@ const response = await fetch('https://vb-seamless-dev-backend.oriserve.com/auth/
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Origin': 'https://seamless-sandbox-dev-cmdash.oriserve.com'
+    'Origin': 'https://vb-seamless-dev-backend.oriserve.com/'
   },
   credentials: 'include',
   body: JSON.stringify({
@@ -240,7 +240,7 @@ url = "https://vb-seamless-dev-backend.oriserve.com/auth/login"
 
 headers = {
     "Content-Type": "application/json",
-    "Origin": "https://seamless-sandbox-dev-cmdash.oriserve.com"
+    "Origin": "https://vb-seamless-dev-backend.oriserve.com/"
 }
 
 payload = {
