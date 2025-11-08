@@ -48,36 +48,39 @@ Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contact
 
 ---
 
-<ParamField body="agent_id" type="string" required>
-  Script/Agent ID to use for all calls
+##  Request Body
+
+<ParamField body="campaignId" type="string" required>
+  Campaign ID to associate all calls with
   ```
-  507f1f77bcf86cd799439011
+  b885b212-d3bb-482f-a29d-508d2a8929ac
   ```
 </ParamField>
 
-<ParamField body="campaign_id" type="string">
-  Optional campaign ID to associate calls with
+<ParamField body="notificationWebhookUrl" type="string">
+  Optional webhook URL for call status notifications
   ```
-  campaign_abc123
+  https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata
   ```
 </ParamField>
 
-<ParamField body="contacts" type="array" required>
-  Array of contact objects (max 1000)
+<ParamField body="users" type="array" required>
+  Array of user objects (max 1000)
   ```json
   [
     {
-      "phone_number": "+919876543210",
-      "custom_data": {
-        "name": "John Doe",
-        "account_id": "ACC-001"
-      }
-    },
-    {
-      "phone_number": "+919876543211",
-      "custom_data": {
-        "name": "Jane Smith",
-        "account_id": "ACC-002"
+      "userName": "Faiz",
+      "userPhoneNumber": "919625147093",
+      "metaData": {
+        "due_amount": "4500",
+        "due_amount_half": "2250",
+        "due_date": "2025-09-03",
+        "allocation_month": "2025-09-01",
+        "company_name": "H-D-B financial services",
+        "loan_id": "1234",
+        "company_id": "23332000",
+        "communication_level": "applicant",
+        "product_description": "two wheeler"
       }
     }
   ]
@@ -94,19 +97,15 @@ Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contact
   "success": true,
   "message": "Batch call initiated successfully",
   "data": {
-    "total_contacts": 2,
-    "calls_initiated": 2,
+    "total_users": 1,
+    "calls_initiated": 1,
     "calls_failed": 0,
     "batch_id": "batch_xyz789",
     "calls": [
       {
         "call_uuid": "call-uuid-001",
-        "phone_number": "+919876543210",
-        "status": "initiated"
-      },
-      {
-        "call_uuid": "call-uuid-002",
-        "phone_number": "+919876543211",
+        "userName": "Faiz",
+        "userPhoneNumber": "919625147093",
         "status": "initiated"
       }
     ]
@@ -123,15 +122,23 @@ Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contact
 curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall" \
   -H "Content-Type: application/json" \
   -d '{
-    "agent_id": "507f1f77bcf86cd799439011",
-    "contacts": [
+    "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+    "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+    "users": [
       {
-        "phone_number": "+919876543210",
-        "custom_data": {"name": "John Doe"}
-      },
-      {
-        "phone_number": "+919876543211",
-        "custom_data": {"name": "Jane Smith"}
+        "userName": "Faiz",
+        "userPhoneNumber": "919625147093",
+        "metaData": {
+          "due_amount": "4500",
+          "due_amount_half": "2250",
+          "due_date": "2025-09-03",
+          "allocation_month": "2025-09-01",
+          "company_name": "H-D-B financial services",
+          "loan_id": "1234",
+          "company_id": "23332000",
+          "communication_level": "applicant",
+          "product_description": "two wheeler"
+        }
       }
     ]
   }'
@@ -141,13 +148,19 @@ curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall" \
 ```javascript
 const axios = require('axios');
 
-async function initiateBatchCall(agentId, contacts) {
+async function initiateBatchCall(campaignId, users, notificationWebhookUrl = null) {
+  const payload = {
+    campaignId: campaignId,
+    users: users
+  };
+  
+  if (notificationWebhookUrl) {
+    payload.notificationWebhookUrl = notificationWebhookUrl;
+  }
+  
   const response = await axios.post(
     'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall',
-    {
-      agent_id: agentId,
-      contacts: contacts
-    }
+    payload
   );
   
   console.log(`✅ ${response.data.data.calls_initiated} calls initiated`);
@@ -155,12 +168,29 @@ async function initiateBatchCall(agentId, contacts) {
 }
 
 // Example
-const contacts = [
-  { phone_number: '+919876543210', custom_data: { name: 'John Doe' } },
-  { phone_number: '+919876543211', custom_data: { name: 'Jane Smith' } }
+const users = [
+  {
+    userName: "Faiz",
+    userPhoneNumber: "919625147093",
+    metaData: {
+      "due_amount": "4500",
+      "due_amount_half": "2250",
+      "due_date": "2025-09-03",
+      "allocation_month": "2025-09-01",
+      "company_name": "H-D-B financial services",
+      "loan_id": "1234",
+      "company_id": "23332000",
+      "communication_level": "applicant",
+      "product_description": "two wheeler"
+    }
+  }
 ];
 
-initiateBatchCall('507f1f77bcf86cd799439011', contacts);
+initiateBatchCall(
+  'b885b212-d3bb-482f-a29d-508d2a8929ac', 
+  users,
+  'https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata'
+);
 ```
 
 ---
