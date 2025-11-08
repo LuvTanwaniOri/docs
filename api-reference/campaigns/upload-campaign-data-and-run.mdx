@@ -21,7 +21,7 @@ Upload contact list and campaign configuration, then immediately start the campa
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -214,7 +214,7 @@ Upload contact list and campaign configuration, then immediately start the campa
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignDataAndRun" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/uploadCampaignDataAndRun" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -243,7 +243,7 @@ const axios = require('axios');
 
 async function uploadAndRunCampaign(campaignData) {
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignDataAndRun',
+    'https://vb-seamless-dev-backend.oriserve.com/uploadCampaignDataAndRun',
     campaignData,
     {
       headers: {

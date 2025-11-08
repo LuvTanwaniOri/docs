@@ -98,7 +98,7 @@ The endpoint must return XML (Plivo XML) with call instructions:
 <Response>
   <Speak>Welcome to VoiceGenie</Speak>
   <GetDigits 
-    action="https://seamless-sandbox-dev-cm.oriserve.com/ivr-menu" 
+    action="https://vb-seamless-dev-backend.oriserve.com/ivr-menu" 
     method="POST"
     numDigits="1"
     timeout="10"
@@ -123,13 +123,13 @@ The endpoint must return XML (Plivo XML) with call instructions:
 <Response>
   <Speak>Hi, I'm Alex, your AI assistant. How can I help you?</Speak>
   <GetInput 
-    action="https://seamless-sandbox-dev-cm.oriserve.com/responseHook"
+    action="https://vb-seamless-dev-backend.oriserve.com/responseHook"
     method="POST"
     inputType="speech"
     timeout="10"
     maxSpeechTime="60"
     speechTimeout="5"
-    interimSpeechResultsCallback="https://seamless-sandbox-dev-cm.oriserve.com/interim-results">
+    interimSpeechResultsCallback="https://vb-seamless-dev-backend.oriserve.com/interim-results">
     <Speak>I'm listening...</Speak>
   </GetInput>
 </Response>
@@ -140,14 +140,14 @@ The endpoint must return XML (Plivo XML) with call instructions:
 <Response>
   <Speak>All our agents are busy. Please leave a message after the beep.</Speak>
   <Record 
-    action="https://seamless-sandbox-dev-cm.oriserve.com/voicemail"
+    action="https://vb-seamless-dev-backend.oriserve.com/voicemail"
     method="POST"
     maxLength="120"
     timeout="10"
     finishOnKey="#"
     recordSession="false"
     redirect="true"
-    callbackUrl="https://seamless-sandbox-dev-cm.oriserve.com/recording-status"
+    callbackUrl="https://vb-seamless-dev-backend.oriserve.com/recording-status"
     callbackMethod="POST" />
   <Speak>Thank you for your message. We'll call you back soon.</Speak>
 </Response>
@@ -359,7 +359,7 @@ Caller dials number → Plivo receives call → POST to /oriIncomingCallHandler
 
 ### cURL Example:
 ```bash
-curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/oriIncomingCallHandler \
+curl -X POST https://vb-seamless-dev-backend.oriserve.com/oriIncomingCallHandler \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -H "X-Plivo-Signature-V2: YOUR_SIGNATURE" \
   -d "From=+919876543210" \

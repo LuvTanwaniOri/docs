@@ -17,7 +17,7 @@ description: "Retrieve call history and detailed logs for a specific campaign wi
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required default="application/json">
@@ -76,7 +76,7 @@ description: "Retrieve call history and detailed logs for a specific campaign wi
 
 ```bash cURL
 curl --request POST \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getHistory' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/getHistory' \
   --header 'Content-Type: application/json' \
   --data '{
     "campaign_id": "550e8400-e29b-41d4-a716-446655440000",

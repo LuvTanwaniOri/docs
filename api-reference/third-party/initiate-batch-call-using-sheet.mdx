@@ -2,6 +2,7 @@
 title: "Initiate Batch Call Using Sheet"
 api: "POST /initiateBatchCallUsingSheet"
 description: "Upload CSV/Excel file to initiate batch calls (supports 10,000+ contacts)"
+auth: "bearer"
 ---
 
 ## Overview
@@ -12,7 +13,7 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 
 ## Headers
 
-<ParamField header="Content-Type" type="string" required>
+<ParamField header="Content-Type" type="string" default="application/json">
   multipart/form-data
 </ParamField>
 
@@ -30,7 +31,7 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
   Use this if not using Authorization header
 </ParamField>
 
-<ParamField header="Origin" type="string" required>
+<ParamField header="Origin" type="string">
   Origin of the request (must be whitelisted)
 </ParamField>
 
@@ -50,8 +51,22 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 
 ##  Request (Multipart Form Data)
 
-<ParamField body="batchFile" type="file" required>
-  CSV or Excel file with contact data
+<ParamField body="campaignId" type="string" required>
+  Campaign ID to associate all calls with (mandatory)
+  ```
+  b885b212-d3bb-482f-a29d-508d2a8929ac
+  ```
+</ParamField>
+
+<ParamField body="notificationWebhookUrl" type="string">
+  Optional webhook URL for call status notifications
+  ```
+  https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata
+  ```
+</ParamField>
+
+<ParamField body="file" type="file" required>
+  CSV or Excel file with user data (attach as form data)
   
   **Supported Formats:**
   - CSV (.csv)
@@ -59,24 +74,26 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
   
   **Max Size:** 50MB
   
-  **Required Columns:**
-  - `phone_number` - Contact phone number (E.164 format)
+  **Required Columns in file:**
+  - `userName` - User name
+  - `userPhoneNumber` - User phone number (without + prefix)
+  - `metaData` - JSON object containing custom fields (can be empty {})
   
-  **Optional Columns:**
-  - `name` - Contact name
-  - `email` - Email address
-  - Any custom fields (passed as custom_data)
-</ParamField>
-
-<ParamField body="agent_id" type="string" required>
-  Script/Agent ID to use for all calls
+  **Example user data structure:**
+  ```json
+  {
+    "userName": "Faiz",
+    "userPhoneNumber": "919625147093",
+    "metaData": {}
+  }
   ```
-  507f1f77bcf86cd799439011
+  
+  **Example CSV structure:**
+  ```csv
+  userName,userPhoneNumber,metaData
+  Faiz,919625147093,"{}"
+  John Doe,919876543210,"{""due_amount"":""4500"",""company_name"":""H-D-B financial services""}"
   ```
-</ParamField>
-
-<ParamField body="campaign_id" type="string">
-  Optional campaign ID
 </ParamField>
 
 ---
@@ -85,17 +102,17 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 
 ### CSV Format:
 ```csv
-phone_number,name,email,company,product_interest
-+919876543210,John Doe,john@example.com,Acme Corp,Premium Plan
-+919876543211,Jane Smith,jane@example.com,Tech Inc,Basic Plan
-+919876543212,Bob Johnson,bob@example.com,StartUp Ltd,Enterprise Plan
+userName,userPhoneNumber,metaData
+Faiz,919625147093,"{}"
+John Doe,919876543210,"{""due_amount"":""4500"",""company_name"":""H-D-B financial services"",""loan_id"":""1234""}"
+Jane Smith,919876543211,"{""due_amount"":""3000"",""company_name"":""ABC Corp""}"
 ```
 
 ### Excel Format:
-| phone_number | name | email | company | product_interest |
-|--------------|------|-------|---------|------------------|
-| +919876543210 | John Doe | john@example.com | Acme Corp | Premium Plan |
-| +919876543211 | Jane Smith | jane@example.com | Tech Inc | Basic Plan |
+| userName | userPhoneNumber | metaData |
+|----------|-----------------|----------|
+| Faiz | 919625147093 | `{}` |
+| John Doe | 919876543210 | `{"due_amount":"4500","company_name":"H-D-B financial services"}` |
 
 ---
 
@@ -107,9 +124,9 @@ phone_number,name,email,company,product_interest
   "success": true,
   "message": "Batch call initiated from file",
   "data": {
-    "total_contacts": 3,
-    "valid_contacts": 3,
-    "invalid_contacts": 0,
+    "total_users": 3,
+    "valid_users": 3,
+    "invalid_users": 0,
     "batch_id": "batch_xyz789",
     "status": "processing",
     "estimated_time": "5-10 minutes"
@@ -123,10 +140,10 @@ phone_number,name,email,company,product_interest
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet" \
-  -F "batchFile=@/path/to/contacts.csv" \
-  -F "agent_id=507f1f77bcf86cd799439011" \
-  -F "campaign_id=campaign_abc123"
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet" \
+  -F "campaignId=b885b212-d3bb-482f-a29d-508d2a8929ac" \
+  -F "notificationWebhookUrl=https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata" \
+  -F "file=@/path/to/contacts.csv"
 ```
 
 ### JavaScript (with FormData):
@@ -135,21 +152,27 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 
-async function initiateBatchCallUsingSheet(filePath, agentId, campaignId) {
+async function initiateBatchCallUsingSheet(filePath, campaignId, notificationWebhookUrl = null) {
   const form = new FormData();
-  form.append('batchFile', fs.createReadStream(filePath));
-  form.append('agent_id', agentId);
-  if (campaignId) form.append('campaign_id', campaignId);
+  
+  // Required fields
+  form.append('campaignId', campaignId);
+  form.append('file', fs.createReadStream(filePath));
+  
+  // Optional field
+  if (notificationWebhookUrl) {
+    form.append('notificationWebhookUrl', notificationWebhookUrl);
+  }
   
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet',
+    'https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet',
     form,
     {
       headers: form.getHeaders()
     }
   );
   
-  console.log(`✅ ${response.data.data.total_contacts} contacts uploaded`);
+  console.log(`✅ ${response.data.data.total_users} users uploaded`);
   console.log(`   Processing batch: ${response.data.data.batch_id}`);
   
   return response.data.data;
@@ -158,8 +181,8 @@ async function initiateBatchCallUsingSheet(filePath, agentId, campaignId) {
 // Example
 initiateBatchCallUsingSheet(
   './contacts.csv',
-  '507f1f77bcf86cd799439011',
-  'campaign_abc123'
+  'b885b212-d3bb-482f-a29d-508d2a8929ac',
+  'https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata'
 );
 ```
 
@@ -167,25 +190,28 @@ initiateBatchCallUsingSheet(
 ```python
 import requests
 
-def initiate_batch_call_using_sheet(file_path, agent_id, campaign_id=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet"
+def initiate_batch_call_using_sheet(file_path, campaign_id, notification_webhook_url=None):
+    url = "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet"
     
-    files = {
-        "batchFile": open(file_path, "rb")
-    }
-    
+    # Required form data
     data = {
-        "agent_id": agent_id
+        "campaignId": campaign_id  # Mandatory
     }
     
-    if campaign_id:
-        data["campaign_id"] = campaign_id
+    # Optional form data
+    if notification_webhook_url:
+        data["notificationWebhookUrl"] = notification_webhook_url
+    
+    # File attachment
+    files = {
+        "file": open(file_path, "rb")
+    }
     
     response = requests.post(url, files=files, data=data)
     
     if response.status_code == 200:
         result = response.json()['data']
-        print(f"✅ Uploaded {result['total_contacts']} contacts")
+        print(f"✅ Uploaded {result['total_users']} users")
         print(f"   Batch ID: {result['batch_id']}")
         print(f"   Estimated time: {result['estimated_time']}")
         return result
@@ -196,8 +222,8 @@ def initiate_batch_call_using_sheet(file_path, agent_id, campaign_id=None):
 # Example
 initiate_batch_call_using_sheet(
     "./contacts.csv",
-    "507f1f77bcf86cd799439011",
-    "campaign_abc123"
+    "b885b212-d3bb-482f-a29d-508d2a8929ac",  # Mandatory campaignId
+    "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata"  # Optional notificationWebhookUrl
 )
 ```
 
@@ -210,12 +236,12 @@ const multer = require('multer');
 const upload = multer();
 
 router.post("/initiateBatchCallUsingSheet", 
-  upload.single('batchFile'), 
+  upload.single('file'), 
   initiateBatchCallUsingSheet
 );
 ```
 
-**Field Name:** `batchFile` (must match in form-data)
+**Field Name:** `file` (must match in form-data)
 
 ---
 
@@ -237,7 +263,7 @@ router.post("/initiateBatchCallUsingSheet",
 </Warning>
 
 <Note>
-  **Phone Number Format:** All phone numbers must be in E.164 format (e.g., +919876543210). Invalid numbers are skipped.
+  **Phone Number Format:** All phone numbers should be provided without the + prefix (e.g., 919876543210). Invalid numbers are skipped.
 </Note>
 
 ---

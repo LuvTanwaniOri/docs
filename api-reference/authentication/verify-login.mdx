@@ -17,7 +17,7 @@ description: "Verify if the current authentication token is valid and retrieve u
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -70,7 +70,7 @@ description: "Verify if the current authentication token is valid and retrieve u
 
 ```bash cURL
 curl --request POST \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/auth/verifyLogin' \
   --header 'Content-Type: application/json'
 ```
 
@@ -83,7 +83,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch('https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin', options)
+fetch('https://vb-seamless-dev-backend.oriserve.com/auth/verifyLogin', options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -92,7 +92,7 @@ fetch('https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin', options)
 ```python Python
 import requests
 
-url = "https://seamless-sandbox-dev-cm.oriserve.com/auth/verifyLogin"
+url = "https://vb-seamless-dev-backend.oriserve.com/auth/verifyLogin"
 
 headers = {
     "Content-Type": "application/json"

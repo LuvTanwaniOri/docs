@@ -21,7 +21,7 @@ Get the configured AI script and settings for handling an inbound call to a spec
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -135,7 +135,7 @@ Get the configured AI script and settings for handling an inbound call to a spec
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/getAgentConfigAndUserDetailsForInboundCall" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/getAgentConfigAndUserDetailsForInboundCall" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -151,7 +151,7 @@ const axios = require('axios');
 async function getInboundCallConfig(phoneNumber, callerNumber) {
   try {
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/getAgentConfigAndUserDetailsForInboundCall',
+      'https://vb-seamless-dev-backend.oriserve.com/getAgentConfigAndUserDetailsForInboundCall',
       {
         phone_number: phoneNumber,
         caller_number: callerNumber

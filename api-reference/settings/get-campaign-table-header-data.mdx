@@ -21,7 +21,7 @@ Get the column configuration for campaign data tables including custom fields an
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -183,7 +183,7 @@ Get the column configuration for campaign data tables including custom fields an
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/getCampaignTableHeaderData" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -194,7 +194,7 @@ const axios = require('axios');
 async function buildCampaignTable() {
   // Get table configuration
   const configResponse = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData',
+    'https://vb-seamless-dev-backend.oriserve.com/getCampaignTableHeaderData',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }
@@ -204,7 +204,7 @@ async function buildCampaignTable() {
   
   // Get campaign data
   const dataResponse = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData',
+    'https://vb-seamless-dev-backend.oriserve.com/fetchCampaignData',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }
@@ -255,14 +255,14 @@ function CampaignTable() {
     async function loadData() {
       // Get table config
       const configRes = await axios.get(
-        'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignTableHeaderData',
+        'https://vb-seamless-dev-backend.oriserve.com/getCampaignTableHeaderData',
         { headers: { 'x-api-key': 'YOUR_API_KEY' } }
       );
       setTableConfig(configRes.data.data);
       
       // Get campaigns
       const dataRes = await axios.get(
-        'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignData',
+        'https://vb-seamless-dev-backend.oriserve.com/fetchCampaignData',
         { headers: { 'x-api-key': 'YOUR_API_KEY' } }
       );
       setCampaigns(dataRes.data.data.campaigns);

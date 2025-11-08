@@ -21,7 +21,7 @@ Get the complete conversation transcript including AI responses, user speech, ti
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -110,7 +110,7 @@ Get the complete conversation transcript including AI responses, user speech, ti
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/call-uuid-abc123" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/getConversationLogs/call-uuid-abc123" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -120,7 +120,7 @@ const axios = require('axios');
 
 async function getConversationLogs(callId) {
   const response = await axios.get(
-    `https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/${callId}`,
+    `https://vb-seamless-dev-backend.oriserve.com/getConversationLogs/${callId}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'
@@ -150,7 +150,7 @@ getConversationLogs('call-uuid-abc123');
 import requests
 
 def get_conversation_logs(call_id):
-    url = f"https://seamless-sandbox-dev-cm.oriserve.com/getConversationLogs/{call_id}"
+    url = f"https://vb-seamless-dev-backend.oriserve.com/getConversationLogs/{call_id}"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"

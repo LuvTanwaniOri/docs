@@ -2,6 +2,7 @@
 title: "Initiate Call"
 api: "POST /initiateCall"
 description: "Initiate a single outbound call via third-party webhook"
+auth: "bearer"
 ---
 
 ## Overview
@@ -12,7 +13,7 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 ## Headers
 
-<ParamField header="Content-Type" type="string" required>
+<ParamField header="Content-Type" type="string" default="application/json">
   application/json
 </ParamField>
 
@@ -33,7 +34,7 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 <ParamField header="Origin" type="string" required>
   Origin of the request (must be whitelisted)
   
-  Example: `https://seamless-sandbox-dev-cmdash.oriserve.com`
+  Example: `https://vb-seamless-dev-backend.oriserve.com/`
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -55,34 +56,47 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 ##  Request Body
 
-<ParamField body="phone_number" type="string" required>
-  Recipient phone number (E.164 format)
+<ParamField body="campaignId" type="string" required>
+  Campaign ID to associate call with
   ```
-  +919876543210
-  ```
-</ParamField>
-
-<ParamField body="agent_id" type="string" required>
-  Script/Agent ID to use for the call
-  ```
-  507f1f77bcf86cd799439011
+  b885b212-d3bb-482f-a29d-508d2a8929ac
   ```
 </ParamField>
 
-<ParamField body="campaign_id" type="string">
-  Optional campaign ID to associate call with
+<ParamField body="notificationWebhookUrl" type="string">
+  Optional webhook URL for call status notifications
   ```
-  campaign_abc123
+  https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata
   ```
 </ParamField>
 
-<ParamField body="custom_data" type="object">
+<ParamField body="userName" type="string" required>
+  Name of the user being called
+  ```
+  Faiz
+  ```
+</ParamField>
+
+<ParamField body="userPhoneNumber" type="string" required>
+  Recipient phone number (without + prefix)
+  ```
+  919625147093
+  ```
+</ParamField>
+
+<ParamField body="metaData" type="object" required>
   Custom data to pass to AI during call
   ```json
   {
-    "customer_name": "John Doe",
-    "account_id": "ACC-12345",
-    "product_interest": "Premium Plan"
+    "due_amount": "4500",
+    "due_amount_half": "2250",
+    "due_date": "2025-09-03",
+    "allocation_month": "2025-09-01",
+    "company_name": "H-D-B financial services",
+    "loan_id": "1234",
+    "company_id": "23332000",
+    "communication_level": "applicant",
+    "product_description": "two wheeler"
   }
   ```
 </ParamField>
@@ -99,8 +113,8 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
   "data": {
     "call_uuid": "call-uuid-abc123",
     "status": "initiated",
-    "phone_number": "+919876543210",
-    "agent_id": "507f1f77bcf86cd799439011",
+    "userPhoneNumber": "919625147093",
+    "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
     "initiated_at": "2024-01-16T10:30:00Z"
   }
 }
@@ -111,7 +125,7 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 {
   "success": false,
   "message": "Invalid phone number",
-  "error": "Phone number must be in E.164 format"
+  "error": "Phone number must be valid"
 }
 ```
 
@@ -121,13 +135,23 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateCall" \
   -H "Content-Type: application/json" \
   -d '{
-    "phone_number": "+919876543210",
-    "agent_id": "507f1f77bcf86cd799439011",
-    "custom_data": {
-      "customer_name": "John Doe"
+    "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+    "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+    "userName": "Faiz",
+    "userPhoneNumber": "919625147093",
+    "metaData": {
+      "due_amount": "4500",
+      "due_amount_half": "2250",
+      "due_date": "2025-09-03",
+      "allocation_month": "2025-09-01",
+      "company_name": "H-D-B financial services",
+      "loan_id": "1234",
+      "company_id": "23332000",
+      "communication_level": "applicant",
+      "product_description": "two wheeler"
     }
   }'
 ```
@@ -136,15 +160,22 @@ curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall" \
 ```javascript
 const axios = require('axios');
 
-async function initiateCall(phoneNumber, agentId, customData = {}) {
+async function initiateCall(campaignId, userName, userPhoneNumber, metaData = {}, notificationWebhookUrl = null) {
   try {
+    const payload = {
+      campaignId: campaignId,
+      userName: userName,
+      userPhoneNumber: userPhoneNumber,
+      metaData: metaData
+    };
+    
+    if (notificationWebhookUrl) {
+      payload.notificationWebhookUrl = notificationWebhookUrl;
+    }
+    
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/initiateCall',
-      {
-        phone_number: phoneNumber,
-        agent_id: agentId,
-        custom_data: customData
-      },
+      'https://vb-seamless-dev-backend.oriserve.com/initiateCall',
+      payload,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -160,24 +191,41 @@ async function initiateCall(phoneNumber, agentId, customData = {}) {
 }
 
 // Example
-initiateCall('+919876543210', '507f1f77bcf86cd799439011', {
-  customer_name: 'John Doe',
-  product_interest: 'Premium Plan'
-});
+initiateCall(
+  'b885b212-d3bb-482f-a29d-508d2a8929ac',
+  'Faiz',
+  '919625147093',
+  {
+    "due_amount": "4500",
+    "due_amount_half": "2250",
+    "due_date": "2025-09-03",
+    "allocation_month": "2025-09-01",
+    "company_name": "H-D-B financial services",
+    "loan_id": "1234",
+    "company_id": "23332000",
+    "communication_level": "applicant",
+    "product_description": "two wheeler"
+  },
+  'https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata'
+);
 ```
 
 ### Python:
 ```python
 import requests
 
-def initiate_call(phone_number, agent_id, custom_data=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall"
+def initiate_call(campaign_id, user_name, user_phone_number, meta_data=None, notification_webhook_url=None):
+    url = "https://vb-seamless-dev-backend.oriserve.com/initiateCall"
     
     payload = {
-        "phone_number": phone_number,
-        "agent_id": agent_id,
-        "custom_data": custom_data or {}
+        "campaignId": campaign_id,
+        "userName": user_name,
+        "userPhoneNumber": user_phone_number,
+        "metaData": meta_data or {}
     }
+    
+    if notification_webhook_url:
+        payload["notificationWebhookUrl"] = notification_webhook_url
     
     response = requests.post(url, json=payload)
     
@@ -191,9 +239,21 @@ def initiate_call(phone_number, agent_id, custom_data=None):
 
 # Example
 initiate_call(
-    "+919876543210",
-    "507f1f77bcf86cd799439011",
-    {"customer_name": "John Doe"}
+    "b885b212-d3bb-482f-a29d-508d2a8929ac",
+    "Faiz",
+    "919625147093",
+    {
+        "due_amount": "4500",
+        "due_amount_half": "2250",
+        "due_date": "2025-09-03",
+        "allocation_month": "2025-09-01",
+        "company_name": "H-D-B financial services",
+        "loan_id": "1234",
+        "company_id": "23332000",
+        "communication_level": "applicant",
+        "product_description": "two wheeler"
+    },
+    "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata"
 )
 ```
 

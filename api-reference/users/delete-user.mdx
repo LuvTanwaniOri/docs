@@ -21,7 +21,7 @@ Soft delete a user account. The user is marked as deleted and deactivated but th
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -84,7 +84,7 @@ Soft delete a user account. The user is marked as deleted and deactivated but th
 
 ### cURL:
 ```bash
-curl -X DELETE "https://seamless-sandbox-dev-cm.oriserve.com/deleteUser?userId=507f1f77bcf86cd799439011" \
+curl -X DELETE "https://vb-seamless-dev-backend.oriserve.com/deleteUser?userId=507f1f77bcf86cd799439011" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -95,7 +95,7 @@ const axios = require('axios');
 async function deleteUser(userId) {
   try {
     const response = await axios.delete(
-      `https://seamless-sandbox-dev-cm.oriserve.com/deleteUser?userId=${userId}`,
+      `https://vb-seamless-dev-backend.oriserve.com/deleteUser?userId=${userId}`,
       {
         headers: {
           'x-api-key': 'YOUR_API_KEY'
@@ -117,7 +117,7 @@ deleteUser('507f1f77bcf86cd799439011');
 import requests
 
 def delete_user(user_id):
-    url = f"https://seamless-sandbox-dev-cm.oriserve.com/deleteUser?userId={user_id}"
+    url = f"https://vb-seamless-dev-backend.oriserve.com/deleteUser?userId={user_id}"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"

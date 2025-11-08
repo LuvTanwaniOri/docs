@@ -21,7 +21,7 @@ Manually trigger redial for specific calls or all failed/unanswered calls in a c
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -134,7 +134,7 @@ Manually trigger redial for specific calls or all failed/unanswered calls in a c
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/redialCampaignCalls" \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -152,7 +152,7 @@ const axios = require('axios');
 
 async function redialCampaignCalls(campaignId, criteria) {
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls',
+    'https://vb-seamless-dev-backend.oriserve.com/redialCampaignCalls',
     {
       campaign_id: campaignId,
       redial_criteria: criteria
@@ -206,7 +206,7 @@ async function retryFailedCalls(campaignId) {
 ```javascript
 async function retrySpecificNumbers(campaignId, callUuids) {
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/redialCampaignCalls',
+    'https://vb-seamless-dev-backend.oriserve.com/redialCampaignCalls',
     {
       campaign_id: campaignId,
       call_uuids: callUuids

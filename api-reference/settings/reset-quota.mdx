@@ -21,7 +21,7 @@ Reset quota usage counters to zero. Typically used at billing cycle renewal or f
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -75,7 +75,7 @@ Reset quota usage counters to zero. Typically used at billing cycle renewal or f
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/resetQuota" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/resetQuota" \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{"resetType": "full"}'
@@ -87,7 +87,7 @@ const axios = require('axios');
 
 async function resetQuota(resetType = 'full') {
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/resetQuota',
+    'https://vb-seamless-dev-backend.oriserve.com/resetQuota',
     { resetType },
     {
       headers: {

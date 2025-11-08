@@ -21,7 +21,7 @@ Update or upload knowledge base content via file upload. Supports PDF, TXT, DOCX
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -89,7 +89,7 @@ Update or upload knowledge base content via file upload. Supports PDF, TXT, DOCX
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/updateKnowledgeBase" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/updateKnowledgeBase" \
   -H "x-api-key: YOUR_API_KEY" \
   -F "knowledge_base=@/path/to/knowledge_base.pdf" \
   -F 'metadata={"category":"product_docs"}'
@@ -110,7 +110,7 @@ async function updateKnowledgeBase(filePath) {
   }));
   
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/updateKnowledgeBase',
+    'https://vb-seamless-dev-backend.oriserve.com/updateKnowledgeBase',
     form,
     {
       headers: {
@@ -131,7 +131,7 @@ updateKnowledgeBase('./knowledge_base.pdf');
 import requests
 
 def update_knowledge_base(file_path):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/updateKnowledgeBase"
+    url = "https://vb-seamless-dev-backend.oriserve.com/updateKnowledgeBase"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"

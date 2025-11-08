@@ -21,7 +21,7 @@ Fetch current user settings including theme, notifications, and campaign default
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -111,7 +111,7 @@ Fetch current user settings including theme, notifications, and campaign default
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getSettings?user_id=507f1f77bcf86cd799439011" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/getSettings?user_id=507f1f77bcf86cd799439011" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -121,7 +121,7 @@ const axios = require('axios');
 
 async function getSettings(userId) {
   const response = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/getSettings',
+    'https://vb-seamless-dev-backend.oriserve.com/getSettings',
     {
       params: { user_id: userId },
       headers: {

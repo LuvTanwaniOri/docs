@@ -17,7 +17,7 @@ description: "Invalidate the current authentication token and end the user sessi
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -38,7 +38,7 @@ description: "Invalidate the current authentication token and end the user sessi
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/logout'
+  --url 'https://vb-seamless-dev-backend.oriserve.com/logout'
 ```
 
 ```javascript JavaScript
@@ -47,7 +47,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch('https://seamless-sandbox-dev-cm.oriserve.com/logout', options)
+fetch('https://vb-seamless-dev-backend.oriserve.com/logout', options)
   .then(response => response.json())
   .then(data => {
     // Clear stored token
@@ -60,7 +60,7 @@ fetch('https://seamless-sandbox-dev-cm.oriserve.com/logout', options)
 ```python Python
 import requests
 
-url = "https://seamless-sandbox-dev-cm.oriserve.com/logout"
+url = "https://vb-seamless-dev-backend.oriserve.com/logout"
 
 response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())

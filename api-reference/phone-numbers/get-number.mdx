@@ -21,7 +21,7 @@ Get complete details for a specific phone number from Plivo, including configura
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -83,7 +83,7 @@ Get complete details for a specific phone number from Plivo, including configura
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/numbers/919876543210" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/numbers/919876543210" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -93,7 +93,7 @@ const axios = require('axios');
 
 async function getPhoneNumberDetails(number) {
   const response = await axios.get(
-    `https://seamless-sandbox-dev-cm.oriserve.com/numbers/${number}`,
+    `https://vb-seamless-dev-backend.oriserve.com/numbers/${number}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'

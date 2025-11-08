@@ -17,7 +17,7 @@ description: "Create a new AI conversation script for voice campaigns with custo
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -154,7 +154,7 @@ description: "Create a new AI conversation script for voice campaigns with custo
 
 ```bash cURL
 curl --request POST \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/createScript' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/createScript' \
   --header 'Content-Type: application/json' \
   --data '{
     "script_name": "Sales Outreach Script",
@@ -220,7 +220,7 @@ const scriptData = {
   }
 };
 
-fetch('https://seamless-sandbox-dev-cm.oriserve.com/createScript', {
+fetch('https://vb-seamless-dev-backend.oriserve.com/createScript', {
   method: 'POST',
   headers: {
     'x-api-key': 'your-api-key-here',
@@ -235,7 +235,7 @@ fetch('https://seamless-sandbox-dev-cm.oriserve.com/createScript', {
 ```python Python
 import requests
 
-url = "https://seamless-sandbox-dev-cm.oriserve.com/createScript"
+url = "https://vb-seamless-dev-backend.oriserve.com/createScript"
 
 headers = {
     "x-api-key": "your-api-key-here",

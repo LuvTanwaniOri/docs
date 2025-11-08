@@ -1,167 +1,646 @@
 ---
-title: "Initiate Batch Call"
+title: "Batch Call"
 api: "POST /initiateBatchCall"
-description: "Initiate calls to multiple contacts in a single request"
+description: "Call multiple contacts at once with JSON payload (up to 1000 contacts)"
+---
+## Quick Start
+
+Need to call multiple people? This endpoint lets you initiate up to **1000 calls** in a single request. Perfect for campaigns, notifications, or bulk outreach.
+
+<CardGroup cols={3}>
+  <Card
+    title="Up to 1000"
+    icon="users"
+  >
+    Call up to 1000 contacts in one request
+  </Card>
+  <Card
+    title="Personalized"
+    icon="bullseye"
+  >
+    Each contact gets custom metadata
+  </Card>
+  <Card
+    title="Real-time"
+    icon="chart-line"
+  >
+    Get instant batch processing status
+  </Card>
+</CardGroup>
+
 ---
 
-## Overview
+## Authentication
 
-Trigger outbound calls to multiple contacts simultaneously. Maximum 1000 contacts per request.
+<Note>
+  **Recommended:** Use a **Static Batch Token** for integrations - it never expires! Contact support to get yours.
+</Note>
 
 ---
 
 ## Headers
 
-<ParamField header="Content-Type" type="string" required>
-  application/json
+<ParamField header="Content-Type" type="string" default="application/json" >
+  Set to application/json for JSON requests
 </ParamField>
 
-<ParamField header="Authorization" type="string" required>
-  Bearer token for authentication
+<ParamField header="Authorization" type="string">
+  Bearer token for authentication (optional)
   
   **Options:**
   - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
   - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
 </ParamField>
 
-<ParamField header="Cookie" type="string">
-  Alternative authentication via cookie: `token=<JWT_TOKEN>`
+---
+
+## Request Body
+
+<ParamField body="campaignId" type="string" required>
+  Campaign ID that links all calls to a specific campaign
+</ParamField>
+
+<ParamField body="notificationWebhookUrl" type="string">
+  Webhook URL for batch processing updates (optional)
+</ParamField>
+
+<ParamField body="users" type="array" required default='[{"userName": "Rajesh Kumar", "userPhoneNumber": "919876543210", "metaData": {"customer_id": "CUST_12345", "due_amount": "25000", "company_name": "HDFC Bank"}}]'>
+  Array of user objects to call (max 1000 users)
   
-  Use this if not using Authorization header
+  *A default user "Rajesh Kumar" will be pre-filled in the playground for easy testing.*
 </ParamField>
 
-<ParamField header="Origin" type="string" required>
-  Origin of the request (must be whitelisted)
-</ParamField>
-
-<ParamField header="User-Agent" type="string">
-  Browser or client user agent
-</ParamField>
-
----
-
-##  Authentication
-
-<Note>
-  **Static Batch Token** (recommended for integrations): Never expires, ideal for automated systems. Contact support to obtain your static token.
-</Note>
-
----
-
-<ParamField body="agent_id" type="string" required>
-  Script/Agent ID to use for all calls
-  ```
-  507f1f77bcf86cd799439011
-  ```
-</ParamField>
-
-<ParamField body="campaign_id" type="string">
-  Optional campaign ID to associate calls with
-  ```
-  campaign_abc123
-  ```
-</ParamField>
-
-<ParamField body="contacts" type="array" required>
-  Array of contact objects (max 1000)
+<Info>
+  **Default User Preview:**
   ```json
-  [
+  {
+    "userName": "Rajesh Kumar",
+    "userPhoneNumber": "919876543210",
+    "metaData": {
+      "customer_id": "CUST_12345", 
+      "due_amount": "25000",
+      "company_name": "HDFC Bank"
+    }
+  }
+  ```
+  This user will be automatically filled in the API playground. You can modify it or add more users as needed.
+</Info>
+
+### Request Body Structure
+
+Each user in the `users` array should have:
+- `userName` (string, required) - Contact's full name
+- `userPhoneNumber` (string, required) - Phone number with country code, no + prefix
+- `metaData` (object, optional) - Custom data for the AI agent
+
+### Phone Number Format Guidelines
+
+<Info>
+  **Phone Number Format:**
+  - **India:** `919876543210` (91 + 10 digits)
+  - **USA/Canada:** `14155551234` (1 + 10 digits)  
+  - **UK:** `447700123456` (44 + 7700123456)
+  - **UAE:** `971501234567` (971 + 9 digits)
+  - **Always include country code, never use + prefix**
+</Info>
+
+<Warning>
+  **Limit:** Maximum 1000 users per request. For larger lists, use the [file upload endpoint](/api-reference/third-party/initiate-batch-call-using-sheet).
+</Warning>
+
+## Request Body Examples
+
+### Minimal Example
+```json
+{
+  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+  "users": [
     {
-      "phone_number": "+919876543210",
-      "custom_data": {
-        "name": "John Doe",
-        "account_id": "ACC-001"
+      "userName": "Rajesh Kumar",
+      "userPhoneNumber": "919876543210"
+    }
+  ]
+}
+```
+
+### Complete Example with metaData
+```json
+{
+  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+  "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
+  "users": [
+    {
+      "userName": "Rajesh Kumar",
+      "userPhoneNumber": "919876543210",
+      "metaData": {
+        "customer_id": "CUST_12345",
+        "due_amount": "25000",
+        "company_name": "HDFC Bank"
       }
     },
     {
-      "phone_number": "+919876543211",
-      "custom_data": {
-        "name": "Jane Smith",
-        "account_id": "ACC-002"
+      "userName": "John Smith", 
+      "userPhoneNumber": "14155551234",
+      "metaData": {
+        "customer_id": "CUST_67890",
+        "due_amount": "15000",
+        "company_name": "Chase Bank"
       }
     }
   ]
-  ```
-</ParamField>
+}
+```
 
 ---
 
 ## Response
 
-### Success Response (200 OK):
-```json
-{
-  "success": true,
-  "message": "Batch call initiated successfully",
-  "data": {
-    "total_contacts": 2,
-    "calls_initiated": 2,
-    "calls_failed": 0,
-    "batch_id": "batch_xyz789",
-    "calls": [
-      {
-        "call_uuid": "call-uuid-001",
-        "phone_number": "+919876543210",
-        "status": "initiated"
-      },
-      {
-        "call_uuid": "call-uuid-002",
-        "phone_number": "+919876543211",
-        "status": "initiated"
+<Tabs>
+  <Tab title="Success">
+    **Batch processing started successfully!**
+    
+    <CodeGroup>
+    ```json 200 OK - Single User
+    {
+      "success": true,
+      "message": "Batch call initiated successfully",
+      "data": {
+        "total_users": 1,
+        "calls_initiated": 1,
+        "calls_failed": 0,
+        "batch_id": "batch_abc123",
+        "calls": [
+          {
+            "call_uuid": "call-uuid-001",
+            "userName": "Rajesh Kumar",
+            "userPhoneNumber": "919876543210",
+            "status": "initiated"
+          }
+        ]
       }
-    ]
-  }
-}
-```
+    }
+    ```
+    
+    ```json 200 OK - Multiple Users
+    {
+      "success": true,
+      "message": "Batch call initiated successfully",
+      "data": {
+        "total_users": 4,
+        "calls_initiated": 3,
+        "calls_failed": 1,
+        "batch_id": "batch_xyz789",
+        "calls": [
+          {
+            "call_uuid": "call-uuid-001",
+            "userName": "Rajesh Kumar",
+            "userPhoneNumber": "919876543210",
+            "status": "initiated"
+          },
+          {
+            "call_uuid": "call-uuid-002", 
+            "userName": "John Smith",
+            "userPhoneNumber": "14155551234",
+            "status": "initiated"
+          },
+          {
+            "call_uuid": "call-uuid-003",
+            "userName": "Sarah Johnson", 
+            "userPhoneNumber": "447700123456",
+            "status": "initiated"
+          },
+          {
+            "call_uuid": null,
+            "userName": "Invalid User",
+            "userPhoneNumber": "invalid_number",
+            "status": "failed",
+            "error": "Invalid phone number format"
+          }
+        ]
+      }
+    }
+    ```
+    </CodeGroup>
+    
+    **Key Fields:**
+    - **total_users** - Number of users in your request
+    - **calls_initiated** - Successfully started calls  
+    - **calls_failed** - Failed calls (invalid numbers, etc.)
+    - **batch_id** - Track this batch in webhooks/analytics
+    - **calls** - Individual call details with UUIDs for tracking
+    
+  </Tab>
+  <Tab title="Error">
+    **Something went wrong:**
+    
+    <CodeGroup>
+    ```json 400 - Invalid Users Array
+    {
+      "success": false,
+      "message": "Invalid users array",
+      "error": "Users array cannot be empty"
+    }
+    ```
+    
+    ```json 400 - Invalid Phone Number
+    {
+      "success": false,
+      "message": "Invalid phone number format",
+      "error": "Phone number '91962514709' is invalid. Must be 10-15 digits with country code (no + prefix)"
+    }
+    ```
+    
+    ```json 413 - Too Many Users
+    {
+      "success": false,
+      "message": "Too many users",
+      "error": "Maximum 1000 users allowed per batch"
+    }
+    ```
+    
+    ```json 401 - Authentication Failed
+    {
+      "success": false,
+      "message": "Authentication failed", 
+      "error": "Invalid or expired token"
+    }
+    ```
+    
+    ```json 422 - Validation Error
+    {
+      "success": false,
+      "message": "Validation failed",
+      "error": "Missing required field: userName for user at index 2"
+    }
+    ```
+    </CodeGroup>
+    
+  </Tab>
+</Tabs>
+
+---
+
+## Phone Number Validation
+
+<CardGroup cols={2}>
+  <Card title="Valid Formats" icon="check">
+    **Correct Examples:**
+    - `919625147093` (India)
+    - `14155551234` (USA/Canada) 
+    - `447700123456` (UK)
+    - `971501234567` (UAE)
+    - `33123456789` (France)
+    - `61423456789` (Australia)
+  </Card>
+  
+  <Card title="Invalid Formats" icon="x">
+    **Incorrect Examples:**
+    - `+919625147093` (has + prefix)
+    - `9625147093` (missing country code)
+    - `91-962-514-7093` (has dashes)
+    - `91 962 514 7093` (has spaces)
+    - `abc123456789` (contains letters)
+  </Card>
+</CardGroup>
+
+<Note>
+  **Pro Tip:** Always include the country code without the + prefix. The system will automatically validate and format the number for optimal delivery rates.
+</Note>
 
 ---
 
 ## Code Examples
 
-### cURL:
-```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall" \
+<CodeGroup>
+```bash cURL
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -d '{
-    "agent_id": "507f1f77bcf86cd799439011",
-    "contacts": [
+    "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+    "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
+    "users": [
       {
-        "phone_number": "+919876543210",
-        "custom_data": {"name": "John Doe"}
+        "userName": "Rajesh Kumar",
+        "userPhoneNumber": "919876543210",
+        "metaData": {
+          "customer_id": "CUST_12345",
+          "account_number": "ACC789123456",
+          "due_amount": "25000",
+          "due_date": "2025-12-15",
+          "loan_type": "Personal Loan",
+          "company_name": "HDFC Bank",
+          "branch_code": "HDFC001",
+          "payment_reminder": "true",
+          "language_preference": "Hindi",
+          "last_payment_date": "2025-10-15",
+          "overdue_days": "24",
+          "contact_attempt": "3"
+        }
       },
       {
-        "phone_number": "+919876543211",
-        "custom_data": {"name": "Jane Smith"}
+        "userName": "John Smith", 
+        "userPhoneNumber": "14155551234",
+        "metaData": {
+          "customer_id": "CUST_67890",
+          "account_number": "ACC456789123",
+          "due_amount": "15000",
+          "due_date": "2025-11-28",
+          "loan_type": "Auto Loan",
+          "company_name": "Chase Bank",
+          "branch_code": "CHASE_NYC",
+          "payment_reminder": "false",
+          "language_preference": "English"
+        }
       }
     ]
   }'
 ```
 
-### JavaScript:
-```javascript
+```javascript JavaScript/Node.js
 const axios = require('axios');
 
-async function initiateBatchCall(agentId, contacts) {
-  const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCall',
-    {
-      agent_id: agentId,
-      contacts: contacts
+async function initiateBatchCall(campaignId, users, notificationWebhookUrl = null) {
+  try {
+    const payload = {
+      campaignId: campaignId,
+      users: users
+    };
+    
+    if (notificationWebhookUrl) {
+      payload.notificationWebhookUrl = notificationWebhookUrl;
     }
-  );
-  
-  console.log(`✅ ${response.data.data.calls_initiated} calls initiated`);
-  return response.data.data;
+    
+    const response = await axios.post(
+      'https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall',
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_TOKEN_HERE'
+        }
+      }
+    );
+    
+    console.log(`${response.data.data.calls_initiated} calls initiated successfully`);
+    console.log(`Batch ID: ${response.data.data.batch_id}`);
+    
+    return response.data.data;
+  } catch (error) {
+    console.error('Batch call failed:', error.response?.data || error.message);
+    throw error;
+  }
 }
 
-// Example
-const contacts = [
-  { phone_number: '+919876543210', custom_data: { name: 'John Doe' } },
-  { phone_number: '+919876543211', custom_data: { name: 'Jane Smith' } }
+// Example usage with multiple international numbers
+const users = [
+  {
+    userName: "Rajesh Kumar",
+    userPhoneNumber: "919876543210", // India
+    metaData: {
+      "customer_id": "CUST_12345",
+      "account_number": "ACC789123456",
+      "due_amount": "25000",
+      "due_date": "2025-12-15",
+      "loan_type": "Personal Loan",
+      "company_name": "HDFC Bank"
+    }
+  },
+  {
+    userName: "John Smith",
+    userPhoneNumber: "14155551234", // USA
+    metaData: {
+      "customer_id": "CUST_67890",
+      "account_number": "ACC456789123", 
+      "due_amount": "15000",
+      "due_date": "2025-11-28",
+      "loan_type": "Auto Loan",
+      "company_name": "Chase Bank"
+    }
+  },
+  {
+    userName: "Sarah Johnson",
+    userPhoneNumber: "447700123456", // UK
+    metaData: {
+      "customer_id": "CUST_11111",
+      "account_number": "ACC111222333",
+      "due_amount": "18500",
+      "due_date": "2025-12-05", 
+      "loan_type": "Mortgage",
+      "company_name": "Barclays Bank"
+    }
+  }
 ];
 
-initiateBatchCall('507f1f77bcf86cd799439011', contacts);
+// Execute batch call
+initiateBatchCall(
+  'b885b212-d3bb-482f-a29d-508d2a8929ac',
+  users,
+  'https://your-webhook.ngrok-free.app/batch-callback'
+);
 ```
+
+```python Python
+import requests
+import json
+
+def initiate_batch_call(campaign_id, users, notification_webhook_url=None):
+    """
+    Initiate batch calls to multiple contacts
+    
+    Args:
+        campaign_id (str): Campaign ID to link calls
+        users (list): List of user objects with phone numbers and metadata
+        notification_webhook_url (str, optional): Webhook URL for batch updates
+    
+    Returns:
+        dict: Response with batch details and call statuses
+    """
+    
+    url = "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall"
+    
+    payload = {
+        "campaignId": campaign_id,
+        "users": users
+    }
+    
+    if notification_webhook_url:
+        payload["notificationWebhookUrl"] = notification_webhook_url
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_TOKEN_HERE"
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        
+        result = response.json()
+        print(f"{result['data']['calls_initiated']} calls initiated successfully")
+        print(f"Batch ID: {result['data']['batch_id']}")
+        
+        return result['data']
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Batch call failed: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Error details: {e.response.text}")
+        raise
+
+# Example usage
+users = [
+    {
+        "userName": "Rajesh Kumar", 
+        "userPhoneNumber": "919876543210",  # India
+        "metaData": {
+            "customer_id": "CUST_12345",
+            "account_number": "ACC789123456",
+            "due_amount": "25000",
+            "due_date": "2025-12-15",
+            "loan_type": "Personal Loan",
+            "company_name": "HDFC Bank"
+        }
+    },
+    {
+        "userName": "Ahmed Al-Rashid",
+        "userPhoneNumber": "971501234567",  # UAE
+        "metaData": {
+            "customer_id": "CUST_22222",
+            "account_number": "ACC444555666",
+            "due_amount": "32000",
+            "due_date": "2025-11-30", 
+            "loan_type": "Business Loan",
+            "company_name": "Emirates NBD"
+        }
+    }
+]
+
+# Execute batch call
+result = initiate_batch_call(
+    campaign_id="b885b212-d3bb-482f-a29d-508d2a8929ac",
+    users=users,
+    notification_webhook_url="https://your-webhook.ngrok-free.app/batch-callback"
+)
+```
+
+```php PHP
+<?php
+
+function initiateBatchCall($campaignId, $users, $notificationWebhookUrl = null) {
+    $url = "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall";
+    
+    $payload = [
+        "campaignId" => $campaignId,
+        "users" => $users
+    ];
+    
+    if ($notificationWebhookUrl) {
+        $payload["notificationWebhookUrl"] = $notificationWebhookUrl;
+    }
+    
+    $headers = [
+        "Content-Type: application/json",
+        "Authorization: Bearer YOUR_TOKEN_HERE"
+    ];
+    
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => $headers,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYPEER => false
+    ]);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 200) {
+        $result = json_decode($response, true);
+        echo "{$result['data']['calls_initiated']} calls initiated successfully\n";
+        echo "Batch ID: {$result['data']['batch_id']}\n";
+        return $result['data'];
+    } else {
+        echo "Batch call failed: HTTP $httpCode\n";
+        echo "Response: $response\n";
+        return false;
+    }
+}
+
+// Example usage with international numbers
+$users = [
+    [
+        "userName" => "Rajesh Kumar",
+        "userPhoneNumber" => "919876543210", // India
+        "metaData" => [
+            "customer_id" => "CUST_12345",
+            "account_number" => "ACC789123456",
+            "due_amount" => "25000",
+            "due_date" => "2025-12-15",
+            "loan_type" => "Personal Loan",
+            "company_name" => "HDFC Bank"
+        ]
+    ],
+    [
+        "userName" => "Sarah Johnson", 
+        "userPhoneNumber" => "447700123456", // UK
+        "metaData" => [
+            "customer_id" => "CUST_11111",
+            "account_number" => "ACC111222333",
+            "due_amount" => "18500",
+            "due_date" => "2025-12-05",
+            "loan_type" => "Mortgage",
+            "company_name" => "Barclays Bank"
+        ]
+    ]
+];
+
+// Execute batch call
+$result = initiateBatchCall(
+    "b885b212-d3bb-482f-a29d-508d2a8929ac",
+    $users,
+    "https://your-webhook.ngrok-free.app/batch-callback"
+);
+?>
+```
+</CodeGroup>
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Phone Number Optimization" icon="phone">
+    - **Always include country code** (91 for India, 1 for USA/Canada, etc.)
+    - **Remove all formatting** (no spaces, dashes, or parentheses)
+    - **Never use + prefix** - the system handles international dialing
+    - **Validate before sending** to reduce failed calls and improve success rates
+  </Accordion>
+
+  <Accordion title="Batch Size Optimization" icon="layer-group">
+    - **Small batches (10-50):** Better for testing and immediate feedback
+    - **Medium batches (100-500):** Ideal for regular campaigns
+    - **Large batches (500-1000):** Best for major outreach campaigns
+    - **Monitor webhook responses** to track batch processing status
+  </Accordion>
+
+  <Accordion title="Error Handling" icon="triangle-exclamation">
+    - **Check response status** - partial success is possible
+    - **Parse individual call results** for specific failure reasons
+    - **Retry failed calls** with corrected phone numbers
+    - **Use webhook notifications** for real-time status updates
+  </Accordion>
+
+  <Accordion title="Performance Tips" icon="rocket">
+    - **Use Static Batch Tokens** for production (never expire)
+    - **Implement exponential backoff** for rate limiting
+    - **Set up webhook endpoints** to avoid polling for status
+    - **Cache campaign IDs** to avoid repeated lookups
+  </Accordion>
+</AccordionGroup>
 
 ---
 

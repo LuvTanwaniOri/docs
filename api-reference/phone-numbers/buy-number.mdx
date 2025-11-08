@@ -21,7 +21,7 @@ Purchase an available phone number after searching. The number will be activated
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
@@ -165,7 +165,7 @@ After successful purchase, a record is created:
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/buy" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/buy" \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -183,7 +183,7 @@ const axios = require('axios');
 async function buyPhoneNumber(number, alias) {
   try {
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/buy',
+      'https://vb-seamless-dev-backend.oriserve.com/buy',
       {
         number,
         config: {
@@ -215,7 +215,7 @@ buyPhoneNumber('919876543210', 'Sales Line - Mumbai');
 import requests
 
 def buy_phone_number(number, alias=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/buy"
+    url = "https://vb-seamless-dev-backend.oriserve.com/buy"
     
     headers = {
         "Content-Type": "application/json",

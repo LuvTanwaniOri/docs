@@ -17,7 +17,7 @@ description: "Pause a running campaign. Ongoing calls will complete, but no new 
 </ParamField>
 
 <ParamField header="Origin" type="string">
-  Origin of the request (e.g., https://seamless-sandbox-dev-cmdash.oriserve.com)
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
 </ParamField>
 
 <ParamField header="User-Agent" type="string">
@@ -60,7 +60,7 @@ description: "Pause a running campaign. Ongoing calls will complete, but no new 
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/pauseTheCampaign/{campaignId}'
+  --url 'https://vb-seamless-dev-backend.oriserve.com/pauseTheCampaign/{campaignId}'
 ```
 
 ```javascript JavaScript
@@ -71,7 +71,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/pauseTheCampaign/${campaignId}`, options)
+fetch(`https://vb-seamless-dev-backend.oriserve.com/pauseTheCampaign/${campaignId}`, options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -81,7 +81,7 @@ fetch(`https://seamless-sandbox-dev-cm.oriserve.com/pauseTheCampaign/${campaignI
 import requests
 
 campaign_id = "550e8400-e29b-41d4-a716-446655440000"
-url = f"https://seamless-sandbox-dev-cm.oriserve.com/pauseTheCampaign/{campaign_id}"
+url = f"https://vb-seamless-dev-backend.oriserve.com/pauseTheCampaign/{campaign_id}"
 
 response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())
