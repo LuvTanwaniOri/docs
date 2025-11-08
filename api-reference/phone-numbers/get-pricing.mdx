@@ -109,7 +109,7 @@ Retrieve pricing information for phone numbers in a specific country including r
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/pricing/IN" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/pricing/IN" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -119,7 +119,7 @@ const axios = require('axios');
 
 async function getPhonePricing(countryIso) {
   const response = await axios.get(
-    `https://seamless-sandbox-dev-cm.oriserve.com/pricing/${countryIso}`,
+    `https://vb-seamless-dev-backend.oriserve.com/pricing/${countryIso}`,
     {
       headers: {
         'x-api-key': 'YOUR_API_KEY'

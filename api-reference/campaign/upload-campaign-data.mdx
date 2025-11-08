@@ -102,7 +102,7 @@ description: "Upload contact data for a new or existing campaign. Supports bulk 
 
 ```bash cURL
 curl --request POST \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignData' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/uploadCampaignData' \
   --header 'Content-Type: application/json' \
   --data '{
     "campaign_name": "Summer Sale Campaign",
@@ -158,7 +158,7 @@ const options = {
   body: JSON.stringify(campaignData)
 };
 
-fetch('https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignData', options)
+fetch('https://vb-seamless-dev-backend.oriserve.com/uploadCampaignData', options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -168,7 +168,7 @@ fetch('https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignData', options
 import requests
 import json
 
-url = "https://seamless-sandbox-dev-cm.oriserve.com/uploadCampaignData"
+url = "https://vb-seamless-dev-backend.oriserve.com/uploadCampaignData"
 
 headers = {
     "x-api-key": "your-api-key-here",

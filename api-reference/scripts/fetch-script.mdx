@@ -104,7 +104,7 @@ description: "Retrieve details of an existing AI conversation script including a
 
 ```bash cURL
 curl --request POST \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/fetchScript' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/fetchScript' \
   --header 'Content-Type: application/json' \
   --data '{
     "script_id": "script_abc123xyz",
@@ -127,7 +127,7 @@ const options = {
   })
 };
 
-fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchScript', options)
+fetch('https://vb-seamless-dev-backend.oriserve.com/fetchScript', options)
   .then(response => response.json())
   .then(data => console.log(data));
 ```
@@ -135,7 +135,7 @@ fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchScript', options)
 ```python Python
 import requests
 
-url = "https://seamless-sandbox-dev-cm.oriserve.com/fetchScript"
+url = "https://vb-seamless-dev-backend.oriserve.com/fetchScript"
 
 headers = {
     "x-api-key": "your-api-key-here",

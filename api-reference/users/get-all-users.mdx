@@ -168,7 +168,7 @@ Retrieve all users in the system. Passwords are automatically excluded from the 
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/getAllUsers" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -179,7 +179,7 @@ const axios = require('axios');
 async function getAllUsers() {
   try {
     const response = await axios.get(
-      'https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers',
+      'https://vb-seamless-dev-backend.oriserve.com/getAllUsers',
       {
         headers: {
           'x-api-key': 'YOUR_API_KEY'
@@ -202,7 +202,7 @@ getAllUsers();
 import requests
 
 def get_all_users():
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/getAllUsers"
+    url = "https://vb-seamless-dev-backend.oriserve.com/getAllUsers"
     
     headers = {
         "x-api-key": "YOUR_API_KEY"

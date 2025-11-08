@@ -91,7 +91,7 @@ Start a campaign immediately with v2 endpoint that supports advanced features li
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/{campaignId}' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/startCampaignv2/{campaignId}' \
   --header 'Accept: application/json' \
   --cookie 'token=your_auth_token'
 ```
@@ -107,7 +107,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/${campaignId}`, options)
+fetch(`https://vb-seamless-dev-backend.oriserve.com/startCampaignv2/${campaignId}`, options)
   .then(response => response.json())
   .then(data => {
     console.log('✅ Campaign started');
@@ -121,7 +121,7 @@ fetch(`https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/${campaignId
 import requests
 
 campaign_id = "507f1f77bcf86cd799439013"
-url = f"https://seamless-sandbox-dev-cm.oriserve.com/startCampaignv2/{campaign_id}"
+url = f"https://vb-seamless-dev-backend.oriserve.com/startCampaignv2/{campaign_id}"
 
 headers = {
     "Accept": "application/json"

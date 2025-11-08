@@ -44,7 +44,7 @@ description: "Permanently delete a campaign and all associated data. This action
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/deleteCampaign/{campaignId}'
+  --url 'https://vb-seamless-dev-backend.oriserve.com/deleteCampaign/{campaignId}'
 ```
 
 ```javascript JavaScript
@@ -55,7 +55,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/deleteCampaign/${campaignId}`, options)
+fetch(`https://vb-seamless-dev-backend.oriserve.com/deleteCampaign/${campaignId}`, options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -65,7 +65,7 @@ fetch(`https://seamless-sandbox-dev-cm.oriserve.com/deleteCampaign/${campaignId}
 import requests
 
 campaign_id = "550e8400-e29b-41d4-a716-446655440000"
-url = f"https://seamless-sandbox-dev-cm.oriserve.com/deleteCampaign/{campaign_id}"
+url = f"https://vb-seamless-dev-backend.oriserve.com/deleteCampaign/{campaign_id}"
 
 response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())

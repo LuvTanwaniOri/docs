@@ -156,7 +156,7 @@ Search for available phone numbers by country, number type, pattern matching, an
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/search?country_iso=IN&type=local&limit=20" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/search?country_iso=IN&type=local&limit=20" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -167,7 +167,7 @@ const axios = require('axios');
 async function searchPhoneNumbers(params) {
   try {
     const response = await axios.get(
-      'https://seamless-sandbox-dev-cm.oriserve.com/search',
+      'https://vb-seamless-dev-backend.oriserve.com/search',
       {
         params: {
           country_iso: 'IN',
@@ -195,7 +195,7 @@ searchPhoneNumbers();
 import requests
 
 def search_phone_numbers():
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/search"
+    url = "https://vb-seamless-dev-backend.oriserve.com/search"
     
     params = {
         "country_iso": "IN",

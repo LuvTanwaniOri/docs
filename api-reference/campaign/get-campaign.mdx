@@ -84,7 +84,7 @@ description: "Retrieves detailed information about a specific campaign by its un
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/campaign/{id}'
+  --url 'https://vb-seamless-dev-backend.oriserve.com/campaign/{id}'
 ```
 
 ```javascript JavaScript
@@ -95,7 +95,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/campaign/${campaignId}`, options)
+fetch(`https://vb-seamless-dev-backend.oriserve.com/campaign/${campaignId}`, options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -105,7 +105,7 @@ fetch(`https://seamless-sandbox-dev-cm.oriserve.com/campaign/${campaignId}`, opt
 import requests
 
 campaign_id = "550e8400-e29b-41d4-a716-446655440000"
-url = f"https://seamless-sandbox-dev-cm.oriserve.com/campaign/{campaign_id}"
+url = f"https://vb-seamless-dev-backend.oriserve.com/campaign/{campaign_id}"
 
 response = requests.get(url, cookies={'token': 'your_auth_token'})
 print(response.json())

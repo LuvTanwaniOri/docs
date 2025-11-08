@@ -108,7 +108,7 @@ Fetch call recordings with S3 URLs, duration, and metadata. Supports filtering a
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/callRecordings?campaign_id=campaign_xyz789&page=1&limit=20" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/callRecordings?campaign_id=campaign_xyz789&page=1&limit=20" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -118,7 +118,7 @@ const axios = require('axios');
 
 async function getCallRecordings(filters = {}) {
   const response = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/callRecordings',
+    'https://vb-seamless-dev-backend.oriserve.com/callRecordings',
     {
       params: {
         campaign_id: filters.campaign_id,

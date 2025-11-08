@@ -124,7 +124,7 @@ Get real-time status information for all campaigns including call counts, succes
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/getCampaignStatuses" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -134,7 +134,7 @@ const axios = require('axios');
 
 async function getCampaignStatuses(filters = {}) {
   const response = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses',
+    'https://vb-seamless-dev-backend.oriserve.com/getCampaignStatuses',
     {
       params: filters,
       headers: {
@@ -170,7 +170,7 @@ getCampaignStatuses({ status: 'in_progress' });
 import requests
 
 def get_campaign_statuses(status=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStatuses"
+    url = "https://vb-seamless-dev-backend.oriserve.com/getCampaignStatuses"
     
     params = {}
     if status:

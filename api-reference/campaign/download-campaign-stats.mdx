@@ -48,7 +48,7 @@ The endpoint returns a downloadable file (Excel or CSV) containing:
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/downloadCampaignStats?campaign_id={campaign_id}&format=xlsx' \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/downloadCampaignStats?campaign_id={campaign_id}&format=xlsx' \
   --output campaign_report.xlsx
 ```
 
@@ -56,7 +56,7 @@ curl --request GET \
 const campaignId = '550e8400-e29b-41d4-a716-446655440000';
 const format = 'xlsx';
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/downloadCampaignStats?campaign_id=${campaignId}&format=${format}`, {
+fetch(`https://vb-seamless-dev-backend.oriserve.com/downloadCampaignStats?campaign_id=${campaignId}&format=${format}`, {
   credentials: 'include'
 })
 .then(response => response.blob())

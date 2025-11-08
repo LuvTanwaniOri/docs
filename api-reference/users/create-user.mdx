@@ -292,7 +292,7 @@ Create new users for your organization with specific roles and permissions. Supp
 
 ### cURL:
 ```bash
-curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/createUser \
+curl -X POST https://vb-seamless-dev-backend.oriserve.com/createUser \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -314,7 +314,7 @@ const axios = require('axios');
 async function createUser(userData) {
   try {
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/createUser',
+      'https://vb-seamless-dev-backend.oriserve.com/createUser',
       {
         email: 'john.doe@company.com',
         password: 'SecureP@ss123',
@@ -348,7 +348,7 @@ createUser();
 import requests
 
 def create_user():
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/createUser"
+    url = "https://vb-seamless-dev-backend.oriserve.com/createUser"
     
     headers = {
         "Content-Type": "application/json",

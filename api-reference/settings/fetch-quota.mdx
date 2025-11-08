@@ -71,7 +71,7 @@ Retrieve current account usage quota including calls, minutes, and remaining lim
 
 ### cURL:
 ```bash
-curl -X GET "https://seamless-sandbox-dev-cm.oriserve.com/fetchQuota" \
+curl -X GET "https://vb-seamless-dev-backend.oriserve.com/fetchQuota" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -81,7 +81,7 @@ const axios = require('axios');
 
 async function fetchQuota() {
   const response = await axios.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/fetchQuota',
+    'https://vb-seamless-dev-backend.oriserve.com/fetchQuota',
     {
       headers: { 'x-api-key': 'YOUR_API_KEY' }
     }

@@ -124,7 +124,7 @@ Only returns campaigns where:
 <CodeGroup>
 
 ```javascript JavaScript
-const response = await fetch('https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll', {
+const response = await fetch('https://vb-seamless-dev-backend.oriserve.com/fetchCampaignDataOnlyNamesAndAll', {
   method: 'GET',
   headers: {
     'Accept': 'application/json, text/plain, */*',
@@ -146,7 +146,7 @@ data.data.forEach(campaign => {
 import requests
 
 response = requests.get(
-    'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll',
+    'https://vb-seamless-dev-backend.oriserve.com/fetchCampaignDataOnlyNamesAndAll',
     headers={
         'Accept': 'application/json, text/plain, */*',
         'Origin': 'https://seamless-sandbox-dev-cmdash.oriserve.com'
@@ -159,7 +159,7 @@ for campaign in data['data']:
 ```
 
 ```bash cURL
-curl 'https://seamless-sandbox-dev-cm.oriserve.com/fetchCampaignDataOnlyNamesAndAll' \
+curl 'https://vb-seamless-dev-backend.oriserve.com/fetchCampaignDataOnlyNamesAndAll' \
   -H 'Accept: application/json, text/plain, */*' \
   -H 'Origin: https://seamless-sandbox-dev-cmdash.oriserve.com' \
   -H 'Cookie: token=your_auth_token_here' \

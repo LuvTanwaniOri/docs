@@ -177,7 +177,7 @@ Modify existing user account details. All fields are optional - only provide the
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/updateUser" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/updateUser" \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -195,7 +195,7 @@ const axios = require('axios');
 async function updateUser(userId, updates) {
   try {
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/updateUser',
+      'https://vb-seamless-dev-backend.oriserve.com/updateUser',
       {
         userId,
         ...updates
@@ -227,7 +227,7 @@ updateUser('507f1f77bcf86cd799439011', {
 import requests
 
 def update_user(user_id, **updates):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/updateUser"
+    url = "https://vb-seamless-dev-backend.oriserve.com/updateUser"
     
     headers = {
         "Content-Type": "application/json",

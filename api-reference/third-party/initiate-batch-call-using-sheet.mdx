@@ -2,6 +2,7 @@
 title: "Initiate Batch Call Using Sheet"
 api: "POST /initiateBatchCallUsingSheet"
 description: "Upload CSV/Excel file to initiate batch calls (supports 10,000+ contacts)"
+auth: "bearer"
 ---
 
 ## Overview
@@ -139,7 +140,7 @@ Jane Smith,919876543211,"{""due_amount"":""3000"",""company_name"":""ABC Corp""}
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet" \
   -F "campaignId=b885b212-d3bb-482f-a29d-508d2a8929ac" \
   -F "notificationWebhookUrl=https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata" \
   -F "file=@/path/to/contacts.csv"
@@ -164,7 +165,7 @@ async function initiateBatchCallUsingSheet(filePath, campaignId, notificationWeb
   }
   
   const response = await axios.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet',
+    'https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet',
     form,
     {
       headers: form.getHeaders()
@@ -190,7 +191,7 @@ initiateBatchCallUsingSheet(
 import requests
 
 def initiate_batch_call_using_sheet(file_path, campaign_id, notification_webhook_url=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateBatchCallUsingSheet"
+    url = "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCallUsingSheet"
     
     # Required form data
     data = {

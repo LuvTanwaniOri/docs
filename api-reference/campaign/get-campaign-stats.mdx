@@ -116,7 +116,7 @@ description: "Retrieve detailed statistics and performance metrics for a specifi
 
 ```bash cURL
 curl --request GET \
-  --url 'https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/{campaignId}'
+  --url 'https://vb-seamless-dev-backend.oriserve.com/getCampaignStats/{campaignId}'
 ```
 
 ```javascript JavaScript
@@ -127,7 +127,7 @@ const options = {
   credentials: 'include'
 };
 
-fetch(`https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/${campaignId}`, options)
+fetch(`https://vb-seamless-dev-backend.oriserve.com/getCampaignStats/${campaignId}`, options)
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(err => console.error(err));
@@ -137,7 +137,7 @@ fetch(`https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/${campaignI
 import requests
 
 campaign_id = "550e8400-e29b-41d4-a716-446655440000"
-url = f"https://seamless-sandbox-dev-cm.oriserve.com/getCampaignStats/{campaign_id}"
+url = f"https://vb-seamless-dev-backend.oriserve.com/getCampaignStats/{campaign_id}"
 
 headers = {
     "x-api-key": "your-api-key-here"

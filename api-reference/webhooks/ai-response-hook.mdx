@@ -99,13 +99,13 @@ User speaks → Plivo transcribes → POST /responseHook
     Would you like to know more about the features?
   </Speak>
   <GetInput 
-    action="https://seamless-sandbox-dev-cm.oriserve.com/responseHook"
+    action="https://vb-seamless-dev-backend.oriserve.com/responseHook"
     method="POST"
     inputType="speech"
     timeout="10"
     maxSpeechTime="60"
     speechTimeout="5"
-    interimSpeechResultsCallback="https://seamless-sandbox-dev-cm.oriserve.com/interim-results"
+    interimSpeechResultsCallback="https://vb-seamless-dev-backend.oriserve.com/interim-results"
     interimSpeechResultsCallbackMethod="POST">
     <Speak>I'm listening...</Speak>
   </GetInput>
@@ -275,7 +275,7 @@ AI follows a predefined script with dynamic responses:
   maxSpeechTime="60"     <!-- Max 60s per response -->
   speechTimeout="5"      <!-- 5s silence ends speech -->
   profanityFilter="false" <!-- Don't censor words -->
-  interimSpeechResultsCallback="https://seamless-sandbox-dev-cm.oriserve.com/interim-results">
+  interimSpeechResultsCallback="https://vb-seamless-dev-backend.oriserve.com/interim-results">
 ```
 
 ### Supported Languages:
@@ -386,7 +386,7 @@ const [aiResponse, sentiment] = await Promise.all([
 
 ### cURL Request:
 ```bash
-curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/responseHook \
+curl -X POST https://vb-seamless-dev-backend.oriserve.com/responseHook \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -H "X-Plivo-Signature-V2: YOUR_SIGNATURE" \
   -d "CallUUID=test-call-123" \
@@ -401,7 +401,7 @@ curl -X POST https://seamless-sandbox-dev-cm.oriserve.com/responseHook \
 import requests
 
 response = requests.post(
-    'https://seamless-sandbox-dev-cm.oriserve.com/responseHook',
+    'https://vb-seamless-dev-backend.oriserve.com/responseHook',
     headers={
         'X-Plivo-Signature-V2': 'YOUR_SIGNATURE',
         'Content-Type': 'application/x-www-form-urlencoded'

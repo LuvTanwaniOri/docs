@@ -2,6 +2,7 @@
 title: "Initiate Call"
 api: "POST /initiateCall"
 description: "Initiate a single outbound call via third-party webhook"
+auth: "bearer"
 ---
 
 ## Overview
@@ -134,7 +135,7 @@ Trigger an outbound AI call to a single contact. This endpoint is designed for t
 
 ### cURL:
 ```bash
-curl -X POST "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall" \
+curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateCall" \
   -H "Content-Type: application/json" \
   -d '{
     "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
@@ -173,7 +174,7 @@ async function initiateCall(campaignId, userName, userPhoneNumber, metaData = {}
     }
     
     const response = await axios.post(
-      'https://seamless-sandbox-dev-cm.oriserve.com/initiateCall',
+      'https://vb-seamless-dev-backend.oriserve.com/initiateCall',
       payload,
       {
         headers: {
@@ -214,7 +215,7 @@ initiateCall(
 import requests
 
 def initiate_call(campaign_id, user_name, user_phone_number, meta_data=None, notification_webhook_url=None):
-    url = "https://seamless-sandbox-dev-cm.oriserve.com/initiateCall"
+    url = "https://vb-seamless-dev-backend.oriserve.com/initiateCall"
     
     payload = {
         "campaignId": campaign_id,
