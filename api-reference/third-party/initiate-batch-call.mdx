@@ -1,20 +1,8 @@
 ---
 title: "Batch Call"
-api: "POST /initiateBatchCall"  
+api: "POST /initiateBatchCall"
 description: "Call multiple contacts at once with JSON payload (up to 1000 contacts)"
 ---
-
-<img
-  className="block dark:hidden"
-  src="/images/batch-light.svg"
-  alt="Batch Call API"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/batch-dark.svg"
-  alt="Batch Call API"
-/>
-
 ## Quick Start
 
 Need to call multiple people? This endpoint lets you initiate up to **1000 calls** in a single request. Perfect for campaigns, notifications, or bulk outreach.
@@ -52,32 +40,16 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
 
 ## Headers
 
-<ParamField header="Content-Type" type="string" required>
-  application/json
+<ParamField header="Content-Type" type="string" default="application/json" >
+  Set to application/json for JSON requests
 </ParamField>
 
-<ParamField header="Authorization" type="string" required>
-  Bearer token for authentication
+<ParamField header="Authorization" type="string">
+  Bearer token for authentication (optional)
   
   **Options:**
   - Regular JWT token: `Bearer <JWT_TOKEN>` (from login response)
   - Static batch token: `Bearer <BATCH_STATIC_TOKEN>` (never expires - contact support)
-</ParamField>
-
-<ParamField header="Cookie" type="string">
-  Alternative authentication via cookie: `token=<JWT_TOKEN>`
-  
-  Use this if not using Authorization header
-</ParamField>
-
-<ParamField header="Origin" type="string" required>
-  Origin of the request (must be whitelisted)
-  
-  Example: `https://seamless-sandbox-dev-cmdash.oriserve.com`
-</ParamField>
-
-<ParamField header="User-Agent" type="string">
-  Browser or client user agent
 </ParamField>
 
 ---
@@ -85,137 +57,76 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
 ## Request Body
 
 <ParamField body="campaignId" type="string" required>
-  **Campaign ID** - Links all calls to a specific campaign
-  
-  <CodeGroup>
-  ```json Example
-  "b885b212-d3bb-482f-a29d-508d2a8929ac"
-  ```
-  </CodeGroup>
+  Campaign ID that links all calls to a specific campaign
 </ParamField>
 
 <ParamField body="notificationWebhookUrl" type="string">
-  **Webhook URL** - Get batch processing updates *(optional)*
-  
-  <CodeGroup>
-  ```json Example
-  "https://your-webhook.com/batch-updates"
-  ```
-  </CodeGroup>
-  
-  We'll POST batch status and individual call updates
+  Webhook URL for batch processing updates (optional)
 </ParamField>
 
 <ParamField body="users" type="array" required>
-  **Users Array** - List of contacts to call (max 1000)
-  
-  <CodeGroup>
-  ```json Single User Example
-  [
-    {
-      "userName": "Faiz Ahmed",
-      "userPhoneNumber": "919625147093",
-      "metaData": {
-        "due_amount": "4500",
-        "due_date": "2025-09-03",
-        "company_name": "H-D-B financial services",
-        "loan_id": "1234",
-        "customer_id": "CUST_001"
-      }
-    }
-  ]
-  ```
-  
-  ```json Multiple Users - Global Examples
-  [
-    {
-      "userName": "Faiz Ahmed",
-      "userPhoneNumber": "919625147093",
-      "metaData": {
-        "due_amount": "4500",
-        "due_date": "2025-09-03",
-        "company_name": "H-D-B financial services",
-        "loan_id": "1234"
-      }
-    },
-    {
-      "userName": "John Smith",
-      "userPhoneNumber": "14155551234",
-      "metaData": {
-        "due_amount": "3000",
-        "due_date": "2025-10-15",
-        "company_name": "ABC Corp USA",
-        "loan_id": "5678"
-      }
-    },
-    {
-      "userName": "Sarah Johnson",
-      "userPhoneNumber": "447700123456",
-      "metaData": {
-        "due_amount": "5500",
-        "due_date": "2025-11-20",
-        "company_name": "XYZ Ltd UK",
-        "loan_id": "9012"
-      }
-    },
-    {
-      "userName": "Ahmed Al-Rashid",
-      "userPhoneNumber": "971501234567",
-      "metaData": {
-        "due_amount": "7200",
-        "due_date": "2025-12-05",
-        "company_name": "Emirates Finance",
-        "loan_id": "3456"
-      }
-    }
-  ]
-  ```
-  </CodeGroup>
-  
-  **Each user object contains:**
-  - `userName` - Contact's full name (required)
-  - `userPhoneNumber` - Phone number with country code (no + prefix, required)
-  - `metaData` - Custom data object for AI agent (optional)
-  
-  <Info>
-    **Phone Number Format:**
-    - **India:** `919625147093` (91 + 10 digits)
-    - **USA/Canada:** `14155551234` (1 + 10 digits)  
-    - **UK:** `447700123456` (44 + 7700123456)
-    - **UAE:** `971501234567` (971 + 9 digits)
-    - **Always include country code, never use + prefix**
-  </Info>
-  
-  <Warning>
-    **Limit:** Maximum 1000 users per request. For larger lists, use the [file upload endpoint](/api-reference/third-party/initiate-batch-call-using-sheet).
-  </Warning>
+  Array of user objects to call (max 1000 users)
 </ParamField>
 
-### Request Body Example
+### Request Body Structure
 
+Each user in the `users` array should have:
+- `userName` (string, required) - Contact's full name
+- `userPhoneNumber` (string, required) - Phone number with country code, no + prefix
+- `metaData` (object, optional) - Custom data for the AI agent
+
+### Phone Number Format Guidelines
+
+<Info>
+  **Phone Number Format:**
+  - **India:** `919876543210` (91 + 10 digits)
+  - **USA/Canada:** `14155551234` (1 + 10 digits)  
+  - **UK:** `447700123456` (44 + 7700123456)
+  - **UAE:** `971501234567` (971 + 9 digits)
+  - **Always include country code, never use + prefix**
+</Info>
+
+<Warning>
+  **Limit:** Maximum 1000 users per request. For larger lists, use the [file upload endpoint](/api-reference/third-party/initiate-batch-call-using-sheet).
+</Warning>
+
+## Request Body Examples
+
+### Minimal Example
+```json
+{
+  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+  "users": [
+    {
+      "userName": "Rajesh Kumar",
+      "userPhoneNumber": "919876543210"
+    }
+  ]
+}
+```
+
+### Complete Example with metaData
 ```json
 {
   "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
   "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
   "users": [
     {
-      "userName": "Faiz Ahmed",
-      "userPhoneNumber": "919625147093",
+      "userName": "Rajesh Kumar",
+      "userPhoneNumber": "919876543210",
       "metaData": {
-        "due_amount": "4500",
-        "due_date": "2025-09-03",
-        "company_name": "H-D-B financial services",
-        "loan_id": "1234"
+        "customer_id": "CUST_12345",
+        "due_amount": "25000",
+        "company_name": "HDFC Bank"
       }
     },
     {
       "userName": "John Smith", 
       "userPhoneNumber": "14155551234",
       "metaData": {
-        "due_amount": "3000",
-        "due_date": "2025-10-15",
-        "company_name": "ABC Corp USA",
-        "loan_id": "5678"
+        "customer_id": "CUST_67890",
+        "due_amount": "15000",
+        "company_name": "Chase Bank"
       }
     }
   ]
@@ -243,8 +154,8 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
         "calls": [
           {
             "call_uuid": "call-uuid-001",
-            "userName": "Faiz Ahmed",
-            "userPhoneNumber": "919625147093",
+            "userName": "Rajesh Kumar",
+            "userPhoneNumber": "919876543210",
             "status": "initiated"
           }
         ]
@@ -264,8 +175,8 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
         "calls": [
           {
             "call_uuid": "call-uuid-001",
-            "userName": "Faiz Ahmed",
-            "userPhoneNumber": "919625147093",
+            "userName": "Rajesh Kumar",
+            "userPhoneNumber": "919876543210",
             "status": "initiated"
           },
           {
@@ -387,35 +298,41 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
 curl -X POST "https://vb-seamless-dev-backend.oriserve.com/initiateBatchCall" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -H "Origin: https://your-domain.com" \
   -d '{
     "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
     "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
     "users": [
       {
-        "userName": "Faiz Ahmed",
-        "userPhoneNumber": "919625147093",
+        "userName": "Rajesh Kumar",
+        "userPhoneNumber": "919876543210",
         "metaData": {
-          "due_amount": "4500",
-          "due_amount_half": "2250",
-          "due_date": "2025-09-03",
-          "allocation_month": "2025-09-01",
-          "company_name": "H-D-B financial services",
-          "loan_id": "1234",
-          "company_id": "23332000",
-          "communication_level": "applicant",
-          "product_description": "two wheeler loan"
+          "customer_id": "CUST_12345",
+          "account_number": "ACC789123456",
+          "due_amount": "25000",
+          "due_date": "2025-12-15",
+          "loan_type": "Personal Loan",
+          "company_name": "HDFC Bank",
+          "branch_code": "HDFC001",
+          "payment_reminder": "true",
+          "language_preference": "Hindi",
+          "last_payment_date": "2025-10-15",
+          "overdue_days": "24",
+          "contact_attempt": "3"
         }
       },
       {
         "userName": "John Smith", 
         "userPhoneNumber": "14155551234",
         "metaData": {
-          "due_amount": "3000",
-          "due_date": "2025-10-15",
-          "company_name": "ABC Corp USA",
-          "loan_id": "5678",
-          "communication_level": "primary"
+          "customer_id": "CUST_67890",
+          "account_number": "ACC456789123",
+          "due_amount": "15000",
+          "due_date": "2025-11-28",
+          "loan_type": "Auto Loan",
+          "company_name": "Chase Bank",
+          "branch_code": "CHASE_NYC",
+          "payment_reminder": "false",
+          "language_preference": "English"
         }
       }
     ]
@@ -442,8 +359,7 @@ async function initiateBatchCall(campaignId, users, notificationWebhookUrl = nul
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_TOKEN_HERE',
-          'Origin': 'https://your-domain.com'
+          'Authorization': 'Bearer YOUR_TOKEN_HERE'
         }
       }
     );
@@ -461,33 +377,39 @@ async function initiateBatchCall(campaignId, users, notificationWebhookUrl = nul
 // Example usage with multiple international numbers
 const users = [
   {
-    userName: "Faiz Ahmed",
-    userPhoneNumber: "919625147093", // India
+    userName: "Rajesh Kumar",
+    userPhoneNumber: "919876543210", // India
     metaData: {
-      "due_amount": "4500",
-      "due_date": "2025-09-03",
-      "company_name": "H-D-B financial services",
-      "loan_id": "1234"
+      "customer_id": "CUST_12345",
+      "account_number": "ACC789123456",
+      "due_amount": "25000",
+      "due_date": "2025-12-15",
+      "loan_type": "Personal Loan",
+      "company_name": "HDFC Bank"
     }
   },
   {
     userName: "John Smith",
     userPhoneNumber: "14155551234", // USA
     metaData: {
-      "due_amount": "3000", 
-      "due_date": "2025-10-15",
-      "company_name": "ABC Corp USA",
-      "loan_id": "5678"
+      "customer_id": "CUST_67890",
+      "account_number": "ACC456789123", 
+      "due_amount": "15000",
+      "due_date": "2025-11-28",
+      "loan_type": "Auto Loan",
+      "company_name": "Chase Bank"
     }
   },
   {
     userName: "Sarah Johnson",
     userPhoneNumber: "447700123456", // UK
     metaData: {
-      "due_amount": "5500",
-      "due_date": "2025-11-20", 
-      "company_name": "XYZ Ltd UK",
-      "loan_id": "9012"
+      "customer_id": "CUST_11111",
+      "account_number": "ACC111222333",
+      "due_amount": "18500",
+      "due_date": "2025-12-05", 
+      "loan_type": "Mortgage",
+      "company_name": "Barclays Bank"
     }
   }
 ];
@@ -529,8 +451,7 @@ def initiate_batch_call(campaign_id, users, notification_webhook_url=None):
     
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer YOUR_TOKEN_HERE",
-        "Origin": "https://your-domain.com"
+        "Authorization": "Bearer YOUR_TOKEN_HERE"
     }
     
     try:
@@ -552,23 +473,27 @@ def initiate_batch_call(campaign_id, users, notification_webhook_url=None):
 # Example usage
 users = [
     {
-        "userName": "Faiz Ahmed", 
-        "userPhoneNumber": "919625147093",  # India
+        "userName": "Rajesh Kumar", 
+        "userPhoneNumber": "919876543210",  # India
         "metaData": {
-            "due_amount": "4500",
-            "due_date": "2025-09-03",
-            "company_name": "H-D-B financial services",
-            "loan_id": "1234"
+            "customer_id": "CUST_12345",
+            "account_number": "ACC789123456",
+            "due_amount": "25000",
+            "due_date": "2025-12-15",
+            "loan_type": "Personal Loan",
+            "company_name": "HDFC Bank"
         }
     },
     {
         "userName": "Ahmed Al-Rashid",
         "userPhoneNumber": "971501234567",  # UAE
         "metaData": {
-            "due_amount": "7200",
-            "due_date": "2025-12-05", 
-            "company_name": "Emirates Finance",
-            "loan_id": "3456"
+            "customer_id": "CUST_22222",
+            "account_number": "ACC444555666",
+            "due_amount": "32000",
+            "due_date": "2025-11-30", 
+            "loan_type": "Business Loan",
+            "company_name": "Emirates NBD"
         }
     }
 ]
@@ -598,8 +523,7 @@ function initiateBatchCall($campaignId, $users, $notificationWebhookUrl = null) 
     
     $headers = [
         "Content-Type: application/json",
-        "Authorization: Bearer YOUR_TOKEN_HERE",
-        "Origin: https://your-domain.com"
+        "Authorization: Bearer YOUR_TOKEN_HERE"
     ];
     
     $ch = curl_init();
@@ -631,23 +555,27 @@ function initiateBatchCall($campaignId, $users, $notificationWebhookUrl = null) 
 // Example usage with international numbers
 $users = [
     [
-        "userName" => "Faiz Ahmed",
-        "userPhoneNumber" => "919625147093", // India
+        "userName" => "Rajesh Kumar",
+        "userPhoneNumber" => "919876543210", // India
         "metaData" => [
-            "due_amount" => "4500",
-            "due_date" => "2025-09-03",
-            "company_name" => "H-D-B financial services",
-            "loan_id" => "1234"
+            "customer_id" => "CUST_12345",
+            "account_number" => "ACC789123456",
+            "due_amount" => "25000",
+            "due_date" => "2025-12-15",
+            "loan_type" => "Personal Loan",
+            "company_name" => "HDFC Bank"
         ]
     ],
     [
         "userName" => "Sarah Johnson", 
         "userPhoneNumber" => "447700123456", // UK
         "metaData" => [
-            "due_amount" => "5500",
-            "due_date" => "2025-11-20",
-            "company_name" => "XYZ Ltd UK", 
-            "loan_id" => "9012"
+            "customer_id" => "CUST_11111",
+            "account_number" => "ACC111222333",
+            "due_amount" => "18500",
+            "due_date" => "2025-12-05",
+            "loan_type" => "Mortgage",
+            "company_name" => "Barclays Bank"
         ]
     ]
 ];

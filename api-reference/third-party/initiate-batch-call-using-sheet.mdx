@@ -13,7 +13,7 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 
 ## Headers
 
-<ParamField header="Content-Type" type="string" required>
+<ParamField header="Content-Type" type="string" default="application/json">
   multipart/form-data
 </ParamField>
 
@@ -31,7 +31,7 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
   Use this if not using Authorization header
 </ParamField>
 
-<ParamField header="Origin" type="string" required>
+<ParamField header="Origin" type="string">
   Origin of the request (must be whitelisted)
 </ParamField>
 
