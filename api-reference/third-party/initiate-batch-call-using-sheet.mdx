@@ -41,41 +41,7 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
 <ParamField body="notificationWebhookUrl" type="string" default="https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata">
   Optional webhook URL for call status notifications
   
-  **When provided, you'll receive detailed webhook responses for each completed call from your uploaded file:**
-  
-  ```json
-  {
-    "referenceId": "6910b30a492fd81ae3b17a70",
-    "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-    "postCallAnalysisResults": {
-      "user_sentiment": "Positive",
-      "interest_level": "Interested", 
-      "dnd_intent": "No",
-      "call_sumary": "AI-generated call summary...",
-      "disposition": "yes",
-      "callback_date": "na",
-      "callback_time": "na"
-    },
-    "conversationLogs": [
-      {
-        "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-        "UserQuery": "Yes. Yes.",
-        "BotResponse": "Great! Thank you for confirming...",
-        "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
-      }
-    ],
-    "customerSpecificdetails": {
-      "name": "Faiz",
-      "phone_number": "919625147093",
-      "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0"
-    },
-    "callDuration": 43,
-    "callStatus": "completed", 
-    "callRecordingUrl": "https://aps1.media.plivo.com/.../recording.mp3"
-  }
-  ```
-  
-  ↳ [View complete webhook documentation](#notification-webhook-response)
+  ↳ [View complete webhook response documentation](#notificationwebhookurl-response)
 </ParamField>
 
 <ParamField body="file" type="file" required>
@@ -149,95 +115,156 @@ Jane Smith,919876543211,"{""due_amount"":""3000"",""company_name"":""ABC Corp""}
 
 ---
 
-## Notification Webhook Response
+## NotificationWebHookUrl Response
 
-When you provide a `notificationWebhookUrl`, the system will send POST requests to your endpoint with detailed call completion data for each call processed from your uploaded file.
+When you provide a `notificationWebhookUrl`, the system will send POST requests to your endpoint with detailed call completion data.
 
-### Webhook Payload Structure
+### Response Payload Structure
 
-Your webhook endpoint will receive the following payload when each call completes:
+Your webhook endpoint will receive different payloads based on the call status:
 
-<CodeGroup>
-```json Webhook Response Example
-{
-  "referenceId": "6910b30a492fd81ae3b17a70",
-  "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-  "postCallAnalysisResults": {
-    "intent": "NA",
-    "disposition": "yes", 
-    "app_status": "NA",
-    "account_status": "NA",
-    "past_sales_experience": "NA",
-    "products_sold_before": "NA",
-    "desired_product_to_sell": "NA",
-    "incentive_primer": "NA",
-    "incentive_details": "NA",
-    "training_interest": "NA",
-    "referral_interest": "NA",
-    "language": "NA",
-    "user_reaction": "NA",
-    "connected": "NA",
-    "bot_repetition": "NA",
-    "voicemail_flow_detected": "NA",
-    "call_date": "NA",
-    "call_time_start": "NA",
-    "call_time_end": "NA",
-    "agent_name": "NA",
-    "callSummary": "NA",
-    "user_sentiment": "Positive",
-    "dnd_intent": "No",
-    "interest_level": "Interested",
-    "call_sumary": "The customer appears open and receptive to the conversation about savings, verbally expressing agreement and willingness to listen to the agent's tips. The user confirmed their identity and was polite and cooperative. There is no dispute or objection, and the customer seems interested in learning more about saving and managing finances.",
-    "callback_date": "na",
-    "callback_time": "na",
-    "p2s": "sure",
-    "key": "call_sumary"
-  },
-  "conversationLogs": [
+<Tabs>
+  <Tab title="Completed Call">
+    **Successful call with full conversation data:**
+    
+    ```json
     {
-      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-      "UserQuery": "Yes. Yes.",
-      "BotResponse": "NA",
-      "ConversationLogId": "6910b340359ea8b48c2f65ec",
-      "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
-    },
-    {
-      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b", 
-      "UserQuery": "Yes. You are speaking with, please.",
-      "BotResponse": "\nGreat!",
-      "ConversationLogId": "6910b340359ea8b48c2f65ed",
-      "BotResponseTimeStamp": "2025-11-09T15:28:36.000Z"
-    },
-    {
-      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-      "UserQuery": "Yes.",
-      "BotResponse": "\nThank you for confirming!\nI'm here to share some simple tips on managing money and making the most out of your finances.\nWould you like a quick tip on how to save a bit more from your salary each month?",
-      "ConversationLogId": "6910b340359ea8b48c2f65ee",
-      "BotResponseTimeStamp": "2025-11-09T15:28:52.000Z"
-    },
-    {
-      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
-      "UserQuery": "NA",
-      "BotResponse": "\nAwesome!",
-      "ConversationLogId": "6910b340359ea8b48c2f65ef",
-      "BotResponseTimeStamp": "2025-11-09T15:28:54.000Z"
+      "referenceId": "6910b30a492fd81ae3b17a70",
+      "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+      "postCallAnalysisResults": {
+        "intent": "NA",
+        "disposition": "yes", 
+        "app_status": "NA",
+        "account_status": "NA",
+        "past_sales_experience": "NA",
+        "products_sold_before": "NA",
+        "desired_product_to_sell": "NA",
+        "incentive_primer": "NA",
+        "incentive_details": "NA",
+        "training_interest": "NA",
+        "referral_interest": "NA",
+        "language": "NA",
+        "user_reaction": "NA",
+        "connected": "NA",
+        "bot_repetition": "NA",
+        "voicemail_flow_detected": "NA",
+        "call_date": "NA",
+        "call_time_start": "NA",
+        "call_time_end": "NA",
+        "agent_name": "NA",
+        "callSummary": "NA",
+        "user_sentiment": "Positive",
+        "dnd_intent": "No",
+        "interest_level": "Interested",
+        "call_sumary": "The customer appears open and receptive to the conversation about savings, verbally expressing agreement and willingness to listen to the agent's tips. The user confirmed their identity and was polite and cooperative. There is no dispute or objection, and the customer seems interested in learning more about saving and managing finances.",
+        "callback_date": "na",
+        "callback_time": "na",
+        "p2s": "sure",
+        "key": "call_sumary"
+      },
+      "conversationLogs": [
+        {
+          "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+          "UserQuery": "Yes. Yes.",
+          "BotResponse": "NA",
+          "ConversationLogId": "6910b340359ea8b48c2f65ec",
+          "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
+        },
+        {
+          "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b", 
+          "UserQuery": "Yes. You are speaking with, please.",
+          "BotResponse": "\nGreat!",
+          "ConversationLogId": "6910b340359ea8b48c2f65ed",
+          "BotResponseTimeStamp": "2025-11-09T15:28:36.000Z"
+        },
+        {
+          "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+          "UserQuery": "Yes.",
+          "BotResponse": "\nThank you for confirming!\nI'm here to share some simple tips on managing money and making the most out of your finances.\nWould you like a quick tip on how to save a bit more from your salary each month?",
+          "ConversationLogId": "6910b340359ea8b48c2f65ee",
+          "BotResponseTimeStamp": "2025-11-09T15:28:52.000Z"
+        },
+        {
+          "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+          "UserQuery": "NA",
+          "BotResponse": "\nAwesome!",
+          "ConversationLogId": "6910b340359ea8b48c2f65ef",
+          "BotResponseTimeStamp": "2025-11-09T15:28:54.000Z"
+        }
+      ],
+      "customerSpecificdetails": {
+        "name": "Faiz",
+        "phone_number": "919625147093",
+        "contactId": "690f62c4ef2fc0e2d66eefb3",
+        "loan_number": 213,
+        "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+        "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0",
+        "campaignRecordId": "6910b30a492fd81ae3b17a70"
+      },
+      "callDuration": 43,
+      "callStatus": "completed",
+      "callRecordingUrl": "https://aps1.media.plivo.com/v1/Account/MAMWZLZTJIYZKWYJLHYM/Recording/9c79dbdb-9a54-4bc5-9d7a-fa7809967af9.mp3"
     }
-  ],
-  "customerSpecificdetails": {
-    "name": "Faiz",
-    "phone_number": "919625147093",
-    "contactId": "690f62c4ef2fc0e2d66eefb3",
-    "loan_number": 213,
-    "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
-    "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0",
-    "campaignRecordId": "6910b30a492fd81ae3b17a70"
-  },
-  "callDuration": 43,
-  "callStatus": "completed",
-  "callRecordingUrl": "https://aps1.media.plivo.com/v1/Account/MAMWZLZTJIYZKWYJLHYM/Recording/9c79dbdb-9a54-4bc5-9d7a-fa7809967af9.mp3"
-}
-```
-</CodeGroup>
+    ```
+    
+  </Tab>
+  <Tab title="Busy/CallCut">
+    **Call failed due to busy line, or call cut:**
+    
+    ```json
+    {
+      "referenceId": "691187352caac6453810448c",
+      "callId": "af7b5038-61bf-4cb3-9737-72c5bb8b2429",
+      "postCallAnalysisResults": {},
+      "conversationLogs": [],
+      "customerSpecificdetails": {
+        "name": "Faiz",
+        "phone_number": "919625147093",
+        "contactId": "690f62c4ef2fc0e2d66eefb3",
+        "loan_number": 213,
+        "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+        "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0",
+        "campaignRecordId": "691187352caac6453810448c"
+      },
+      "callDuration": 0,
+      "callStatus": "busy",
+      "callRecordingUrl": ""
+    }
+    ```
+  </Tab>
+  <Tab title="No Answer">
+    **Call failed due to no answer:**
+    
+    ```json
+    {
+      "referenceId": "691188b52caac64538104571",
+      "callId": "78fbabf5-d8a9-45ab-8c1e-2c9a2c2d6bd6",
+      "postCallAnalysisResults": {},
+      "conversationLogs": [],
+      "customerSpecificdetails": {
+        "name": "Faiz",
+        "phone_number": "919625147093",
+        "contactId": "690f62c4ef2fc0e2d66eefb3",
+        "loan_number": 213,
+        "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+        "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0",
+        "campaignRecordId": "691188b52caac64538104571"
+      },
+      "callDuration": 0,
+      "callStatus": "no-answer",
+      "callRecordingUrl": ""
+    }
+    ```
+    
+    **Possible callStatus values for failed calls:**
+    - `busy` - Line was busy
+    - `no-answer` - Call not answered
+    - `failed` - Call failed to connect
+    - `call-cut` - Call was disconnected early
+    - `invalid-number` - Phone number invalid
+    
+  </Tab>
+</Tabs>
 
 ### Webhook Payload Fields
 
