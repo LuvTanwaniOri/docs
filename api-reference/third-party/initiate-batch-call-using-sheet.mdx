@@ -112,6 +112,259 @@ Jane Smith,919876543211,"{""due_amount"":""3000"",""company_name"":""ABC Corp""}
 
 ---
 
+## Notification Webhook Response
+
+When you provide a `notificationWebhookUrl`, the system will send POST requests to your endpoint with detailed call completion data for each call processed from your uploaded file.
+
+### Webhook Payload Structure
+
+Your webhook endpoint will receive the following payload when each call completes:
+
+<CodeGroup>
+```json Webhook Response Example
+{
+  "referenceId": "6910b30a492fd81ae3b17a70",
+  "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+  "postCallAnalysisResults": {
+    "intent": "NA",
+    "disposition": "yes", 
+    "app_status": "NA",
+    "account_status": "NA",
+    "past_sales_experience": "NA",
+    "products_sold_before": "NA",
+    "desired_product_to_sell": "NA",
+    "incentive_primer": "NA",
+    "incentive_details": "NA",
+    "training_interest": "NA",
+    "referral_interest": "NA",
+    "language": "NA",
+    "user_reaction": "NA",
+    "connected": "NA",
+    "bot_repetition": "NA",
+    "voicemail_flow_detected": "NA",
+    "call_date": "NA",
+    "call_time_start": "NA",
+    "call_time_end": "NA",
+    "agent_name": "NA",
+    "callSummary": "NA",
+    "user_sentiment": "Positive",
+    "dnd_intent": "No",
+    "interest_level": "Interested",
+    "call_sumary": "The customer appears open and receptive to the conversation about savings, verbally expressing agreement and willingness to listen to the agent's tips. The user confirmed their identity and was polite and cooperative. There is no dispute or objection, and the customer seems interested in learning more about saving and managing finances.",
+    "callback_date": "na",
+    "callback_time": "na",
+    "p2s": "sure",
+    "key": "call_sumary"
+  },
+  "conversationLogs": [
+    {
+      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+      "UserQuery": "Yes. Yes.",
+      "BotResponse": "NA",
+      "ConversationLogId": "6910b340359ea8b48c2f65ec",
+      "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
+    },
+    {
+      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b", 
+      "UserQuery": "Yes. You are speaking with, please.",
+      "BotResponse": "\nGreat!",
+      "ConversationLogId": "6910b340359ea8b48c2f65ed",
+      "BotResponseTimeStamp": "2025-11-09T15:28:36.000Z"
+    },
+    {
+      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+      "UserQuery": "Yes.",
+      "BotResponse": "\nThank you for confirming!\nI'm here to share some simple tips on managing money and making the most out of your finances.\nWould you like a quick tip on how to save a bit more from your salary each month?",
+      "ConversationLogId": "6910b340359ea8b48c2f65ee",
+      "BotResponseTimeStamp": "2025-11-09T15:28:52.000Z"
+    },
+    {
+      "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+      "UserQuery": "NA",
+      "BotResponse": "\nAwesome!",
+      "ConversationLogId": "6910b340359ea8b48c2f65ef",
+      "BotResponseTimeStamp": "2025-11-09T15:28:54.000Z"
+    }
+  ],
+  "customerSpecificdetails": {
+    "name": "Faiz",
+    "phone_number": "919625147093",
+    "contactId": "690f62c4ef2fc0e2d66eefb3",
+    "loan_number": 213,
+    "notificationWebhookUrl": "https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata",
+    "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0",
+    "campaignRecordId": "6910b30a492fd81ae3b17a70"
+  },
+  "callDuration": 43,
+  "callStatus": "completed",
+  "callRecordingUrl": "https://aps1.media.plivo.com/v1/Account/MAMWZLZTJIYZKWYJLHYM/Recording/9c79dbdb-9a54-4bc5-9d7a-fa7809967af9.mp3"
+}
+```
+</CodeGroup>
+
+### Webhook Payload Fields
+
+<AccordionGroup>
+  <Accordion title="Core Call Data" icon="phone">
+    - **referenceId** - Unique reference ID for the call record
+    - **callId** - Unique UUID for this specific call
+    - **callDuration** - Call duration in seconds
+    - **callStatus** - Final call status (completed, failed, no-answer, busy, etc.)
+    - **callRecordingUrl** - Direct URL to the call recording (MP3 format)
+  </Accordion>
+
+  <Accordion title="Post-Call Analysis" icon="chart-line">
+    The `postCallAnalysisResults` object contains AI-powered analysis of the call:
+    - **user_sentiment** - Customer sentiment (Positive, Negative, Neutral)
+    - **interest_level** - Level of customer interest (Interested, Not Interested, Neutral)
+    - **dnd_intent** - Whether customer requested Do Not Disturb (Yes, No)
+    - **call_sumary** - AI-generated summary of the conversation
+    - **disposition** - Call outcome classification
+    - **callback_date/callback_time** - If customer requested callback
+    - **connected** - Whether call was successfully connected
+    - **voicemail_flow_detected** - If voicemail was detected
+  </Accordion>
+
+  <Accordion title="Conversation Logs" icon="message">
+    The `conversationLogs` array contains the complete conversation transcript:
+    - **CallId** - Links to the main call
+    - **UserQuery** - What the customer said
+    - **BotResponse** - How the AI agent responded
+    - **ConversationLogId** - Unique ID for this exchange
+    - **BotResponseTimeStamp** - When the response was generated
+  </Accordion>
+
+  <Accordion title="Customer Details" icon="user">
+    The `customerSpecificdetails` object contains:
+    - **name** - Customer name from your CSV/Excel file
+    - **phone_number** - Customer phone number
+    - **contactId** - Internal contact ID
+    - **campaignId** - The campaign this call belongs to
+    - **campaignRecordId** - Specific record ID within the campaign
+    - **notificationWebhookUrl** - The webhook URL (for verification)
+    - **loan_number** - Custom field from your metadata (if provided)
+  </Accordion>
+</AccordionGroup>
+
+### Webhook Endpoint Implementation
+
+Your webhook endpoint should be prepared to handle these POST requests for each contact in your uploaded file:
+
+<CodeGroup>
+```javascript Node.js/Express
+app.post('/batch-callback', (req, res) => {
+  const callData = req.body;
+  
+  console.log(`Call ${callData.callId} completed for ${callData.customerSpecificdetails.name}`);
+  console.log(`Status: ${callData.callStatus}`);
+  console.log(`Duration: ${callData.callDuration} seconds`);
+  console.log(`Sentiment: ${callData.postCallAnalysisResults.user_sentiment}`);
+  
+  // Process the call results from your uploaded file
+  processFileCallResults(callData);
+  
+  // Always respond with 200 OK
+  res.status(200).json({ received: true });
+});
+
+function processFileCallResults(callData) {
+  // Store call results in your database
+  // Update customer records based on file data
+  // Trigger follow-up actions based on sentiment/interest
+  // Download and store call recordings if needed
+  
+  // Access original CSV/Excel metadata
+  const customerDetails = callData.customerSpecificdetails;
+  console.log(`Processing results for contact: ${customerDetails.name}`);
+  console.log(`Phone: ${customerDetails.phone_number}`);
+  console.log(`Campaign: ${customerDetails.campaignId}`);
+}
+```
+
+```python Python/Flask
+from flask import Flask, request, jsonify
+
+@app.route('/batch-callback', methods=['POST'])
+def handle_file_batch_callback():
+    call_data = request.json
+    
+    customer = call_data['customerSpecificdetails']
+    analysis = call_data['postCallAnalysisResults']
+    
+    print(f"Call {call_data['callId']} completed for {customer['name']}")
+    print(f"Status: {call_data['callStatus']}")
+    print(f"Duration: {call_data['callDuration']} seconds")
+    print(f"Sentiment: {analysis['user_sentiment']}")
+    print(f"Interest Level: {analysis['interest_level']}")
+    
+    # Process the call results from uploaded file
+    process_file_call_results(call_data)
+    
+    # Always respond with 200 OK
+    return jsonify({"received": True}), 200
+
+def process_file_call_results(call_data):
+    # Store call results in your database
+    # Update customer records based on uploaded file data
+    # Trigger follow-up actions based on sentiment/interest
+    # Download and store call recordings if needed
+    
+    # Access original CSV/Excel metadata
+    customer = call_data['customerSpecificdetails']
+    print(f"Processing results for contact from file: {customer['name']}")
+    pass
+```
+
+```php PHP
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $callData = json_decode(file_get_contents('php://input'), true);
+    $customer = $callData['customerSpecificdetails'];
+    $analysis = $callData['postCallAnalysisResults'];
+    
+    echo "Call " . $callData['callId'] . " completed for " . $customer['name'] . "\n";
+    echo "Status: " . $callData['callStatus'] . "\n";
+    echo "Duration: " . $callData['callDuration'] . " seconds\n";
+    echo "Sentiment: " . $analysis['user_sentiment'] . "\n";
+    echo "Interest Level: " . $analysis['interest_level'] . "\n";
+    
+    // Process the call results from uploaded file
+    processFileCallResults($callData);
+    
+    // Always respond with 200 OK
+    http_response_code(200);
+    echo json_encode(['received' => true]);
+}
+
+function processFileCallResults($callData) {
+    // Store call results in your database
+    // Update customer records based on uploaded file data
+    // Trigger follow-up actions based on sentiment/interest
+    // Download and store call recordings if needed
+    
+    // Access original CSV/Excel metadata
+    $customer = $callData['customerSpecificdetails'];
+    echo "Processing results for contact from file: " . $customer['name'] . "\n";
+}
+?>
+```
+</CodeGroup>
+
+<Note>
+**File Processing:** You'll receive one webhook call for each contact in your uploaded CSV/Excel file. Each webhook contains the complete call analysis and conversation data for that specific contact.
+</Note>
+
+<Tip>
+**Pro Tips for File-Based Webhook Handling:**
+- **Track completion progress** by counting webhook calls vs. total uploaded contacts
+- **Match webhook data to original file** using phone numbers or custom IDs
+- **Store file upload batch ID** to group related webhook calls
+- **Handle large files gracefully** - webhooks may arrive over several hours for very large uploads
+- **Implement duplicate detection** in case of webhook retries
+</Tip>
+
+---
+
 ## Code Examples
 
 ### cURL:
