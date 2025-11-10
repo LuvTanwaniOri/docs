@@ -8,6 +8,10 @@ description: "Upload CSV/Excel file to initiate batch calls (supports 10,000+ co
 
 Upload a CSV or Excel file containing contact details to initiate batch calls. Supports large datasets (10,000+ contacts).
 
+<Note>
+  **Call Processing Time:** Receiving calls on your phone numbers can take up to 30 seconds from the telephony dialer's side.
+</Note>
+
 ---
 
 ## Headers
@@ -34,11 +38,44 @@ Upload a CSV or Excel file containing contact details to initiate batch calls. S
   ```
 </ParamField>
 
-<ParamField body="notificationWebhookUrl" type="string">
+<ParamField body="notificationWebhookUrl" type="string" default="https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata">
   Optional webhook URL for call status notifications
+  
+  **When provided, you'll receive detailed webhook responses for each completed call from your uploaded file:**
+  
+  ```json
+  {
+    "referenceId": "6910b30a492fd81ae3b17a70",
+    "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+    "postCallAnalysisResults": {
+      "user_sentiment": "Positive",
+      "interest_level": "Interested", 
+      "dnd_intent": "No",
+      "call_sumary": "AI-generated call summary...",
+      "disposition": "yes",
+      "callback_date": "na",
+      "callback_time": "na"
+    },
+    "conversationLogs": [
+      {
+        "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+        "UserQuery": "Yes. Yes.",
+        "BotResponse": "Great! Thank you for confirming...",
+        "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
+      }
+    ],
+    "customerSpecificdetails": {
+      "name": "Faiz",
+      "phone_number": "919625147093",
+      "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0"
+    },
+    "callDuration": 43,
+    "callStatus": "completed", 
+    "callRecordingUrl": "https://aps1.media.plivo.com/.../recording.mp3"
+  }
   ```
-  https://overindulgently-unbreezy-colleen.ngrok-free.dev/getCallbackdata
-  ```
+  
+  ↳ [View complete webhook documentation](#notification-webhook-response)
 </ParamField>
 
 <ParamField body="file" type="file" required>

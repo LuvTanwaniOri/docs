@@ -20,6 +20,10 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
   </Card>
 </CardGroup>
 
+<Note>
+  **Call Processing Time:** Receiving calls on your phone numbers can take up to 30 seconds from the telephony dialer's side.
+</Note>
+
 ---
 
 ## Headers
@@ -45,10 +49,44 @@ Need to call multiple people? This endpoint lets you initiate up to **1000 calls
   Example: `b885b212-d3bb-482f-a29d-508d2a8929ac`
 </ParamField>
 
-<ParamField body="notificationWebhookUrl" type="string">
+<ParamField body="notificationWebhookUrl" type="string" default="https://your-webhook.ngrok-free.app/batch-callback">
   Webhook URL for batch processing updates (optional)
   
-  Example: `https://your-webhook.com/batch-updates`
+  **When provided, you'll receive detailed webhook responses for each completed call:**
+  
+  ```json
+  {
+    "referenceId": "6910b30a492fd81ae3b17a70",
+    "callId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+    "postCallAnalysisResults": {
+      "user_sentiment": "Positive",
+      "interest_level": "Interested", 
+      "dnd_intent": "No",
+      "call_sumary": "AI-generated call summary...",
+      "disposition": "yes",
+      "callback_date": "na",
+      "callback_time": "na"
+    },
+    "conversationLogs": [
+      {
+        "CallId": "2c52293f-53cc-487f-aead-4d55bf8baf3b",
+        "UserQuery": "Yes. Yes.",
+        "BotResponse": "Great! Thank you for confirming...",
+        "BotResponseTimeStamp": "2025-11-09T15:28:33.000Z"
+      }
+    ],
+    "customerSpecificdetails": {
+      "name": "Faiz",
+      "phone_number": "919625147093",
+      "campaignId": "246eb08f-ab16-4e31-a7d5-dd1c9b2bc3d0"
+    },
+    "callDuration": 43,
+    "callStatus": "completed",
+    "callRecordingUrl": "https://aps1.media.plivo.com/.../recording.mp3"
+  }
+  ```
+  
+  ↳ [View complete webhook documentation](#notification-webhook-response)
 </ParamField>
 
 <ParamField
@@ -147,7 +185,7 @@ Each user in the `users` array should have:
 <RequestExample>
 ```json
 {
-  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929ac",
+  "campaignId": "b885b212-d3bb-482f-a29d-508d2a8929acssss",
   "notificationWebhookUrl": "https://your-webhook.ngrok-free.app/batch-callback",
   "users": [
     {
