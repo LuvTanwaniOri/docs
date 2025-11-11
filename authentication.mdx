@@ -1,8 +1,10 @@
 # Authentication
 
-All API requests to VoiceGenie require authentication using API keys. This guide covers the authentication method used across the VoiceGenie platform.
+All API requests to VoiceGenie require authentication. This guide covers the authentication methods and headers used across the VoiceGenie platform.
 
-## API Key Authentication
+## Authentication Methods
+
+### API Key Authentication
 
 VoiceGenie uses API key authentication for all API requests. Include your API key in the `x-api-key` header with every request.
 
@@ -19,12 +21,40 @@ curl --request GET \
   --header 'Content-Type: application/json'
 ```
 
+### Session-Based Authentication
+
+Some endpoints require session-based authentication using cookies for dashboard and web application access.
+
+**Cookie Header:**
+```bash
+Cookie: token=your_session_token_here
+```
+
 ## Required Headers
 
-| Header | Value | Description |
-|--------|-------|-------------|
-| `x-api-key` | Your API key | Required for all API requests |
-| `Content-Type` | `application/json` | Required for requests with body |
+| Header | Value | Description | When Required |
+|--------|-------|-------------|---------------|
+| `x-api-key` | Your API key | Primary authentication for API requests | All API endpoints |
+| `Cookie` | `token=session_token` | Session authentication for dashboard endpoints | Dashboard/web endpoints |
+| `Content-Type` | `application/json` or `multipart/form-data` | Request payload format | POST/PUT requests with body |
+
+## Optional Headers
+
+| Header | Example | Description |
+|--------|---------|-------------|
+| `Origin` | `vb-seamless-dev-backend.oriserve.com` | Request origin for whitelisting |
+| `Accept` | `application/json` | Preferred response format |
+| `User-Agent` | Browser/client identifier | Client identification |
+
+## Webhook Authentication Headers
+
+For incoming webhooks, VoiceGenie uses signature verification:
+
+| Header | Description | Used In |
+|--------|-------------|---------|
+| `X-Plivo-Signature-V2` | Plivo webhook signature verification | Plivo webhooks |
+| `X-Plivo-Signature-MA-V2` | Additional Plivo signature verification | Plivo webhooks |
+| `x-webhook-signature` | Custom webhook signature | AI dialer callbacks |
 
 ## Getting Your API Key
 
@@ -41,11 +71,12 @@ curl --request GET \
 - Use different keys for development, staging, and production environments
 - Implement IP whitelisting when possible
 - Monitor API usage for suspicious activity
+- Validate webhook signatures for incoming webhooks
 
 ## Error Responses
 
 ### 401 Unauthorized
-Invalid or missing API key.
+Invalid or missing authentication credentials.
 
 ```json
 {
@@ -55,7 +86,7 @@ Invalid or missing API key.
 ```
 
 ### 403 Forbidden
-Valid API key but insufficient permissions.
+Valid credentials but insufficient permissions.
 
 ```json
 {
@@ -99,6 +130,8 @@ X-RateLimit-Reset: 1699276800
 curl --request GET \
   --url https://vb-seamless-dev-backend.oriserve.com/fetchCampaignData \
   --header 'x-api-key: your-api-key-here' \
+  --header 'Content-Type: application/json' \
+  --header 'Origin: vb-seamless-dev-backend.oriserve.com' \
   --verbose
 ```
 
@@ -108,7 +141,8 @@ const response = await fetch('https://vb-seamless-dev-backend.oriserve.com/fetch
   method: 'GET',
   headers: {
     'x-api-key': process.env.VOICEGENIE_API_KEY,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Origin': 'vb-seamless-dev-backend.oriserve.com'
   }
 });
 
@@ -123,7 +157,8 @@ import os
 
 headers = {
     'x-api-key': os.environ.get('VOICEGENIE_API_KEY'),
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Origin': 'vb-seamless-dev-backend.oriserve.com'
 }
 
 response = requests.get(
