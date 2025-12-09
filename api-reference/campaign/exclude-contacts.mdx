@@ -4,9 +4,29 @@ api: "POST /excludeContactsFromCampaign/:campaignId"
 description: "Upload a file to exclude contacts from a campaign."
 ---
 
-## Overview
+## Quick Start
 
-Upload an XLSX or CSV file to exclude specific contacts from a campaign. Exclusion processing continues in the background.
+Upload XLSX or CSV files to exclude specific contacts from your campaigns. Processing happens asynchronously in the background, allowing you to manage exclusions without interrupting active campaigns.
+
+<CardGroup cols={3}>
+  <Card title="Bulk Upload" icon="file-upload">
+    Support for XLSX and CSV formats
+  </Card>
+  <Card title="Async Processing" icon="cog">
+    Background processing won't block your API
+  </Card>
+  <Card title="Flexible Matching" icon="filter">
+    Match by phone, email, or custom columns
+  </Card>
+</CardGroup>
+
+<Note>
+  **Exclusion Timing:** Only queued and future calls are affected. Cannot exclude contacts from currently running calls.
+</Note>
+
+<Info>
+  **API Playground:** Test exclusion with sample CSV/XLSX files in the interactive playground.
+</Info>
 
 ---
 
@@ -120,6 +140,29 @@ with open('contacts.xlsx', 'rb') as f:
         cookies={'token': 'your_auth_token'}
     )
     print(response.json())
+```
+
+## Usage Examples
+
+### Example 1: Exclude by Phone Number
+
+Upload a CSV file with phone numbers to exclude:
+
+```csv
+phone_number,name,status
++1234567890,John Doe,do_not_call
++9876543210,Jane Smith,opted_out
++5555555555,Bob Wilson,invalid
+```
+
+### Example 2: Exclude by Email
+
+Upload an XLSX file and match by email:
+
+```
+email,first_name,last_name
+john@example.com,John,Doe
+jane@example.com,Jane,Smith
 ```
 
 </RequestExample>

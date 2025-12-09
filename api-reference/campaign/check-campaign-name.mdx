@@ -4,9 +4,26 @@ api: "POST /checkCampaignNameExistence"
 description: "Check if a campaign name is already taken."
 ---
 
-## Overview
+## Quick Start
 
-Verify if a campaign name is available before creating a new campaign. Prevents duplicate naming conflicts.
+Validate campaign names before creation to prevent duplicate naming conflicts. This is essential for maintaining unique campaign identities.
+
+<CardGroup cols={2}>
+  <Card title="Pre-validation" icon="check">
+    Check availability before campaign creation
+  </Card>
+  <Card title="Case-Sensitive" icon="shield">
+    Names are case-sensitive for flexibility
+  </Card>
+</CardGroup>
+
+<Note>
+  **Soft-deleted campaigns** also count as taken names in the system.
+</Note>
+
+<Info>
+  **API Playground:** Use the interactive playground to test campaign name availability instantly.
+</Info>
 
 ---
 
@@ -98,6 +115,12 @@ response = requests.post(
     json={'campaignName': 'Q4 Sales Campaign'}
 )
 print(response.json())
+```
+
+```json Request Body
+{
+  "campaignName": "Q4 Sales Campaign"
+}
 ```
 
 </RequestExample>

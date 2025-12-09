@@ -4,9 +4,29 @@ api: "POST /createCampaign"
 description: "Creates a new campaign with contacts and configuration settings."
 ---
 
-## Overview
+## Quick Start
 
-Creates a new campaign with contacts and configuration settings. Optionally starts the campaign immediately.
+Create and configure a new campaign with custom calling schedules, timezones, and contact groups. Define when and how your campaigns run with flexible scheduling options.
+
+<CardGroup cols={3}>
+  <Card title="Flexible Scheduling" icon="calendar">
+    Fixed-date or continuous campaigns with timezone support
+  </Card>
+  <Card title="Contact Management" icon="users">
+    Associate contacts and manage redial configurations
+  </Card>
+  <Card title="Multi-Phone Support" icon="phone">
+    Use multiple phone numbers per campaign
+  </Card>
+</CardGroup>
+
+<Note>
+  **Campaign Setup:** Ensure contacts are already loaded and agents/scripts exist before creating a campaign.
+</Note>
+
+<Info>
+  **API Playground:** Use the interactive playground on the right to test campaign creation with different configurations.
+</Info>
 
 ---
 
@@ -279,6 +299,51 @@ Creates a new campaign with contacts and configuration settings. Optionally star
 </ResponseField>
 
 ---
+
+## Request Examples
+
+### Minimal Example (Continuous Campaign)
+
+```json
+{
+  "campaignName": "Basic Sales Campaign",
+  "contactName": "60d5ec49c1234567890abcde",
+  "campaignStartHour": 9,
+  "campaignStartMinute": 0,
+  "campaignEndHour": 18,
+  "campaignEndMinute": 0,
+  "agentId": "60d5ec49c1234567890abcdf",
+  "PhoneNumber": ["+1234567890"]
+}
+```
+
+### Complete Example (Fixed-Date with All Options)
+
+```json
+{
+  "campaignName": "Q4 Sales Campaign",
+  "contactName": "60d5ec49c1234567890abcde",
+  "campaignType": "fixed-date",
+  "campaignStartDate": "2024-01-15T00:00:00Z",
+  "campaignEndDate": "2024-01-31T23:59:59Z",
+  "campaignStartTimezone": "America/New_York",
+  "campaignStartHour": 9,
+  "campaignStartMinute": 0,
+  "campaignEndTimezone": "America/New_York",
+  "campaignEndHour": 18,
+  "campaignEndMinute": 0,
+  "agentId": "60d5ec49c1234567890abcdf",
+  "isScheduledCall": false,
+  "isContextBasedCall": true,
+  "recentCallContextCount": 3,
+  "PhoneNumber": ["+1234567890", "+0987654321"],
+  "redialConfig": {
+    "enabled": true,
+    "campaignWiseLimit": 3,
+    "dailyLimit": 2
+  }
+}
+```
 
 <RequestExample>
 

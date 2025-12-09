@@ -4,9 +4,29 @@ api: "PUT /updateCampaign/:campaignId"
 description: "Update an existing campaign's configuration and phone numbers."
 ---
 
-## Overview
+## Quick Start
 
-Updates campaign settings including timing, timezone, campaign type, and associated phone numbers.
+Modify campaign settings including timing, timezone, campaign type, and phone numbers. Updates can be applied even while campaigns are running (applies to next day's calls).
+
+<CardGroup cols={3}>
+  <Card title="Schedule Updates" icon="clock">
+    Change start/end times and timezones
+  </Card>
+  <Card title="Phone Numbers" icon="phone">
+    Update associated phone numbers
+  </Card>
+  <Card title="Campaign Settings" icon="sliders">
+    Modify campaign type and name
+  </Card>
+</CardGroup>
+
+<Note>
+  **Live Updates:** Campaign must exist before update. Changes apply immediately to pending/future calls.
+</Note>
+
+<Info>
+  **API Playground:** Test campaign updates with different parameters in the interactive playground.
+</Info>
 
 ---
 
