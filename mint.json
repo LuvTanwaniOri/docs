@@ -46,6 +46,15 @@
       "pages": [
        
         {
+          "group": "Campaign Management",
+          "pages": [
+            "api-reference/campaign-management/check-campaign-name",
+            "api-reference/campaign-management/create-campaign",
+            "api-reference/campaign-management/exclude-contacts",
+            "api-reference/campaign-management/update-campaign"
+          ]
+        },
+        {
           "group": "Third-Party Integration",
           "pages": [
             "api-reference/third-party/initiate-call",

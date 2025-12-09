@@ -1,0 +1,137 @@
+---
+title: "Check Campaign Name Existence"
+api: "POST /checkCampaignNameExistence"
+description: "Check if a campaign name is already taken."
+---
+
+## Overview
+
+Verify if a campaign name is available before creating a new campaign. Prevents duplicate naming conflicts.
+
+---
+
+## Headers
+
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body="campaignName" type="string" required>
+  Campaign name to check
+  
+  Example: `Q4 Sales Campaign`
+</ParamField>
+
+---
+
+## Response
+
+<ResponseField name="status" type="number">
+  HTTP status code (200 if available, 409 if exists)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Status message
+</ResponseField>
+
+---
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/checkCampaignNameExistence' \
+  --header 'Content-Type: application/json' \
+  --cookie 'token=your_auth_token' \
+  --data '{
+    "campaignName": "Q4 Sales Campaign"
+  }'
+```
+
+```javascript JavaScript
+const campaignName = "Q4 Sales Campaign";
+
+const options = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify({ campaignName })
+};
+
+fetch('https://vb-seamless-dev-backend.oriserve.com/checkCampaignNameExistence', options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://vb-seamless-dev-backend.oriserve.com/checkCampaignNameExistence',
+    headers={'Content-Type': 'application/json'},
+    cookies={'token': 'your_auth_token'},
+    json={'campaignName': 'Q4 Sales Campaign'}
+)
+print(response.json())
+```
+
+</RequestExample>
+
+---
+
+<ResponseExample>
+
+```json 200 Campaign Name Available
+{
+  "status": 200,
+  "message": "Campaign name is available"
+}
+```
+
+```json 409 Campaign Name Already Exists
+{
+  "status": 409,
+  "message": "Campaign name already exists"
+}
+```
+
+```json 400 Missing Campaign Name
+{
+  "status": 400,
+  "message": "Campaign name is required",
+  "error": "MISSING_PARAMETER"
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- Check before creating campaign to avoid conflicts
+- Campaign names are case-sensitive
+- Soft-deleted campaigns also count as taken

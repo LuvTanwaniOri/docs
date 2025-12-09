@@ -1,0 +1,188 @@
+---
+title: "Exclude Contacts from Campaign"
+api: "POST /excludeContactsFromCampaign/:campaignId"
+description: "Upload a file to exclude contacts from a campaign."
+---
+
+## Overview
+
+Upload an XLSX or CSV file to exclude specific contacts from a campaign. Exclusion processing continues in the background.
+
+---
+
+## Headers
+
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
+## Path Parameters
+
+<ParamField path="campaignId" type="string" required>
+  Campaign ID (UUID)
+  
+  Example: `550e8400-e29b-41d4-a716-446655440000`
+</ParamField>
+
+---
+
+## Request Body
+
+**Content-Type:** `multipart/form-data`
+
+<ParamField body="file" type="file" required>
+  XLSX or CSV file containing contacts to exclude
+  
+  Accepted formats: `.xlsx`, `.csv`
+</ParamField>
+
+<ParamField body="searchKey" type="string" required>
+  Column name from the file to match for exclusion
+  
+  Example: `phone_number` or `email`
+</ParamField>
+
+---
+
+## Response
+
+<ResponseField name="status" type="number">
+  HTTP status code
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Empty object for successful requests
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Status message
+</ResponseField>
+
+---
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/excludeContactsFromCampaign/550e8400-e29b-41d4-a716-446655440000' \
+  --cookie 'token=your_auth_token' \
+  --form 'file=@contacts.xlsx' \
+  --form 'searchKey=phone_number'
+```
+
+```javascript JavaScript
+const campaignId = '550e8400-e29b-41d4-a716-446655440000';
+const formData = new FormData();
+formData.append('file', fileInput.files[0]); // file input element
+formData.append('searchKey', 'phone_number');
+
+const options = {
+  method: 'POST',
+  credentials: 'include',
+  body: formData
+};
+
+fetch(`https://vb-seamless-dev-backend.oriserve.com/excludeContactsFromCampaign/${campaignId}`, options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+
+campaign_id = "550e8400-e29b-41d4-a716-446655440000"
+url = f"https://vb-seamless-dev-backend.oriserve.com/excludeContactsFromCampaign/{campaign_id}"
+
+with open('contacts.xlsx', 'rb') as f:
+    files = {'file': f}
+    data = {'searchKey': 'phone_number'}
+    response = requests.post(
+        url,
+        files=files,
+        data=data,
+        cookies={'token': 'your_auth_token'}
+    )
+    print(response.json())
+```
+
+</RequestExample>
+
+---
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "status": 200,
+  "data": {},
+  "message": "Exclusion started. Processing will continue in background."
+}
+```
+
+```json 400 Missing File or SearchKey
+{
+  "status": 400,
+  "message": "File not provided or searchKey missing",
+  "error": "MISSING_PARAMETERS"
+}
+```
+
+```json 422 Column Not Found
+{
+  "status": 422,
+  "message": "Column 'phone_number' doesn't exist in file",
+  "error": "INVALID_COLUMN"
+}
+```
+
+```json 500 Processing Error
+{
+  "status": 500,
+  "message": "Error processing exclusion file",
+  "error": "PROCESSING_ERROR"
+}
+```
+
+</ResponseExample>
+
+## File Format
+
+### Supported Formats
+- **XLSX** - Excel spreadsheet
+- **CSV** - Comma-separated values
+
+### File Requirements
+- Column specified in `searchKey` must exist in file
+- File should contain contact identifiers (phone numbers, emails, etc.)
+- Maximum file size: 10 MB
+
+### Example File Structure (CSV)
+```
+phone_number,name,email
++1234567890,John Doe,john@example.com
++0987654321,Jane Smith,jane@example.com
+```
+
+## Notes
+
+- Exclusion processes asynchronously in background
+- Response confirms request acceptance, not completion
+- Excluded contacts won't be called for remaining campaign duration
+- Cannot exclude contacts from running calls (only queued/future calls)

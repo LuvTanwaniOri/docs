@@ -1,0 +1,446 @@
+---
+title: "Create Campaign"
+api: "POST /createCampaign"
+description: "Creates a new campaign with contacts and configuration settings."
+---
+
+## Overview
+
+Creates a new campaign with contacts and configuration settings. Optionally starts the campaign immediately.
+
+---
+
+## Headers
+
+<ParamField header="Cookie" type="string" required>
+  Authentication token from login (httpOnly cookie)
+  
+  Example: `token=your_jwt_token_here`
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="Accept" type="string" default="application/json, text/plain, */*">
+  application/json, text/plain, */*
+</ParamField>
+
+<ParamField header="Origin" type="string">
+  Origin of the request (e.g., https://vb-seamless-dev-backend.oriserve.com/)
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Browser or client user agent
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body="campaignName" type="string" required>
+  Unique name for the campaign
+  
+  Example: `Q4 Sales Campaign`
+</ParamField>
+
+<ParamField body="contactName" type="string" required>
+  Contact ID to fetch contacts from (MongoDB ObjectId)
+  
+  Example: `60d5ec49c1234567890abcde`
+</ParamField>
+
+<ParamField body="campaignType" type="string">
+  Campaign execution type
+  
+  **Values:** `fixed-date` | `continuous` (default: `continuous`)
+</ParamField>
+
+<ParamField body="campaignStartDate" type="string">
+  Campaign start date in ISO 8601 format
+  
+  Example: `2024-01-15T00:00:00Z`
+</ParamField>
+
+<ParamField body="campaignEndDate" type="string">
+  Campaign end date in ISO 8601 format
+  
+  Example: `2024-01-31T23:59:59Z`
+</ParamField>
+
+<ParamField body="campaignStartTimezone" type="string">
+  Timezone for start time (default: `Asia/Calcutta`)
+  
+  Example: `America/New_York`
+</ParamField>
+
+<ParamField body="campaignStartHour" type="number" required>
+  Hour to start calling (0-23)
+  
+  Example: `9`
+</ParamField>
+
+<ParamField body="campaignStartMinute" type="number" required>
+  Minute to start calling (0-59)
+  
+  Example: `0`
+</ParamField>
+
+<ParamField body="campaignEndTimezone" type="string">
+  Timezone for end time (default: `Asia/Calcutta`)
+  
+  Example: `America/New_York`
+</ParamField>
+
+<ParamField body="campaignEndHour" type="number" required>
+  Hour to stop calling (0-23)
+  
+  Example: `18`
+</ParamField>
+
+<ParamField body="campaignEndMinute" type="number" required>
+  Minute to stop calling (0-59)
+  
+  Example: `0`
+</ParamField>
+
+<ParamField body="agentId" type="string" required>
+  MongoDB ObjectId of the script/agent
+  
+  Example: `60d5ec49c1234567890abcdf`
+</ParamField>
+
+<ParamField body="isScheduledCall" type="boolean">
+  Enable scheduled calls at specific datetime
+  
+  Default: `false`
+</ParamField>
+
+<ParamField body="scheduledCallDateTime" type="string">
+  DateTime for scheduled calls (required if `isScheduledCall` is true)
+  
+  Example: `2024-01-20T14:00:00Z`
+</ParamField>
+
+<ParamField body="isContextBasedCall" type="boolean">
+  Enable context-based calling using previous call history
+  
+  Default: `false`
+</ParamField>
+
+<ParamField body="recentCallContextCount" type="number">
+  Number of recent calls to use for context (required if `isContextBasedCall` is true)
+  
+  Example: `3`
+</ParamField>
+
+<ParamField body="redialConfig" type="object">
+  Redial configuration for failed calls
+  
+  <Expandable title="Redial Config Properties">
+    <ParamField body="enabled" type="boolean">
+      Enable redial functionality
+    </ParamField>
+    
+    <ParamField body="callBackHandlingOnly" type="boolean">
+      Only redial callback requests
+    </ParamField>
+    
+    <ParamField body="campaignWiseLimit" type="number">
+      Maximum redials per contact in campaign
+    </ParamField>
+    
+    <ParamField body="dailyLimit" type="number">
+      Maximum redials per contact per day
+    </ParamField>
+    
+    <ParamField body="callEntities" type="array">
+      Array of call entity filters
+    </ParamField>
+    
+    <ParamField body="terminalConditions" type="array">
+      Array of conditions that stop redials
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="PhoneNumber" type="array">
+  Array of phone numbers to associate with campaign
+  
+  Example: `["+1234567890", "+0987654321"]`
+</ParamField>
+
+---
+
+## Response
+
+<ResponseField name="status" type="number">
+  HTTP status code
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Campaign Object">
+    <ResponseField name="_id" type="string">
+      MongoDB ObjectId of the campaign
+    </ResponseField>
+    
+    <ResponseField name="campaignName" type="string">
+      Name of the created campaign
+    </ResponseField>
+    
+    <ResponseField name="campaignId" type="string">
+      UUID of the campaign
+    </ResponseField>
+    
+    <ResponseField name="campaignType" type="string">
+      Type of campaign (fixed-date or continuous)
+    </ResponseField>
+    
+    <ResponseField name="status" type="string">
+      Current campaign status (default: not-yet-started)
+    </ResponseField>
+    
+    <ResponseField name="agentId" type="string">
+      Associated agent/script ID
+    </ResponseField>
+    
+    <ResponseField name="contactId" type="string">
+      Associated contact ID
+    </ResponseField>
+    
+    <ResponseField name="campaignStartDate" type="string">
+      Campaign start date
+    </ResponseField>
+    
+    <ResponseField name="campaignEndDate" type="string">
+      Campaign end date
+    </ResponseField>
+    
+    <ResponseField name="campaignStartTime" type="object">
+      <Expandable title="Time Object">
+        <ResponseField name="timeZone" type="string">
+          Timezone for start time
+        </ResponseField>
+        
+        <ResponseField name="hour" type="number">
+          Hour value
+        </ResponseField>
+        
+        <ResponseField name="minute" type="number">
+          Minute value
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="campaignEndTime" type="object">
+      End time with timezone details
+    </ResponseField>
+    
+    <ResponseField name="redialConfig" type="object">
+      Redial configuration
+    </ResponseField>
+    
+    <ResponseField name="isScheduledCall" type="boolean">
+      Whether scheduled calls are enabled
+    </ResponseField>
+    
+    <ResponseField name="scheduledCallDateTime" type="string">
+      Scheduled call datetime if enabled
+    </ResponseField>
+    
+    <ResponseField name="isDeleted" type="boolean">
+      Soft delete flag
+    </ResponseField>
+    
+    <ResponseField name="isHidden" type="boolean">
+      Hidden flag
+    </ResponseField>
+    
+    <ResponseField name="currDialingCallCount" type="number">
+      Current dialing calls count
+    </ResponseField>
+    
+    <ResponseField name="currProcessingCallCount" type="number">
+      Current processing calls count
+    </ResponseField>
+    
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 creation timestamp
+    </ResponseField>
+    
+    <ResponseField name="updatedAt" type="string">
+      ISO 8601 last update timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Success message
+</ResponseField>
+
+---
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url 'https://vb-seamless-dev-backend.oriserve.com/createCampaign' \
+  --header 'Content-Type: application/json' \
+  --cookie 'token=your_auth_token' \
+  --data '{
+    "campaignName": "Q4 Sales Campaign",
+    "contactName": "60d5ec49c1234567890abcde",
+    "campaignType": "continuous",
+    "campaignStartHour": 9,
+    "campaignStartMinute": 0,
+    "campaignEndHour": 18,
+    "campaignEndMinute": 0,
+    "campaignStartTimezone": "America/New_York",
+    "campaignEndTimezone": "America/New_York",
+    "agentId": "60d5ec49c1234567890abcdf",
+    "PhoneNumber": ["+1234567890", "+0987654321"]
+  }'
+```
+
+```javascript JavaScript
+const campaignData = {
+  campaignName: "Q4 Sales Campaign",
+  contactName: "60d5ec49c1234567890abcde",
+  campaignType: "continuous",
+  campaignStartHour: 9,
+  campaignStartMinute: 0,
+  campaignEndHour: 18,
+  campaignEndMinute: 0,
+  campaignStartTimezone: "America/New_York",
+  campaignEndTimezone: "America/New_York",
+  agentId: "60d5ec49c1234567890abcdf",
+  PhoneNumber: ["+1234567890", "+0987654321"]
+};
+
+const options = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'include',
+  body: JSON.stringify(campaignData)
+};
+
+fetch('https://vb-seamless-dev-backend.oriserve.com/createCampaign', options)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```
+
+```python Python
+import requests
+import json
+
+campaign_data = {
+    "campaignName": "Q4 Sales Campaign",
+    "contactName": "60d5ec49c1234567890abcde",
+    "campaignType": "continuous",
+    "campaignStartHour": 9,
+    "campaignStartMinute": 0,
+    "campaignEndHour": 18,
+    "campaignEndMinute": 0,
+    "campaignStartTimezone": "America/New_York",
+    "campaignEndTimezone": "America/New_York",
+    "agentId": "60d5ec49c1234567890abcdf",
+    "PhoneNumber": ["+1234567890", "+0987654321"]
+}
+
+response = requests.post(
+    'https://vb-seamless-dev-backend.oriserve.com/createCampaign',
+    headers={'Content-Type': 'application/json'},
+    cookies={'token': 'your_auth_token'},
+    json=campaign_data
+)
+print(response.json())
+</RequestExample>
+
+---
+
+<ResponseExample>
+
+```json 200 Success
+{
+  "status": 200,
+  "data": {
+    "_id": "507f1f77bcf86cd799439013",
+    "campaignName": "Q4 Sales Campaign",
+    "campaignId": "550e8400-e29b-41d4-a716-446655440000",
+    "campaignType": "continuous",
+    "status": "not-yet-started",
+    "agentId": "60d5ec49c1234567890abcdf",
+    "contactId": "60d5ec49c1234567890abcde",
+    "campaignStartDate": "2024-01-15T00:00:00Z",
+    "campaignEndDate": "2024-01-31T23:59:59Z",
+    "campaignStartTime": {
+      "timeZone": "America/New_York",
+      "hour": 9,
+      "minute": 0
+    },
+    "campaignEndTime": {
+      "timeZone": "America/New_York",
+      "hour": 18,
+      "minute": 0
+    },
+    "redialConfig": {
+      "enabled": false
+    },
+    "isScheduledCall": false,
+    "isDeleted": false,
+    "isHidden": false,
+    "currDialingCallCount": 0,
+    "currProcessingCallCount": 0,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  "message": "Campaign created successfully"
+}
+```
+
+```json 422 Campaign Name Already Exists
+{
+  "status": 422,
+  "message": "Campaign name already exists",
+  "error": "DUPLICATE_CAMPAIGN_NAME"
+}
+```
+
+```json 404 Contact Not Found
+{
+  "status": 404,
+  "message": "Contact not found",
+  "error": "CONTACT_NOT_FOUND"
+}
+```
+
+```json 400 Invalid Parameters
+{
+  "status": 400,
+  "message": "Invalid campaign configuration",
+  "error": "INVALID_PARAMETERS",
+  "details": {
+    "missing": ["agentId", "campaignStartHour"]
+  }
+}
+```
+
+```json 500 Internal Server Error
+{
+  "status": 500,
+  "message": "Failed to create campaign",
+  "error": "INTERNAL_ERROR"
+}
+```
+
+</ResponseExample>
+
+## Notes
+
+- Campaign name must be unique
+- Agent/Script must exist before campaign creation
+- Contact must be loaded with data before campaign starts
+- Timezone defaults to Asia/Calcutta if not specified
